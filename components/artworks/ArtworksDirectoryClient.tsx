@@ -1,0 +1,237 @@
+'use client';
+
+import React, { useState, useMemo, useEffect } from 'react';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useArchive } from '@/context/ArchiveContext';
+import { useLanguage } from '@/context/LanguageContext';
+import { Artwork, ArtworkCategory, CATEGORIES, getArtworkDepartment, getArtworkDepartmentLabel } from '@/data/artworks';
+import { ArtCard } from '@/components/ui/ArtCard';
+import { 
+  ArrowLeft, 
+  ArrowRight, 
+  Sparkles, 
+  Palette, 
+  Music, 
+  Layers, 
+  Theater,
+  Search,
+  Filter
+} from 'lucide-react';
+
+export function ArtworksDirectoryClient() {
+  const { artworks } = useArchive();
+  const { t, locale, isRTL } = useLanguage();
+  const searchParams = useSearchParams();
+
+  // Selected department filter from query param: ?dept=painting | music | theater
+  const initialDept = searchParams?.get('dept')?.toLowerCase() || 'all';
+  const [selectedDept, setSelectedDept] = useState<string>(initialDept);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Sync if query param changes
+  useEffect(() => {
+    if (searchParams) {
+      const q = searchParams.get('dept')?.toLowerCase();
+      if (q) setSelectedDept(q);
+    }
+  }, [searchParams]);
+
+  // Department Filters List
+  const departmentsList = useMemo(() => [
+    {
+      id: 'all',
+      label: {
+        ckb: 'هەموو بەشەکان',
+        ar: 'جميع الأقسام',
+        en: 'All Departments',
+      },
+      icon: Layers,
+    },
+    {
+      id: 'painting',
+      label: {
+        ckb: 'شێوەکاری',
+        ar: 'الفنون التشكيلية',
+        en: 'Painting & Fine Arts',
+      },
+      icon: Palette,
+    },
+    {
+      id: 'music',
+      label: {
+        ckb: 'مۆسیقا',
+        ar: 'الموسيقى',
+        en: 'Music & Sound',
+      },
+      icon: Music,
+    },
+    {
+      id: 'theater',
+      label: {
+        ckb: 'شانۆ',
+        ar: 'المسرح',
+        en: 'Dramatic Arts & Theater',
+      },
+      icon: Theater,
+    },
+  ], []);
+
+  // Filter artworks dynamically
+  const filteredArtworks = useMemo(() => {
+    return artworks.filter((item) => {
+      // 1. Department Filter
+      if (selectedDept !== 'all') {
+        const itemDeptLabel = getArtworkDepartmentLabel(item.departmentLabel || item.department, 'ckb');
+        const itemDeptCode = getArtworkDepartment(item);
+        if (selectedDept === 'painting' || selectedDept === 'shewakari' || selectedDept === 'شێوەکاری') {
+          const match = ['painting', 'sculpture', 'ceramics', 'design'].includes(item.category) ||
+            itemDeptCode === 'painting' ||
+            itemDeptCode === 'sculpture' ||
+            /شێوەکاری|پەیکەرسازی|سیرامیک|دیزاین/i.test(itemDeptLabel);
+          if (!match) return false;
+        } else if (selectedDept === 'music' || selectedDept === 'مۆسیقا' || selectedDept === 'موسيقى') {
+          const match = item.category === 'music' ||
+            /مۆسیقا|دەنگ|تار|music/i.test(itemDeptLabel) ||
+            Boolean(item.audioUrl);
+          if (!match) return false;
+        } else if (selectedDept === 'theater' || selectedDept === 'theatre' || selectedDept === 'شانۆ' || selectedDept === 'مسرح') {
+          const match = item.category === 'theater' ||
+            /شانۆ|دراما|theater|theatre/i.test(itemDeptLabel);
+          if (!match) return false;
+        }
+      }
+
+      // 2. Search Query Filter
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase();
+        const titleMatch = (item.title[locale] || item.title.ckb || item.title.en).toLowerCase().includes(q);
+        const artistMatch = (item.artist[locale] || item.artist.ckb || item.artist.en).toLowerCase().includes(q);
+        const deptLabel = getArtworkDepartmentLabel(item.departmentLabel || item.department, locale);
+        const deptMatch = deptLabel.toLowerCase().includes(q);
+        if (!titleMatch && !artistMatch && !deptMatch) return false;
+      }
+
+      return true;
+    });
+  }, [artworks, selectedDept, searchQuery, locale]);
+
+  return (
+    <div className="flex flex-col gap-8 w-full max-w-7xl mx-auto px-4 py-8 pb-32">
+      {/* Top Header & Breadcrumb */}
+      <div className="flex flex-col gap-4">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-xs font-mono text-museum-secondary hover:text-gold transition-colors w-fit group"
+        >
+          {isRTL ? (
+            <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+          ) : (
+            <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
+          )}
+          <span>{locale === 'ckb' ? 'گەڕانەوە بۆ پەڕەی سەرەکی' : locale === 'ar' ? 'العودة للرئيسية' : 'Return Home'}</span>
+        </Link>
+
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-museum-divider pb-6">
+          <div>
+            <div className="flex items-center gap-2 text-gold text-xs font-mono font-bold uppercase tracking-wider mb-1">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>{locale === 'ckb' ? 'ئەرشیفی فەرمی بەشە ئەکادیمییەکان' : locale === 'ar' ? 'الأرشيف الرسمي للأقسام' : 'Official Academic Archive'}</span>
+            </div>
+            <h1 className="text-2xl sm:text-4xl font-bold text-parchment-pure font-serif">
+              {locale === 'ckb' ? 'تەواوی شاکار و بەرهەمە تۆمارکراوەکان' : locale === 'ar' ? 'سجل الأعمال والروائع الموثقة' : 'Archived Fine Arts Masterworks'}
+            </h1>
+            <p className="text-xs sm:text-sm text-museum-secondary mt-1 max-w-2xl">
+              {locale === 'ckb'
+                ? 'کۆکراوەی سەرجەم بەرهەمە هونەرییەکان، تۆمارە دەنگییەکان و دۆکیۆمێنتەکانی سێ بەشە ڕەسەنەکەی پەیمانگا.'
+                : locale === 'ar'
+                ? 'المجموعة الكاملة للأعمال الفنية، التسجيلات الصوتية ووثائق الأقسام الثلاثة للمعهد.'
+                : 'Complete repository of artistic works, audio performances, and archival documentations across the 3 historic institute departments.'}
+            </p>
+          </div>
+
+          {/* Search Box */}
+          <div className="relative w-full sm:w-72">
+            <Search className="w-4 h-4 text-white/40 absolute start-3.5 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={locale === 'ckb' ? 'گەڕان لە بەرهەمەکان...' : locale === 'ar' ? 'البحث في الأعمال...' : 'Search artworks...'}
+              className="w-full ps-10 pe-4 py-2.5 rounded-full bg-white/5 border border-white/10 focus:border-gold/60 text-xs text-parchment placeholder-white/40 focus:outline-none transition-colors"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Filter Tabs by Department */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none no-scrollbar">
+        {departmentsList.map((dept) => {
+          const isSelected = selectedDept === dept.id;
+          const Icon = dept.icon;
+          const label = dept.label[locale] || dept.label.ckb;
+
+          return (
+            <button
+              key={dept.id}
+              onClick={() => setSelectedDept(dept.id)}
+              className={`relative px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-colors duration-200 select-none flex items-center gap-2 ${
+                isSelected
+                  ? 'text-obsidian font-semibold'
+                  : 'text-parchment-muted hover:text-parchment bg-obsidian-surface/60 border border-museum-border'
+              }`}
+            >
+              {isSelected && (
+                <motion.div
+                  layoutId="active-dept-pill"
+                  transition={{ type: 'spring', stiffness: 450, damping: 32 }}
+                  className="absolute inset-0 rounded-full bg-gradient-to-r from-gold via-[#E8C860] to-gold shadow-gold-glow -z-10"
+                />
+              )}
+              <Icon className={`w-3.5 h-3.5 ${isSelected ? 'text-obsidian' : 'text-gold'}`} />
+              <span>{label}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Artworks Grid */}
+      <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+        <AnimatePresence mode="popLayout">
+          {filteredArtworks.map((artwork, idx) => (
+            <motion.div
+              key={artwork.id}
+              layout
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.4, delay: idx * 0.05 }}
+            >
+              <ArtCard artwork={artwork} index={idx} />
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </motion.div>
+
+      {/* Empty State */}
+      {filteredArtworks.length === 0 && (
+        <div className="py-20 flex flex-col items-center justify-center text-center gap-3">
+          <Filter className="w-8 h-8 text-white/30" />
+          <h3 className="text-base font-bold text-parchment">
+            {locale === 'ckb' ? 'هیچ بەرهەمێک نەدۆزرایەوە' : locale === 'ar' ? 'لم يتم العثور على أعمال' : 'No artworks found'}
+          </h3>
+          <p className="text-xs text-museum-secondary">
+            {locale === 'ckb' ? 'تکایە فلتەرەکان پاک بکەرەوە یان وشەیەکی تر بەکاربهێنە.' : 'Try adjusting your search or department filter.'}
+          </p>
+          <button
+            onClick={() => { setSelectedDept('all'); setSearchQuery(''); }}
+            className="mt-2 px-4 py-2 rounded-full bg-white/10 hover:bg-gold/20 text-xs text-white hover:text-gold transition-colors"
+          >
+            {locale === 'ckb' ? 'پاککردنەوەی هەموو فلتەرەکان' : 'Reset All Filters'}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
