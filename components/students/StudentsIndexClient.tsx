@@ -46,9 +46,9 @@ export function StudentsIndexClient() {
   return (
     <div className="flex flex-col gap-10 sm:gap-14 w-full pb-32 safe-bottom">
       {/* Header */}
-      <section className="relative pt-4 sm:pt-8 flex flex-col items-center text-center max-w-3xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gold/10 border border-gold/30 text-gold-light text-xs font-medium tracking-wide mb-4 shadow-gold-glow">
-          <GraduationCap className="w-4 h-4 text-gold" />
+      <section className="relative pt-4 sm:pt-8 flex flex-col items-center text-center max-w-3xl mx-auto px-2 sm:px-4">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gold/10 border border-gold/30 text-gold-dark dark:text-gold-light text-xs font-medium tracking-wide mb-3 sm:mb-4 shadow-gold-glow">
+          <GraduationCap className="w-4 h-4 text-gold shrink-0" />
           <span>
             {locale === 'ckb'
               ? 'تۆماری خوێندکاران و هونەرمەندانی پەیمانگە'
@@ -58,15 +58,18 @@ export function StudentsIndexClient() {
           </span>
         </div>
 
-        <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-parchment-pure leading-tight">
-          {locale === 'ckb'
-            ? 'داهێنەرانی پەیمانگەی چەمچەماڵ'
-            : locale === 'ar'
-            ? 'مبدعو معهد الفنون الجميلة في جمجمال'
-            : 'Artists & Creators of Chamchamal'}
-        </h1>
+        {/* Title Container with top breathing room for Kurdish ascenders & diacritics */}
+        <div className="pt-2 sm:pt-3 w-full">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-stone-900 dark:text-parchment-pure leading-relaxed sm:leading-normal text-balance">
+            {locale === 'ckb'
+              ? 'داهێنەرانی پەیمانگەی چەمچەماڵ'
+              : locale === 'ar'
+              ? 'مبدعو معهد الفنون الجميلة في جمجمال'
+              : 'Artists & Creators of Chamchamal'}
+          </h1>
+        </div>
 
-        <p className="mt-4 text-sm sm:text-base text-museum-secondary max-w-2xl leading-relaxed">
+        <p className="mt-2 sm:mt-4 text-xs sm:text-base text-stone-600 dark:text-museum-secondary max-w-2xl leading-relaxed text-balance">
           {locale === 'ckb'
             ? 'تۆمارێکی زیندووی دەرچووان و قوتابیانی پەیمانگە؛ لەگەڵ دەقی هونەری، ناسنامەی داهێنان، و ئەو بەرهەمانەی کە لە ئەرشیفی دیجیتاڵیدا پارێزراون.'
             : locale === 'ar'

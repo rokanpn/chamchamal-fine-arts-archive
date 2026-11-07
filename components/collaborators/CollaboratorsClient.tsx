@@ -44,9 +44,9 @@ export function CollaboratorsClient() {
   return (
     <div className="flex flex-col gap-12 sm:gap-16 w-full pb-32 safe-bottom">
       {/* Header Banner */}
-      <section className="relative pt-6 sm:pt-10 flex flex-col items-center text-center max-w-4xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gold/10 border border-gold/30 text-gold-light text-xs font-medium tracking-wide mb-4 shadow-gold-glow">
-          <Globe className="w-3.5 h-3.5 text-gold" />
+      <section className="relative pt-6 sm:pt-10 flex flex-col items-center text-center max-w-4xl mx-auto px-2 sm:px-4">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gold/10 border border-gold/30 text-gold-dark dark:text-gold-light text-xs font-medium tracking-wide mb-3 sm:mb-4 shadow-gold-glow">
+          <Globe className="w-3.5 h-3.5 text-gold shrink-0" />
           <span>
             {locale === 'ckb'
               ? 'هونەرمەندانی میوان و هاوبەشە ئەکادیمییەکان'
@@ -56,15 +56,18 @@ export function CollaboratorsClient() {
           </span>
         </div>
 
-        <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-parchment-pure leading-tight font-serif">
-          {locale === 'ckb'
-            ? 'پردی دیالۆگی هونەری و هاوبەشییەکان'
-            : locale === 'ar'
-            ? 'جسور الحوار الفني والتبادل الإبداعي'
-            : 'Artistic Dialogues & Global Residencies'}
-        </h1>
+        {/* Title Container with top breathing room for Kurdish ascenders & diacritics */}
+        <div className="pt-2 sm:pt-3 w-full">
+          <h1 className="text-2xl sm:text-4xl md:text-6xl font-bold text-stone-900 dark:text-parchment-pure leading-relaxed sm:leading-normal text-balance font-serif">
+            {locale === 'ckb'
+              ? 'پردی دیالۆگی هونەری و هاوبەشییەکان'
+              : locale === 'ar'
+              ? 'جسور الحوار الفني والتبادل الإبداعي'
+              : 'Artistic Dialogues & Global Residencies'}
+          </h1>
+        </div>
 
-        <p className="mt-4 text-sm sm:text-base text-museum-secondary max-w-2xl leading-relaxed">
+        <p className="mt-2 sm:mt-4 text-xs sm:text-base text-stone-600 dark:text-museum-secondary max-w-2xl leading-relaxed text-balance">
           {locale === 'ckb'
             ? 'تۆماری مێژوویی ئەو شێوەکار، پەیکەرساز، توێژەر و مامۆستا نێودەوڵەتییانەی کە ماستەرکلاس، ئیقامەی هونەری و پڕۆژەی هاوبەشیان لەگەڵ قوتابیانی پەیمانگەی چەمچەماڵ ئەنجامداوە.'
             : locale === 'ar'

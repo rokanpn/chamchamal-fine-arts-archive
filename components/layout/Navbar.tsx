@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, startTransition } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
@@ -133,21 +134,31 @@ export function Navbar() {
             <div className="absolute inset-0 bg-gold/5 group-hover:bg-gold/15 transition-colors duration-500 pointer-events-none" />
 
             {/* Dark Mode Logo: Transparent background */}
-            <img
-              src="/logo-dark.png"
-              alt={t.instituteName}
-              className="w-full h-full object-contain rounded-full hidden dark:block transition-transform duration-300 group-hover:scale-105"
-            />
+            <div className="relative w-full h-full hidden dark:block">
+              <Image
+                src="/logo-dark.png"
+                alt={t.instituteName}
+                fill
+                sizes="44px"
+                priority
+                className="object-contain rounded-full transition-transform duration-300 group-hover:scale-105"
+              />
+            </div>
 
             {/* Light Mode Logo: Solid white background */}
-            <img
-              src="/logo-light.png"
-              alt={t.instituteName}
-              className="w-full h-full object-contain rounded-full block dark:hidden transition-transform duration-300 group-hover:scale-105"
-            />
+            <div className="relative w-full h-full block dark:hidden">
+              <Image
+                src="/logo-light.png"
+                alt={t.instituteName}
+                fill
+                sizes="44px"
+                priority
+                className="object-contain rounded-full transition-transform duration-300 group-hover:scale-105"
+              />
+            </div>
 
             {/* Micro Gold Twinkle Flare */}
-            <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-gold shadow-[0_0_6px_#D4AF37] opacity-80 pointer-events-none" />
+            <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-gold shadow-[0_0_6px_#D4AF37] opacity-80 pointer-events-none z-10" />
           </div>
 
           {/* Typography Moniker & Official Medallion */}
@@ -338,9 +349,25 @@ export function Navbar() {
             {/* Mobile Header Medallion with dynamic logo */}
             <div className="flex items-center justify-between border-b border-stone-200/80 dark:border-museum-divider pb-3">
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full overflow-hidden border border-gold/40 shrink-0">
-                  <img src="/logo-dark.png" alt={t.instituteName} className="w-full h-full object-contain hidden dark:block" />
-                  <img src="/logo-light.png" alt={t.instituteName} className="w-full h-full object-contain block dark:hidden" />
+                <div className="relative w-6 h-6 rounded-full overflow-hidden border border-gold/40 shrink-0">
+                  <div className="relative w-full h-full hidden dark:block">
+                    <Image
+                      src="/logo-dark.png"
+                      alt={t.instituteName}
+                      fill
+                      sizes="24px"
+                      className="object-contain"
+                    />
+                  </div>
+                  <div className="relative w-full h-full block dark:hidden">
+                    <Image
+                      src="/logo-light.png"
+                      alt={t.instituteName}
+                      fill
+                      sizes="24px"
+                      className="object-contain"
+                    />
+                  </div>
                 </div>
                 <span className="text-xs font-bold text-stone-900 dark:text-parchment font-serif">
                   {t.instituteName}

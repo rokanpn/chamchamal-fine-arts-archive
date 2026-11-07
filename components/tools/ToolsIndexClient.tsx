@@ -54,14 +54,16 @@ export function ToolsIndexClient() {
           </span>
         </div>
 
-        {/* Main Title */}
-        <h1 className="text-xl sm:text-3xl md:text-5xl font-bold tracking-tight text-stone-900 dark:text-parchment-pure leading-snug sm:leading-tight text-balance">
-          {locale === 'ckb'
-            ? 'ئامرازەکانی داهێنانی هونەری'
-            : locale === 'ar'
-            ? 'أدوات الإبداع التشكيلي في جمجمال'
-            : 'Instruments of Fine Art & Craft'}
-        </h1>
+        {/* Main Title Container with top breathing space for Kurdish diacritics */}
+        <div className="pt-2 sm:pt-3 w-full">
+          <h1 className="text-xl sm:text-3xl md:text-5xl font-bold text-stone-900 dark:text-parchment-pure leading-relaxed sm:leading-normal text-balance">
+            {locale === 'ckb'
+              ? 'ئامرازەکانی داهێنانی هونەری'
+              : locale === 'ar'
+              ? 'أدوات الإبداع التشكيلي في جمجمال'
+              : 'Instruments of Fine Art & Craft'}
+          </h1>
+        </div>
 
         {/* Subtitle / Description */}
         <p className="mt-2 sm:mt-4 text-[11px] sm:text-sm md:text-base text-stone-600 dark:text-museum-secondary max-w-2xl leading-relaxed text-balance line-clamp-3 sm:line-clamp-none px-2 sm:px-0">

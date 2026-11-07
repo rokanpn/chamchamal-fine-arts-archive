@@ -162,26 +162,29 @@ export function DualVirtualJoysticks({
   locale = 'ckb',
 }: DualVirtualJoysticksProps) {
   return (
-    <div className="fixed inset-x-0 bottom-4 sm:bottom-6 px-4 sm:px-8 z-40 flex items-end justify-between pointer-events-none select-none touch-none">
-      {/* ── Left Joystick: Translation / Walking / Strafe ── */}
+    <div
+      dir="ltr"
+      className="fixed inset-x-0 bottom-4 sm:bottom-6 px-4 sm:px-8 z-40 flex items-end justify-between pointer-events-none select-none touch-none"
+    >
+      {/* ── Left Joystick: Camera Look / Orientation / Panning ── */}
       <div className="pointer-events-auto">
         <SingleVirtualThumbstick
           side="left"
-          label="MOVE"
-          subLabel={locale === 'ckb' ? 'جوڵە' : locale === 'ar' ? 'تحريك' : 'WALK'}
-          icon={<Move className="w-4 h-4" />}
-          onChange={onMoveChange}
-        />
-      </div>
-
-      {/* ── Right Joystick: Orientation / Free-Look / Head Rotation ── */}
-      <div className="pointer-events-auto">
-        <SingleVirtualThumbstick
-          side="right"
           label="LOOK"
           subLabel={locale === 'ckb' ? 'ڕوانین' : locale === 'ar' ? 'رؤية' : 'VIEW'}
           icon={<Compass className="w-4 h-4" />}
           onChange={onLookChange}
+        />
+      </div>
+
+      {/* ── Right Joystick: Translation / Walking / Movement ── */}
+      <div className="pointer-events-auto">
+        <SingleVirtualThumbstick
+          side="right"
+          label="MOVE"
+          subLabel={locale === 'ckb' ? 'جوڵە' : locale === 'ar' ? 'تحريك' : 'WALK'}
+          icon={<Move className="w-4 h-4" />}
+          onChange={onMoveChange}
         />
       </div>
     </div>

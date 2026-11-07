@@ -42,13 +42,16 @@ export function FacultyClient() {
           </span>
         </div>
 
-        <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-parchment-pure leading-tight font-serif">
-          {locale === 'ckb'
-            ? 'سەرکردایەتی و مامۆستایانی پەیمانگە'
-            : locale === 'ar'
-            ? 'قيادة معهد الفنون وأساتذة الأتيلييهات'
-            : 'Institute Leadership & Faculty'}
-        </h1>
+        {/* Title Container with top breathing room for Kurdish ascenders & diacritics */}
+        <div className="pt-2 sm:pt-3 w-full">
+          <h1 className="text-2xl sm:text-4xl md:text-6xl font-bold text-stone-900 dark:text-parchment-pure leading-relaxed sm:leading-normal text-balance font-serif">
+            {locale === 'ckb'
+              ? 'سەرکردایەتی و مامۆستایانی پەیمانگە'
+              : locale === 'ar'
+              ? 'قيادة معهد الفنون وأساتذة الأتيلييهات'
+              : 'Institute Leadership & Faculty'}
+          </h1>
+        </div>
 
         <p className="mt-4 text-sm sm:text-base text-museum-secondary max-w-2xl leading-relaxed">
           {locale === 'ckb'
