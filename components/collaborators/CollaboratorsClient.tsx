@@ -45,9 +45,12 @@ export function CollaboratorsClient() {
     <div className="flex flex-col gap-12 sm:gap-16 w-full pb-32 safe-bottom">
       {/* Header Banner */}
       <section className="relative pt-6 sm:pt-10 flex flex-col items-center text-center max-w-4xl mx-auto px-2 sm:px-4 overflow-visible">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gold/10 border border-gold/30 text-gold-dark dark:text-gold-light text-xs font-medium tracking-wide mb-3 sm:mb-4 shadow-gold-glow">
+        <div
+          dir={isRTL ? 'rtl' : 'ltr'}
+          className="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-2xl sm:rounded-full bg-gold/10 border border-gold/30 text-gold-dark dark:text-gold-light text-xs sm:text-sm font-medium tracking-wide mb-3 sm:mb-4 shadow-gold-glow max-w-full text-right"
+        >
           <Globe className="w-3.5 h-3.5 text-gold shrink-0" />
-          <span>
+          <span className="whitespace-normal text-right leading-relaxed">
             {locale === 'ckb'
               ? 'هونەرمەندانی میوان و هاوبەشە ئەکادیمییەکان'
               : locale === 'ar'

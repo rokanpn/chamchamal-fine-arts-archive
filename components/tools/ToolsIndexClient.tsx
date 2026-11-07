@@ -43,9 +43,12 @@ export function ToolsIndexClient() {
       {/* Header Section */}
       <section className="relative pt-2 sm:pt-8 flex flex-col items-center text-center max-w-3xl mx-auto px-1 sm:px-4">
         {/* Top Eyebrow Badge */}
-        <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-gold/10 border border-gold/30 text-gold-dark dark:text-gold-light text-[10px] sm:text-xs font-medium tracking-wide mb-2 sm:mb-4 shadow-gold-glow">
-          <Wrench className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gold shrink-0" />
-          <span>
+        <div
+          dir={isRTL ? 'rtl' : 'ltr'}
+          className="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-2xl sm:rounded-full bg-gold/10 border border-gold/30 text-gold-dark dark:text-gold-light text-xs sm:text-sm font-medium tracking-wide mb-2 sm:mb-4 shadow-gold-glow max-w-full text-right"
+        >
+          <Wrench className="w-3.5 h-3.5 text-gold shrink-0" />
+          <span className="whitespace-normal text-right leading-relaxed">
             {locale === 'ckb'
               ? 'کەرەستەناسی و ئامرازەکانی ئاتلیێ'
               : locale === 'ar'

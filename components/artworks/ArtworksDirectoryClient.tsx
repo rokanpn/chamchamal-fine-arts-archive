@@ -135,9 +135,14 @@ export function ArtworksDirectoryClient() {
 
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-museum-divider pb-6">
           <div>
-            <div className="flex items-center gap-2 text-gold text-xs font-mono font-bold uppercase tracking-wider mb-1">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>{locale === 'ckb' ? 'ئەرشیفی فەرمی بەشە ئەکادیمییەکان' : locale === 'ar' ? 'الأرشيف الرسمي للأقسام' : 'Official Academic Archive'}</span>
+            <div
+              dir={isRTL ? 'rtl' : 'ltr'}
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-2xl sm:rounded-full bg-gold/10 border border-gold/30 text-gold text-xs font-mono font-bold uppercase tracking-wider mb-1 max-w-full text-right"
+            >
+              <Sparkles className="w-3.5 h-3.5 shrink-0" />
+              <span className="whitespace-normal text-right leading-relaxed">
+                {locale === 'ckb' ? 'ئەرشیفی فەرمی بەشە ئەکادیمییەکان' : locale === 'ar' ? 'الأرشيف الرسمي للأقسام' : 'Official Academic Archive'}
+              </span>
             </div>
             <div className="overflow-visible">
               <h1
