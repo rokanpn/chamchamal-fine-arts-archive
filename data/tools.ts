@@ -101,7 +101,7 @@ export const TOOLS_DATA: AtelierTool[] = [
       en: 'An oval-crowned archival brush hand-crafted from indigenous Kurdish horsehair, renowned for structural resilience under heavy impasto.',
     },
     historicalSignificance: {
-      ckb: 'لەوەتەی دامەزراندنی پەیمانگای چەمچەماڵەوە لە ساڵی ٢٠٠٠، ئەم جۆرە فڵچەیە بووەتە نیشانەی باڵای بەشی شێوەکاری لە کێشانی کەشوهەوای سروشتی گەرمیاندا.',
+      ckb: 'لەوەتەی دامەزراندنی پەیمانگەی چەمچەماڵەوە لە ساڵی ٢٠٠٠، ئەم جۆرە فڵچەیە بووەتە نیشانەی باڵای بەشی شێوەکاری لە کێشانی کەشوهەوای سروشتی گەرمیاندا.',
       ar: 'منذ تأسيس معهد جمجمال، مثلت هذه الفرشاة حجر زاوية في تدريب الطلبة على التقاط تضاريس وسماء كرميان الوعرة.',
       en: 'Since the founding of the Chamchamal Institute, this brush model has symbolized the academic lineage of capturing Garmian atmospheric light.',
     },
@@ -116,7 +116,7 @@ export const TOOLS_DATA: AtelierTool[] = [
       en: 'Kurdish horsehair, seamless brass ferrule, oiled walnut handle',
     },
     origin: {
-      ckb: 'ئاتلیێی کەرەستەسازی پەیمانگای چەمچەماڵ',
+      ckb: 'ئاتلیێی کەرەستەسازی پەیمانگەی چەمچەماڵ',
       ar: 'ورشة صناعة الأدوات - معهد جمجمال',
       en: 'Institute Artisan Atelier, Chamchamal',
     },
@@ -249,7 +249,7 @@ export const TOOLS_DATA: AtelierTool[] = [
       en: 'A natural sedimentary red clay packed with iron oxides harvested from Basara river valley deposits, aged for 90 days in stone vats.',
     },
     historicalSignificance: {
-      ckb: 'کەلەپووری گڵینەی گەرمیان زیاتر لە سێ هەزار ساڵە بەم خاکە سوورە ئاوێتە کراوە و لە ئەرشیفی پەیمانگادا بە زیندوویی دەپارێزرێت.',
+      ckb: 'کەلەپووری گڵینەی گەرمیان زیاتر لە سێ هەزار ساڵە بەم خاکە سوورە ئاوێتە کراوە و لە ئەرشیفی پەیمانگەدا بە زیندوویی دەپارێزرێت.',
       ar: 'يعود استخدام هذا الطين إلى أكثر من ثلاثة آلاف عام في حضارات بلاد ميزوبوتاميا، ويُعتمد رسمياً في تدريس الخزف.',
       en: 'Carries a continuous 3,000-year ceramic heritage across Mesopotamian foothills, preserved through institute studio curricula.',
     },
@@ -397,7 +397,7 @@ export const TOOLS_DATA: AtelierTool[] = [
       en: 'Single-piece forged spring blade allowing dramatic architectural impasto applications across primed linen panels.',
     },
     historicalSignificance: {
-      ckb: 'ئەم ئامرازە بووەتە هێمای گۆڕانی شێوەکاریی کلاسیک بۆ ڕێبازی تەعبیری و ئیمپرێشنیزمی هاوچەرخی پەیمانگا.',
+      ckb: 'ئەم ئامرازە بووەتە هێمای گۆڕانی شێوەکاریی کلاسیک بۆ ڕێبازی تەعبیری و ئیمپرێشنیزمی هاوچەرخی پەیمانگە.',
       ar: 'يمثل هذا السكين تحول معهد جمجمال من الأسلوب الأكاديمي الكلاسيكي إلى التعبيرية والتركيب اللوني الجريء.',
       en: 'Represents the modern pedagogical shift at Chamchamal from strict academic realism toward expressive chromatic structures.',
     },
@@ -412,7 +412,7 @@ export const TOOLS_DATA: AtelierTool[] = [
       en: 'Flexible stainless spring steel, brass collar, contoured walnut handle',
     },
     origin: {
-      ckb: 'هاوردەکراو و تایبەتکراو لە ئاتلیێی پەیمانگا',
+      ckb: 'هاوردەکراو و تایبەتکراو لە ئاتلیێی پەیمانگە',
       ar: 'مستورد ومعدل في أتيليه المعهد',
       en: 'Fine Arts Studio Imports, Chamchamal',
     },
@@ -486,7 +486,7 @@ export const TOOLS_DATA: AtelierTool[] = [
       en: 'Heavy-gauge forged wrought steel with insulated leather grip',
     },
     origin: {
-      ckb: 'کارگەی ئامێرسازیی پەیمانگا',
+      ckb: 'کارگەی ئامێرسازیی پەیمانگە',
       ar: 'ورشة الميكانيك والتجهيز - معهد جمجمال',
       en: 'Institute Fabrication Shop, Chamchamal',
     },
@@ -499,7 +499,7 @@ export const TOOLS_DATA: AtelierTool[] = [
     ],
     videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
     videoTitle: {
-      ckb: 'سووتاندنی ڕاکۆ لە پلەی هەزار پلە و دووکەڵکاری لە پەیمانگادا',
+      ckb: 'سووتاندنی ڕاکۆ لە پلەی هەزار پلە و دووکەڵکاری لە پەیمانگەدا',
       ar: 'حرق الراكوا المباشر وتقنيات الاختزال بالدخان',
       en: 'Thermal Shock & Lustre: Live 1000°C Raku Reduction',
     },
@@ -619,7 +619,7 @@ export const TOOLS_DATA: AtelierTool[] = [
       en: 'Slender willow and walnut twigs carbonized in airtight kilns, yielding velvety, easily liftable tonal shading sticks.',
     },
     historicalSignificance: {
-      ckb: 'یەکەم وانەی هەموو قوتابییەکی پەیمانگا لە هۆڵی مۆدێلی زیندودا بەم خەڵووزە دەستپێدەکات بۆ فێربوونی بەهای تاریکی و ڕووناکی.',
+      ckb: 'یەکەم وانەی هەموو قوتابییەکی پەیمانگە لە هۆڵی مۆدێلی زیندودا بەم خەڵووزە دەستپێدەکات بۆ فێربوونی بەهای تاریکی و ڕووناکی.',
       ar: 'الخطوة الأولى لكل طالب فن تشكيلي في دراسة التشريح والنسب الأكاديمية والظل والنور.',
       en: 'The primordial foundational medium introduced to all first-year atelier students examining live figure anatomy and chiaroscuro.',
     },
@@ -634,7 +634,7 @@ export const TOOLS_DATA: AtelierTool[] = [
       en: 'Pure pyrolyzed Kurdish willow twigs, zero binders',
     },
     origin: {
-      ckb: 'فڕنی خەڵووزسازیی پەیمانگا',
+      ckb: 'فڕنی خەڵووزسازیی پەیمانگە',
       ar: 'فرن تفحيم الخشب - معهد جمجمال',
       en: 'Institute Wood Charcoal Kiln, Chamchamal',
     },
@@ -782,7 +782,7 @@ export const TOOLS_DATA: AtelierTool[] = [
       en: 'Fine-grained Kurdish mountain walnut, conditioned in mineral oil',
     },
     origin: {
-      ckb: 'ئاتلیێی دارتاشی پەیمانگای چەمچەماڵ',
+      ckb: 'ئاتلیێی دارتاشی پەیمانگەی چەمچەماڵ',
       ar: 'ورشة النجارة الفنية - معهد جمجمال',
       en: 'Woodcraft Atelier, Chamchamal',
     },
@@ -836,7 +836,7 @@ export const TOOLS_DATA: AtelierTool[] = [
       en: 'Sculpture',
     },
     description: {
-      ckb: 'سندانێکی ٨٠ کیلۆگرامی پۆڵای بەهێز لەگەڵ چەکوشی قۆقز بۆ دانانی شێوە و چەماندنەوەی ئاسنی گەرمکراوی پەیکەرە مۆدێرنەکانی پەیمانگا.',
+      ckb: 'سندانێکی ٨٠ کیلۆگرامی پۆڵای بەهێز لەگەڵ چەکوشی قۆقز بۆ دانانی شێوە و چەماندنەوەی ئاسنی گەرمکراوی پەیکەرە مۆدێرنەکانی پەیمانگە.',
       ar: 'سندان فولاذي ضخم بوزن 80 كغ مع مطرقة تشكيل دقيقة لطرق وتطويع صفائح الفولاذ والبرونز المصهور.',
       en: 'Heavy 80kg hardened steel anvil paired with balanced cross-peen hammers for hot-forging steel armatures and public sculpture forms.',
     },
@@ -856,7 +856,7 @@ export const TOOLS_DATA: AtelierTool[] = [
       en: 'Cast tool steel anvil face (58 HRC), shock-absorbing hickory mallet handle',
     },
     origin: {
-      ckb: 'بەشی پەیکەرسازی، پەیمانگای چەمچەماڵ',
+      ckb: 'بەشی پەیکەرسازی، پەیمانگەی چەمچەماڵ',
       ar: 'قسم النحت والسباكة - معهد جمجمال',
       en: 'Sculpture Foundry, Chamchamal',
     },
@@ -915,7 +915,7 @@ export const TOOLS_DATA: AtelierTool[] = [
       en: 'Double-ended curved rasps with hand-stitched teeth tailored for smoothing intricate concave anatomical features in marble and stucco.',
     },
     historicalSignificance: {
-      ckb: 'لە تاشینی ڕوخسار و چاو و پرچی پەیکەرە کلاسیکییەکانی هۆڵی پەیمانگا لە ساڵی ٢٠١٠وە ئەم سوهانانە دەستی یەکەمن.',
+      ckb: 'لە تاشینی ڕوخسار و چاو و پرچی پەیکەرە کلاسیکییەکانی هۆڵی پەیمانگە لە ساڵی ٢٠١٠وە ئەم سوهانانە دەستی یەکەمن.',
       ar: 'الأداة الأساسية لطلبة قسم النحت في تشكيل تفاصيل الوجه، العيون، وخصلات الشعر في التماثيل الكلاسيكية.',
       en: 'The definitive tool in the academic sculpture syllabus for modeling delicate facial physiognomy, eyelids, and drapery.',
     },

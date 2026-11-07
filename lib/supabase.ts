@@ -12,10 +12,30 @@ if (!supabaseUrl || !supabaseAnonKey) {
   }
 }
 
-// Initialize and export the Supabase client singleton
+// Initialize and export the Supabase client singleton with zero-caching fetch
 export const supabase = createClient(
   supabaseUrl || 'https://placeholder-project.supabase.co',
-  supabaseAnonKey || 'placeholder-anon-key'
+  supabaseAnonKey || 'placeholder-anon-key',
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+    },
+    global: {
+      fetch: (url, options = {}) => {
+        return fetch(url, {
+          ...options,
+          cache: 'no-store',
+          headers: {
+            ...options.headers,
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            Pragma: 'no-cache',
+            Expires: '0',
+          },
+        });
+      },
+    },
+  }
 );
 
 // Strongly-typed database entity interfaces
@@ -269,7 +289,7 @@ export async function updateArtworkInSupabase(
     if (!data || data.length === 0) {
       const fullRow = {
         id: idOrSlug,
-        title: updatedData.title || { ckb: 'شاکاری پەیمانگا', ar: 'عمل فني', en: 'Masterwork' },
+        title: updatedData.title || { ckb: 'شاکاری پەیمانگە', ar: 'عمل فني', en: 'Masterwork' },
         artist: updatedData.artist || { ckb: 'هونەرمەند', ar: 'فنان', en: 'Artist' },
         year: updatedData.year || new Date().getFullYear(),
         department: updatedData.department || 'painting',

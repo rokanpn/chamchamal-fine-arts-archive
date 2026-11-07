@@ -84,11 +84,11 @@ export function ToolDetailClient({ tool: initialTool }: ToolDetailClientProps) {
       {/* Breadcrumb Navigation & Top Action Bar */}
       <nav
         aria-label="Breadcrumb Navigation"
-        className="flex items-center justify-between border-b border-museum-divider pb-4 pt-2 print:hidden"
+        className="flex items-center justify-between border-b border-stone-200/80 dark:border-museum-divider pb-4 pt-2 print:hidden"
       >
         <Link
           href="/tools"
-          className="group inline-flex items-center gap-2 text-xs font-medium text-museum-secondary hover:text-gold transition-colors"
+          className="group inline-flex items-center gap-2 text-xs font-medium text-stone-600 dark:text-museum-secondary hover:text-gold transition-colors"
         >
           {isRTL ? (
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -108,13 +108,13 @@ export function ToolDetailClient({ tool: initialTool }: ToolDetailClientProps) {
         <div className="flex items-center gap-2 sm:gap-3">
           <button
             onClick={handleShare}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-obsidian-surface border border-museum-border text-xs text-parchment hover:border-gold/50 transition-all"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-100 dark:bg-obsidian-surface border border-stone-200 dark:border-museum-border text-xs text-stone-800 dark:text-parchment hover:border-gold/50 transition-all"
             title="Share instrument link"
           >
             {copied ? (
               <>
-                <Check className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="text-emerald-400 font-mono text-[11px]">
+                <Check className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
+                <span className="text-emerald-600 dark:text-emerald-400 font-mono text-[11px]">
                   {locale === 'ckb' ? 'کۆپی کرا' : 'Copied'}
                 </span>
               </>
@@ -130,7 +130,7 @@ export function ToolDetailClient({ tool: initialTool }: ToolDetailClientProps) {
 
           <button
             onClick={handlePrint}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-obsidian-surface border border-museum-border text-xs text-parchment hover:border-gold/50 transition-all"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-100 dark:bg-obsidian-surface border border-stone-200 dark:border-museum-border text-xs text-stone-800 dark:text-parchment hover:border-gold/50 transition-all"
             title="Print Atelier Technical Spec Sheet"
           >
             <Printer className="w-3.5 h-3.5 text-gold" />
@@ -311,17 +311,17 @@ export function ToolDetailClient({ tool: initialTool }: ToolDetailClientProps) {
             <span className="px-3 py-1 rounded-full text-[10px] font-semibold tracking-wider uppercase bg-gold/15 text-gold border border-gold/30 w-fit">
               {categoryLabel}
             </span>
-            <h1 className="text-2xl sm:text-4xl font-bold text-parchment-pure leading-tight font-serif">
+            <h1 className="text-2xl sm:text-4xl font-bold text-stone-900 dark:text-parchment-pure leading-tight font-serif">
               {name}
             </h1>
-            <p className="text-sm sm:text-base text-parchment-muted leading-relaxed">
+            <p className="text-sm sm:text-base text-stone-600 dark:text-parchment-muted leading-relaxed">
               {description}
             </p>
           </div>
 
           {/* Step-by-Step Usage Instructions */}
           {usageInstructions && (
-            <div className="p-6 sm:p-8 rounded-3xl bg-obsidian-surface/60 border border-museum-border backdrop-blur-xl flex flex-col gap-3">
+            <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-obsidian-surface/60 border border-stone-200/80 dark:border-museum-border backdrop-blur-xl flex flex-col gap-3 shadow-sm dark:shadow-none">
               <h2 className="text-xs font-semibold text-gold tracking-widest uppercase font-serif flex items-center gap-2">
                 <Wrench className="w-4 h-4" />
                 <span>
@@ -332,7 +332,7 @@ export function ToolDetailClient({ tool: initialTool }: ToolDetailClientProps) {
                     : 'Pedagogical Workflow & Application Method'}
                 </span>
               </h2>
-              <p className="text-xs sm:text-sm text-museum-secondary leading-relaxed">
+              <p className="text-xs sm:text-sm text-stone-600 dark:text-museum-secondary leading-relaxed">
                 {usageInstructions}
               </p>
             </div>
@@ -340,7 +340,7 @@ export function ToolDetailClient({ tool: initialTool }: ToolDetailClientProps) {
 
           {/* Master Artisan Pro-Tips */}
           {proTips && proTips.length > 0 && (
-            <div className="p-6 sm:p-8 rounded-3xl bg-obsidian-surface/60 border border-museum-border backdrop-blur-xl flex flex-col gap-4">
+            <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-obsidian-surface/60 border border-stone-200/80 dark:border-museum-border backdrop-blur-xl flex flex-col gap-4 shadow-sm dark:shadow-none">
               <h2 className="text-xs font-semibold text-gold tracking-widest uppercase font-serif flex items-center gap-2">
                 <Sparkles className="w-4 h-4" />
                 <span>
@@ -355,7 +355,7 @@ export function ToolDetailClient({ tool: initialTool }: ToolDetailClientProps) {
                 {proTips.map((tip, idx) => (
                   <div
                     key={idx}
-                    className="flex items-start gap-3 p-3 rounded-2xl bg-black/40 border border-museum-border/60 text-xs text-parchment"
+                    className="flex items-start gap-3 p-3 rounded-2xl bg-stone-50 dark:bg-black/40 border border-stone-200 dark:border-museum-border/60 text-xs text-stone-800 dark:text-parchment"
                   >
                     <span className="w-5 h-5 rounded-full bg-gold/20 text-gold flex items-center justify-center font-mono text-[10px] shrink-0 mt-0.5 font-bold">
                       {idx + 1}
@@ -368,7 +368,7 @@ export function ToolDetailClient({ tool: initialTool }: ToolDetailClientProps) {
           )}
 
           {/* Historical Significance Card */}
-          <div className="p-6 sm:p-8 rounded-3xl bg-obsidian-surface/60 border border-museum-border backdrop-blur-xl flex flex-col gap-3">
+          <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-obsidian-surface/60 border border-stone-200/80 dark:border-museum-border backdrop-blur-xl flex flex-col gap-3 shadow-sm dark:shadow-none">
             <h2 className="text-xs font-semibold text-gold tracking-widest uppercase font-serif flex items-center gap-2">
               <BookOpen className="w-4 h-4" />
               <span>
@@ -379,13 +379,13 @@ export function ToolDetailClient({ tool: initialTool }: ToolDetailClientProps) {
                   : 'Historical & Curatorial Significance'}
               </span>
             </h2>
-            <p className="text-xs sm:text-sm text-museum-secondary leading-relaxed">
+            <p className="text-xs sm:text-sm text-stone-600 dark:text-museum-secondary leading-relaxed">
               {history}
             </p>
           </div>
 
           {/* Workshop Best Practices Card */}
-          <div className="p-6 sm:p-8 rounded-3xl bg-obsidian-surface/60 border border-museum-border backdrop-blur-xl flex flex-col gap-3">
+          <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-obsidian-surface/60 border border-stone-200/80 dark:border-museum-border backdrop-blur-xl flex flex-col gap-3 shadow-sm dark:shadow-none">
             <h2 className="text-xs font-semibold text-gold tracking-widest uppercase font-serif flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4" />
               <span>
@@ -396,7 +396,7 @@ export function ToolDetailClient({ tool: initialTool }: ToolDetailClientProps) {
                   : 'Recommended Studio Practices & Maintenance'}
               </span>
             </h2>
-            <p className="text-xs sm:text-sm text-museum-secondary leading-relaxed">
+            <p className="text-xs sm:text-sm text-stone-600 dark:text-museum-secondary leading-relaxed">
               {bestPractices}
             </p>
           </div>
@@ -404,11 +404,11 @@ export function ToolDetailClient({ tool: initialTool }: ToolDetailClientProps) {
           {/* Masterworks Created With This Tool */}
           {relatedArtworks.length > 0 && (
             <div className="flex flex-col gap-4 print:hidden">
-              <h2 className="text-sm font-bold text-parchment-pure flex items-center gap-2">
+              <h2 className="text-sm font-bold text-stone-900 dark:text-parchment-pure flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-gold" />
                 <span>
                   {locale === 'ckb'
-                    ? 'شاکارەکانی پەیمانگا کە بەم ئامرازە خوڵقێنراون'
+                    ? 'شاکارەکانی پەیمانگە کە بەم ئامرازە خوڵقێنراون'
                     : locale === 'ar'
                     ? 'روائع تم إبداعها بهذه الأداة في المعهد'
                     : 'Masterworks Produced With This Instrument'}
@@ -420,9 +420,9 @@ export function ToolDetailClient({ tool: initialTool }: ToolDetailClientProps) {
                   <Link
                     key={art.id}
                     href={`/artworks/${art.slug}`}
-                    className="group relative flex items-center gap-3.5 p-3 rounded-2xl bg-obsidian-surface/80 border border-museum-border hover:border-gold/50 transition-all shadow-art-card overflow-hidden"
+                    className="group relative flex items-center gap-3.5 p-3 rounded-2xl bg-white dark:bg-obsidian-surface/80 border border-stone-200 dark:border-museum-border hover:border-gold/50 transition-all shadow-sm dark:shadow-art-card overflow-hidden"
                   >
-                    <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-obsidian-elevated shrink-0">
+                    <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-stone-100 dark:bg-obsidian-elevated shrink-0">
                       <SafeImage
                         src={art.imageUrl}
                         alt={art.title[locale] || art.title.ckb}
@@ -434,10 +434,10 @@ export function ToolDetailClient({ tool: initialTool }: ToolDetailClientProps) {
                       <span className="text-[10px] text-gold uppercase tracking-wider">
                         {getArtworkDepartmentLabel(art.departmentLabel || art.department, locale)}
                       </span>
-                      <h4 className="text-xs sm:text-sm font-bold text-parchment group-hover:text-gold-light truncate transition-colors">
+                      <h4 className="text-xs sm:text-sm font-bold text-stone-900 dark:text-parchment group-hover:text-gold-dark dark:group-hover:text-gold-light truncate transition-colors">
                         {art.title[locale] || art.title.ckb}
                       </h4>
-                      <span className="text-[11px] text-museum-secondary truncate">
+                      <span className="text-[11px] text-stone-500 dark:text-museum-secondary truncate">
                         {art.artist[locale] || art.artist.ckb} • {art.year}
                       </span>
                     </div>
@@ -451,7 +451,7 @@ export function ToolDetailClient({ tool: initialTool }: ToolDetailClientProps) {
 
         {/* Sidebar: Tool Specifications & Provenance */}
         <div className="flex flex-col gap-6">
-          <div className="p-6 rounded-3xl bg-obsidian-surface/70 border border-museum-border shadow-art-card flex flex-col gap-4">
+          <div className="p-6 rounded-3xl bg-white dark:bg-obsidian-surface/70 border border-stone-200/80 dark:border-museum-border shadow-sm dark:shadow-art-card flex flex-col gap-4">
             <span className="text-xs font-semibold text-gold uppercase tracking-wider font-serif">
               {locale === 'ckb'
                 ? 'تایبەتمەندییە فیزیکییەکان'
@@ -462,26 +462,26 @@ export function ToolDetailClient({ tool: initialTool }: ToolDetailClientProps) {
 
             <div className="flex flex-col gap-3 text-xs">
               <div>
-                <span className="text-museum-caption block text-[10px] uppercase">
+                <span className="text-stone-500 dark:text-museum-caption block text-[10px] uppercase">
                   {locale === 'ckb' ? 'پێکهاتە و کەرەستە' : locale === 'ar' ? 'المواد والمكونات' : 'Materials & Composition'}
                 </span>
-                <span className="text-parchment font-medium mt-0.5 block">
+                <span className="text-stone-900 dark:text-parchment font-medium mt-0.5 block">
                   {materials}
                 </span>
               </div>
 
-              <div className="pt-2 border-t border-museum-divider">
-                <span className="text-museum-caption block text-[10px] uppercase">
+              <div className="pt-2 border-t border-stone-200 dark:border-museum-divider">
+                <span className="text-stone-500 dark:text-museum-caption block text-[10px] uppercase">
                   {locale === 'ckb' ? 'سەرچاوە و دروستکەر' : locale === 'ar' ? 'المصدر والمنشأ' : 'Provenance & Forge'}
                 </span>
-                <span className="text-parchment font-medium mt-0.5 flex items-center gap-1.5">
+                <span className="text-stone-900 dark:text-parchment font-medium mt-0.5 flex items-center gap-1.5">
                   <MapPin className="w-3.5 h-3.5 text-gold shrink-0" />
                   <span>{origin}</span>
                 </span>
               </div>
 
-              <div className="pt-2 border-t border-museum-divider">
-                <span className="text-museum-caption block text-[10px] uppercase">
+              <div className="pt-2 border-t border-stone-200 dark:border-museum-divider">
+                <span className="text-stone-500 dark:text-museum-caption block text-[10px] uppercase">
                   {locale === 'ckb' ? 'بەشی پەیوەندیدار' : locale === 'ar' ? 'القسم الأكاديمي' : 'Relevant Academic Dept.'}
                 </span>
                 <span className="text-gold font-medium mt-0.5 block">
@@ -489,20 +489,20 @@ export function ToolDetailClient({ tool: initialTool }: ToolDetailClientProps) {
                 </span>
               </div>
 
-              <div className="pt-2 border-t border-museum-divider">
-                <span className="text-museum-caption block text-[10px] uppercase">
+              <div className="pt-2 border-t border-stone-200 dark:border-museum-divider">
+                <span className="text-stone-500 dark:text-museum-caption block text-[10px] uppercase">
                   {locale === 'ckb' ? 'تۆماری دەنگی' : locale === 'ar' ? 'التعليق الصوتي' : 'Audio Commentary'}
                 </span>
-                <span className="text-parchment font-mono mt-0.5 block">
+                <span className="text-stone-900 dark:text-parchment font-mono mt-0.5 block">
                   {tool.audioDuration || '2:15 Min'} • Fine Arts Faculty
                 </span>
               </div>
 
-              <div className="pt-2 border-t border-museum-divider">
-                <span className="text-museum-caption block text-[10px] uppercase">
+              <div className="pt-2 border-t border-stone-200 dark:border-museum-divider">
+                <span className="text-stone-500 dark:text-museum-caption block text-[10px] uppercase">
                   {locale === 'ckb' ? 'کۆدی دیجیتاڵی' : locale === 'ar' ? 'المعرف الرقمي' : 'Digital ID'}
                 </span>
-                <span className="text-museum-secondary font-mono text-[10px] mt-0.5 block truncate">
+                <span className="text-stone-500 dark:text-museum-secondary font-mono text-[10px] mt-0.5 block truncate">
                   {tool.id}
                 </span>
               </div>

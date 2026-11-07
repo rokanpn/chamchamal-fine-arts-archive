@@ -63,7 +63,7 @@ export function QRBatchStudio({ artworks }: QRBatchStudioProps) {
           </h2>
           <p className="text-xs text-museum-secondary mt-0.5">
             {locale === 'ckb'
-              ? 'پلاتی فەرمی بۆ هەڵواسین لە هۆڵەکانی پەیمانگا؛ لەگەڵ کۆدی سێ ڕەهەندی و زانیاری بەرهەم.'
+              ? 'پلاتی فەرمی بۆ هەڵواسین لە هۆڵەکانی پەیمانگە؛ لەگەڵ کۆدی سێ ڕەهەندی و زانیاری بەرهەم.'
               : 'Print-ready archival labels formatted for physical mounting beside artworks in institute galleries.'}
           </p>
         </div>

@@ -180,7 +180,7 @@ export function ArtworkEditClient({ slug }: ArtworkEditClientProps) {
             </h2>
             <p className="text-xs text-museum-secondary">
               {locale === 'ckb'
-                ? 'ئەم بەرهەمە لە تۆماری فەرمیی پەیمانگادا بوونی نییە یان سڕدراوەتەوە.'
+                ? 'ئەم بەرهەمە لە تۆماری فەرمیی پەیمانگەدا بوونی نییە یان سڕدراوەتەوە.'
                 : 'This artwork cannot be found in the curatorial registry or was removed.'}
             </p>
           </div>
@@ -545,7 +545,7 @@ export function ArtworkEditClient({ slug }: ArtworkEditClientProps) {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 pt-3 border-t border-museum-divider">
               <div>
                 <label className="block text-xs font-medium text-parchment mb-1">
-                  {locale === 'ckb' ? 'بەشی پەیمانگا (هۆڵی ٣D)' : '3D Tour Department'}
+                  {locale === 'ckb' ? 'بەشی پەیمانگە (هۆڵی ٣D)' : '3D Tour Department'}
                 </label>
                 <select
                   value={formData.department || 'painting'}
@@ -644,7 +644,7 @@ export function ArtworkEditClient({ slug }: ArtworkEditClientProps) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-museum-divider">
               <div>
                 <label className="block text-xs font-medium text-parchment mb-1">
-                  {locale === 'ckb' ? 'شوێنی فیزیکی لە پەیمانگا' : 'Location in Institute'}
+                  {locale === 'ckb' ? 'شوێنی فیزیکی لە پەیمانگە' : 'Location in Institute'}
                 </label>
                 <input
                   type="text"

@@ -290,7 +290,7 @@ export function DepartmentConfigEditor() {
           </div>
           <div>
             <h2 className="text-xl font-bold text-parchment-pure font-serif">
-              {locale === 'ckb' ? 'بەڕێوەبردنی بەشە فەرمییەکانی پەیمانگا' : 'Official Institute Departments Curator'}
+              {locale === 'ckb' ? 'بەڕێوەبردنی بەشە فەرمییەکانی پەیمانگە' : 'Official Institute Departments Curator'}
             </h2>
             <p className="text-xs text-museum-secondary mt-0.5">
               {locale === 'ckb'

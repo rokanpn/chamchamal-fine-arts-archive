@@ -139,7 +139,7 @@ export function ArtworkDetailClient({ artwork: initialArtwork }: ArtworkDetailCl
           </h2>
           <p className="text-xs text-museum-secondary">
             {locale === 'ckb'
-              ? 'ئەم بەرهەمە لە تۆماری گشتیی پەیمانگای چەمچەماڵدا بەردەست نییە.'
+              ? 'ئەم بەرهەمە لە تۆماری گشتیی پەیمانگەی چەمچەماڵدا بەردەست نییە.'
               : 'This work is not cataloged in the Institute permanent archive.'}
           </p>
         </div>
@@ -524,7 +524,7 @@ export function ArtworkDetailClient({ artwork: initialArtwork }: ArtworkDetailCl
                 <GraduationCap className="w-4 h-4 text-gold shrink-0" />
                 <span>
                   {locale === 'ckb'
-                    ? `خولی دەرچوونی ${artwork.artistGraduationYear} - پەیمانگای چەمچەماڵ`
+                    ? `خولی دەرچوونی ${artwork.artistGraduationYear} - پەیمانگەی چەمچەماڵ`
                     : locale === 'ar'
                     ? `خريج دفعة ${artwork.artistGraduationYear} - معهد جمجمال`
                     : `Class of ${artwork.artistGraduationYear} • Chamchamal Fine Arts`}
@@ -540,7 +540,7 @@ export function ArtworkDetailClient({ artwork: initialArtwork }: ArtworkDetailCl
           {/* Physical Provenance Inscription */}
           <div className="p-6 rounded-3xl bg-obsidian-surface/70 border border-museum-border flex flex-col gap-3">
             <span className="text-xs font-semibold text-gold uppercase tracking-wider font-serif">
-              {locale === 'ckb' ? 'شوێنی فیزیکی لە پەیمانگا' : locale === 'ar' ? 'الموقع الفعلي في المعهد' : 'Physical Provenance'}
+              {locale === 'ckb' ? 'شوێنی فیزیکی لە پەیمانگە' : locale === 'ar' ? 'الموقع الفعلي في المعهد' : 'Physical Provenance'}
             </span>
             <div className="flex items-start gap-2.5 text-xs text-parchment">
               <MapPin className="w-4 h-4 text-gold shrink-0 mt-0.5" />
@@ -604,7 +604,7 @@ export function ArtworkDetailClient({ artwork: initialArtwork }: ArtworkDetailCl
 
               <p className="text-[11px] text-museum-secondary mb-5">
                 {locale === 'ckb'
-                  ? 'ئەم کۆدە تەنیشت بەرهەمە فیزیکییەکە لە هۆڵی پەیمانگا هەڵواسراوە.'
+                  ? 'ئەم کۆدە تەنیشت بەرهەمە فیزیکییەکە لە هۆڵی پەیمانگە هەڵواسراوە.'
                   : locale === 'ar'
                   ? 'هذا الرمز معلق بجانب العمل الفني في قاعة معهد الفنون بجمجمال.'
                   : 'This official archival plaque is mounted adjacent to the physical work at the institute.'}

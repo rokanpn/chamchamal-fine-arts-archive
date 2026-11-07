@@ -69,7 +69,7 @@ export function StudentDetailClient({ student }: StudentDetailClientProps) {
         id: structured.id || `award-${idx}`,
         title: structured.title,
         year: structured.year || '',
-        issuer: structured.issuer || 'پەیمانگای هونەرە جوانەکانی چەمچەماڵ',
+        issuer: structured.issuer || 'پەیمانگەی هونەرە جوانەکانی چەمچەماڵ',
         description: structured.description || '',
       };
     } else {
@@ -78,7 +78,7 @@ export function StudentDetailClient({ student }: StudentDetailClientProps) {
         id: `award-${idx}`,
         title: localized[locale] || localized.ckb || localized.en || String(award),
         year: `${student.graduationYear}`,
-        issuer: 'پەیمانگای هونەرە جوانەکانی چەمچەماڵ • Chamchamal Fine Arts',
+        issuer: 'پەیمانگەی هونەرە جوانەکانی چەمچەماڵ • Chamchamal Fine Arts',
         description: '',
       };
     }
@@ -333,7 +333,7 @@ export function StudentDetailClient({ student }: StudentDetailClientProps) {
             <ShieldCheck className="w-3.5 h-3.5 text-gold" />
             <span>
               {locale === 'ckb'
-                ? 'تۆماری فەرمی پەیمانگا'
+                ? 'تۆماری فەرمی پەیمانگە'
                 : locale === 'ar'
                 ? 'سجل أكاديمي موثق'
                 : 'Verified Academic Record'}

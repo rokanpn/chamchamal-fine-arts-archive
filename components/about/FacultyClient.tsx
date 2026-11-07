@@ -35,7 +35,7 @@ export function FacultyClient() {
           <Building2 className="w-3.5 h-3.5 text-gold" />
           <span>
             {locale === 'ckb'
-              ? 'دەستەی کارگێڕی و مامۆستایانی پەیمانگا'
+              ? 'دەستەی کارگێڕی و مامۆستایانی پەیمانگە'
               : locale === 'ar'
               ? 'مجلس الإدارة والهيئة التدريسية الأكاديمية'
               : 'Administration & Academic Faculty'}
@@ -44,7 +44,7 @@ export function FacultyClient() {
 
         <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-parchment-pure leading-tight font-serif">
           {locale === 'ckb'
-            ? 'سەرکردایەتی و مامۆستایانی پەیمانگا'
+            ? 'سەرکردایەتی و مامۆستایانی پەیمانگە'
             : locale === 'ar'
             ? 'قيادة معهد الفنون وأساتذة الأتيلييهات'
             : 'Institute Leadership & Faculty'}
@@ -52,7 +52,7 @@ export function FacultyClient() {
 
         <p className="mt-4 text-sm sm:text-base text-museum-secondary max-w-2xl leading-relaxed">
           {locale === 'ckb'
-            ? 'ڕێبەران، مامۆستایان و کەسایەتییە ئەکادیمیانەی کە بەرپرسیارن لە پەروەردەکردنی نەوەکانی داهاتووی هونەری کوردی لە پەیمانگای هونەرە جوانەکانی چەمچەماڵ.'
+            ? 'ڕێبەران، مامۆستایان و کەسایەتییە ئەکادیمیانەی کە بەرپرسیارن لە پەروەردەکردنی نەوەکانی داهاتووی هونەری کوردی لە پەیمانگەی هونەرە جوانەکانی چەمچەماڵ.'
             : locale === 'ar'
             ? 'نخبة من كبار الأكاديميين والفنانين الرواد المسؤولين عن صياغة المناهج وتأهيل الأجيال الصاعدة في معهد الفنون الجميلة بجمجمال.'
             : 'The esteemed educators, artists, and department heads cultivating the next vanguard of Kurdish fine art and scholarly preservation.'}
@@ -60,7 +60,7 @@ export function FacultyClient() {
 
         {/* Dean's Welcome Quote Card */}
         {sortedFaculty[0] && (
-          <div className="mt-10 p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-obsidian-surface via-[#15151c] to-obsidian-surface border border-gold/40 shadow-gold-glow max-w-3xl w-full text-start flex flex-col sm:flex-row items-center sm:items-start gap-6">
+          <div className="mt-10 p-6 sm:p-8 rounded-3xl bg-white dark:bg-gradient-to-r dark:from-obsidian-surface dark:via-[#15151c] dark:to-obsidian-surface border border-stone-200/80 dark:border-gold/40 shadow-sm dark:shadow-gold-glow max-w-3xl w-full text-start flex flex-col sm:flex-row items-center sm:items-start gap-6">
             <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden shrink-0 border-2 border-gold/50 shadow-art-card">
               <SafeImage
                 src={sortedFaculty[0].avatarUrl}
@@ -72,7 +72,7 @@ export function FacultyClient() {
 
             <div className="flex flex-col gap-2 flex-1 text-center sm:text-start">
               <span className="text-[10px] text-gold uppercase tracking-widest font-mono">
-                {locale === 'ckb' ? 'پەیامی ڕاگری پەیمانگا' : 'Dean’s Institutional Inscription'}
+                {locale === 'ckb' ? 'پەیامی ڕاگری پەیمانگە' : 'Dean’s Institutional Inscription'}
               </span>
               <h3 className="text-lg sm:text-xl font-bold text-parchment-pure font-serif">
                 {sortedFaculty[0].name[locale] || sortedFaculty[0].name.ckb}
@@ -100,17 +100,17 @@ export function FacultyClient() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.08 }}
-            className="group relative rounded-3xl bg-obsidian-surface/80 border border-museum-border hover:border-gold/50 transition-all duration-300 shadow-art-card flex flex-col overflow-hidden"
+            className="group relative rounded-3xl bg-white dark:bg-obsidian-surface/80 border border-stone-200/80 dark:border-museum-border hover:border-gold/50 dark:hover:border-gold/50 transition-all duration-300 shadow-sm dark:shadow-art-card flex flex-col overflow-hidden"
           >
             {/* Portrait Cover */}
-            <div className="relative aspect-[4/3] w-full overflow-hidden bg-obsidian-elevated">
+            <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-100 dark:bg-obsidian-elevated">
               <SafeImage
                 src={member.avatarUrl}
                 alt={member.name.en}
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-500"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/40 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-transparent dark:from-obsidian dark:via-obsidian/40 dark:to-transparent" />
 
               <span className="absolute bottom-3 start-4 px-3 py-1 rounded-full text-[10px] font-semibold bg-black/70 backdrop-blur-md text-gold border border-gold/30">
                 {member.department[locale] || member.department.ckb}
@@ -120,14 +120,14 @@ export function FacultyClient() {
             {/* Info Body */}
             <div className="p-6 flex flex-col flex-1 justify-between gap-4">
               <div className="flex flex-col gap-1.5">
-                <h3 className="text-lg sm:text-xl font-bold text-parchment-pure font-serif group-hover:text-gold-light transition-colors">
+                <h3 className="text-lg sm:text-xl font-bold text-stone-900 dark:text-parchment-pure font-serif group-hover:text-gold-dark dark:group-hover:text-gold-light transition-colors">
                   {member.name[locale] || member.name.ckb}
                 </h3>
-                <span className="text-xs text-gold font-medium">
+                <span className="text-xs text-gold-dark dark:text-gold font-medium">
                   {member.role[locale] || member.role.ckb}
                 </span>
 
-                <p className="text-xs text-museum-secondary leading-relaxed mt-2 line-clamp-3">
+                <p className="text-xs text-stone-600 dark:text-museum-secondary leading-relaxed mt-2 line-clamp-3">
                   {member.bio[locale] || member.bio.ckb}
                 </p>
               </div>

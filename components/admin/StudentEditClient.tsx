@@ -128,7 +128,7 @@ export function StudentEditClient({ id }: StudentEditClientProps) {
             id: item.id || `award-${i}`,
             title: item.title,
             year: item.year || `${targetStudent.graduationYear}`,
-            issuer: item.issuer || 'پەیمانگای هونەرە جوانەکانی چەمچەماڵ',
+            issuer: item.issuer || 'پەیمانگەی هونەرە جوانەکانی چەمچەماڵ',
             description: item.description || '',
           };
         } else {
@@ -137,7 +137,7 @@ export function StudentEditClient({ id }: StudentEditClientProps) {
             id: `award-${i}`,
             title: loc[locale] || loc.ckb || loc.en || String(a),
             year: `${targetStudent.graduationYear}`,
-            issuer: 'پەیمانگای هونەرە جوانەکانی چەمچەماڵ',
+            issuer: 'پەیمانگەی هونەرە جوانەکانی چەمچەماڵ',
             description: '',
           };
         }
@@ -147,7 +147,7 @@ export function StudentEditClient({ id }: StudentEditClientProps) {
           id: 'award-default',
           title: `خوێندکاری دەرچووی بەشی ${targetStudent.department?.ckb || ''}`,
           year: `${targetStudent.graduationYear}`,
-          issuer: 'پەیمانگای هونەرە جوانەکانی چەمچەماڵ',
+          issuer: 'پەیمانگەی هونەرە جوانەکانی چەمچەماڵ',
           description: '',
         }
       ]);
@@ -412,7 +412,7 @@ export function StudentEditClient({ id }: StudentEditClientProps) {
             {/* Department Selection */}
             <div className="flex flex-col gap-2">
               <label className="text-xs font-mono text-museum-secondary uppercase">
-                {locale === 'ckb' ? 'بەشی خوێندن لە پەیمانگا *' : 'Academic Department *'}
+                {locale === 'ckb' ? 'بەشی خوێندن لە پەیمانگە *' : 'Academic Department *'}
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[
@@ -679,7 +679,7 @@ export function StudentEditClient({ id }: StudentEditClientProps) {
                         type="text"
                         value={item.issuer}
                         onChange={(e) => handleUpdateAward(idx, 'issuer', e.target.value)}
-                        placeholder="وەک: وەزارەتی ڕۆشنبیری یان پەیمانگای چەمچەماڵ"
+                        placeholder="وەک: وەزارەتی ڕۆشنبیری یان پەیمانگەی چەمچەماڵ"
                         className="w-full px-3 py-2 rounded-xl bg-black/60 border border-museum-border text-xs text-parchment outline-none focus:border-gold"
                       />
                     </div>

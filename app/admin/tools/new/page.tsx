@@ -75,7 +75,7 @@ export default function NewToolIngestionPage() {
     materialsCkb: 'داری گوێز، تاڵی دەستکرد، کانزای زێڕین',
     materialsAr: 'خشب الجوز العتيق، ألياف دقيقة، حلقة نحاسية',
     materialsEn: 'Walnut hardwood, synthetic micro-filaments, brass ferrule',
-    originCkb: 'کارگەی ئاتلیێی پەیمانگای چەمچەماڵ',
+    originCkb: 'کارگەی ئاتلیێی پەیمانگەی چەمچەماڵ',
     originAr: 'ورشة الأتيليه بمعهد جمجمال',
     originEn: 'Chamchamal Atelier Foundry & Crafts Studio',
     glbUrl: PRESET_MODELS[0].url,
@@ -143,12 +143,12 @@ export default function NewToolIngestionPage() {
       category: formData.category,
       categoryLabel: categoryLabels[formData.category] || categoryLabels.painting,
       description: {
-        ckb: formData.descriptionCkb || 'کەرەستەیەکی پێشکەوتووی خوێندنی هونەری لە پەیمانگای چەمچەماڵ.',
+        ckb: formData.descriptionCkb || 'کەرەستەیەکی پێشکەوتووی خوێندنی هونەری لە پەیمانگەی چەمچەماڵ.',
         ar: formData.descriptionAr || formData.descriptionCkb || 'أداة فنية وأكاديمية متقدمة في معهد جمجمال.',
         en: formData.descriptionEn || 'Advanced atelier studio instrument curated for Chamchamal Fine Arts Institute.',
       },
       historicalSignificance: {
-        ckb: formData.historicalSignificanceCkb || 'بەشێکە لە کەلەپوور و مێژووی دەستڕەنگینی هونەرمەندانی پەیمانگا.',
+        ckb: formData.historicalSignificanceCkb || 'بەشێکە لە کەلەپوور و مێژووی دەستڕەنگینی هونەرمەندانی پەیمانگە.',
         ar: formData.historicalSignificanceAr || formData.historicalSignificanceCkb || 'جزء من إرث وتاريخ الحرفيين والفنانين بالمعهد.',
         en: formData.historicalSignificanceEn || 'Integral part of the material history and artistic lineage at the Institute.',
       },
@@ -387,7 +387,7 @@ export default function NewToolIngestionPage() {
                       type="text"
                       value={formData.originCkb}
                       onChange={(e) => setFormData({ ...formData, originCkb: e.target.value })}
-                      placeholder="نموونە: کارگەی پەیمانگای چەمچەماڵ"
+                      placeholder="نموونە: کارگەی پەیمانگەی چەمچەماڵ"
                       className="w-full px-4 py-2 rounded-xl bg-black/50 border border-museum-border text-xs text-parchment outline-none focus:border-gold"
                     />
                   </div>
@@ -775,7 +775,7 @@ export default function NewToolIngestionPage() {
             <h2 className="text-sm font-bold text-parchment-pure flex items-center gap-2 font-serif border-b border-museum-divider pb-3">
               <Sparkles className="w-4 h-4 text-gold" />
               <span>
-                {locale === 'ckb' ? 'بەستنەوە بە شاکارەکانی پەیمانگا' : 'Cross-link with Institute Masterworks'}
+                {locale === 'ckb' ? 'بەستنەوە بە شاکارەکانی پەیمانگە' : 'Cross-link with Institute Masterworks'}
               </span>
             </h2>
             <p className="text-xs text-museum-secondary">

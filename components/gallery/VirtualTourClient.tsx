@@ -3,12 +3,14 @@
 import React, { useState, useRef, useMemo, Suspense, useEffect, useCallback, useTransition } from 'react';
 import Link from 'next/link';
 import { SafeImage } from '@/components/ui/SafeImage';
-import { Canvas } from '@react-three/fiber';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { useArchive, AmbientTrack } from '@/context/ArchiveContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { useNavigationTransition } from '@/context/NavigationTransitionContext';
 import { useResolvedAudioUrl } from '@/hooks/useResolvedAudioUrl';
 import { Artwork, getArtworkDepartment, getArtworkDepartmentLabel } from '@/data/artworks';
+import { LandscapeOrientationPrompt } from './controls/LandscapeOrientationPrompt';
+import { DualVirtualJoysticks } from './controls/DualVirtualJoysticks';
 import {
   ArrowLeft,
   ArrowRight,
@@ -33,6 +35,8 @@ import {
   DoorOpen,
   Box,
   Loader2,
+  RotateCcw,
+  RotateCw,
 } from 'lucide-react';
 
 // Scene component imports
@@ -44,6 +48,28 @@ import { MixedScene } from './scenes/MixedScene';
 // Walking speed constant (used only for HUD logic, actual movement is in scene rigs)
 const ENTRY_BUFFER = 5.0;
 const SPACING_INTERVAL = 5.5;
+
+// High-frequency 60fps controller that maps Right Virtual Joystick to Smooth Free-Look
+function JoystickLookRigController({
+  joystickLookRef,
+  onRotate,
+}: {
+  joystickLookRef: React.MutableRefObject<{ x: number; y: number }>;
+  onRotate: (deltaYaw: number, deltaPitch: number) => void;
+}) {
+  useFrame((_, delta) => {
+    const look = joystickLookRef.current;
+    if (Math.abs(look.x) > 0.03 || Math.abs(look.y) > 0.03) {
+      const safeDelta = Number.isFinite(delta) && delta > 0 ? Math.min(delta, 0.1) : 0.016;
+      const YAW_SPEED = 2.4;
+      const PITCH_SPEED = 1.8;
+      // Invert look.x so pushing right turns camera right (decreases yaw in Three.js coordinates)
+      onRotate(-look.x * YAW_SPEED * safeDelta, look.y * PITCH_SPEED * safeDelta);
+    }
+  });
+
+  return null;
+}
 
 // Main Interactive Virtual 3D Multi-Room Museum Component
 export function VirtualTourClient() {
@@ -127,28 +153,89 @@ export function VirtualTourClient() {
   // Shared Camera Navigation State (used by all hall scenes)
   // ─────────────────────────────────────────────────────────────
   const [targetZ, setTargetZ] = useState(1.8);
+  const [targetX, setTargetX] = useState(0);
   const [moveDirection, setMoveDirection] = useState(0); // -1: forward, +1: backward, 0: idle
   const [targetYaw, setTargetYaw] = useState(0);
   const [targetPitch, setTargetPitch] = useState(0);
   const [focusedArtworkIndex, setFocusedArtworkIndex] = useState<number | null>(null);
   const [activeArtworkIndex, setActiveArtworkIndex] = useState(0);
 
+  // Dual Virtual Joysticks & Mobile Orientation State
+  const [joystickMove, setJoystickMove] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const joystickLookRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [isLandscape, setIsLandscape] = useState(false);
+  const [isLandscapePromptDismissed, setIsLandscapePromptDismissed] = useState(false);
+
+  useEffect(() => {
+    const checkDeviceOrientation = () => {
+      if (typeof window === 'undefined') return;
+      const touch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      const landscape = window.innerWidth > window.innerHeight;
+      setIsTouchDevice(touch);
+      setIsLandscape(landscape);
+    };
+
+    checkDeviceOrientation();
+    window.addEventListener('resize', checkDeviceOrientation);
+    window.addEventListener('orientationchange', checkDeviceOrientation);
+
+    return () => {
+      window.removeEventListener('resize', checkDeviceOrientation);
+      window.removeEventListener('orientationchange', checkDeviceOrientation);
+    };
+  }, []);
+
+  // Joystick Input Handlers
+  const handleJoystickMove = useCallback((vector: { x: number; y: number }) => {
+    setJoystickMove(vector);
+    if (Math.abs(vector.y) > 0.15) {
+      setMoveDirection(vector.y > 0 ? -1 : 1);
+    } else {
+      setMoveDirection(0);
+    }
+  }, []);
+
+  const handleJoystickLook = useCallback((vector: { x: number; y: number }) => {
+    joystickLookRef.current = vector;
+  }, []);
+
+  const handleJoystickRotate = useCallback((deltaYaw: number, deltaPitch: number) => {
+    setTargetYaw((prev) => prev + deltaYaw);
+    setTargetPitch((prev) => Math.max(-Math.PI / 4, Math.min(Math.PI / 4, prev + deltaPitch)));
+  }, []);
+
   // UI Overlays & Modals
   const [selectedModalArtwork, setSelectedModalArtwork] = useState<Artwork | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isAudioPlayerExpanded, setIsAudioPlayerExpanded] = useState(false);
 
-  // Drag / Look interaction state
+  // Drag / Look / Multi-Touch interaction state
   const isPointerDownRef = useRef(false);
   const lastPointerPosRef = useRef({ x: 0, y: 0 });
+  const activePointersRef = useRef<Map<number, { x: number; y: number }>>(new Map());
+  const lastPinchDistRef = useRef<number | null>(null);
+
+  // Quick 45-degree turn helpers for fluid mobile and keyboard navigation
+  const handleTurnLeft = useCallback(() => {
+    setTargetYaw((prev) => prev + Math.PI / 4);
+  }, []);
+
+  const handleTurnRight = useCallback(() => {
+    setTargetYaw((prev) => prev - Math.PI / 4);
+  }, []);
 
   // ─────────────────────────────────────────────────────────────
   // Scene Transition: Non-blocking Concurrent Navigation
   // ─────────────────────────────────────────────────────────────
   const handleNavigateToScene = useCallback((scene: SceneType) => {
     setTargetZ(1.8);
+    setTargetX(0);
     setTargetYaw(0);
     setTargetPitch(0);
     setMoveDirection(0);
+    setJoystickMove({ x: 0, y: 0 });
+    joystickLookRef.current = { x: 0, y: 0 };
     setFocusedArtworkIndex(null);
     setActiveArtworkIndex(0);
     setSelectedModalArtwork(null);
@@ -295,30 +382,68 @@ export function VirtualTourClient() {
   }, [currentScene, focusedArtworkIndex]);
 
   // ─────────────────────────────────────────────────────────────
-  // Free-Look Pointer Drag Handlers
+  // Free-Look & Multi-Touch Drag/Pinch Handlers (Optimized for Mobile)
   // ─────────────────────────────────────────────────────────────
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (currentScene === 'painting' && focusedArtworkIndex !== null) return;
     if ((e.target as HTMLElement).tagName === 'CANVAS') {
+      activePointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
       isPointerDownRef.current = true;
       lastPointerPosRef.current = { x: e.clientX, y: e.clientY };
+
+      if (activePointersRef.current.size === 2) {
+        const points = Array.from(activePointersRef.current.values());
+        lastPinchDistRef.current = Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y);
+      }
+
       try { (e.target as HTMLElement).setPointerCapture(e.pointerId); } catch (_) {}
     }
   };
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (currentScene === 'painting' && focusedArtworkIndex !== null) return;
     if (!isPointerDownRef.current) return;
+    activePointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+    // Multi-touch 2-Finger Pinch-to-Zoom / Dolly on touch screens
+    if (activePointersRef.current.size >= 2) {
+      const points = Array.from(activePointersRef.current.values());
+      const currentDist = Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y);
+      if (lastPinchDistRef.current !== null) {
+        const pinchDelta = currentDist - lastPinchDistRef.current;
+        if (currentScene !== 'lobby') {
+          setTargetZ((prev) => {
+            const next = prev + pinchDelta * 0.038;
+            return Math.max(-200, Math.min(1.8, next));
+          });
+        }
+      }
+      lastPinchDistRef.current = currentDist;
+      return;
+    }
+
+    if (currentScene === 'painting' && focusedArtworkIndex !== null) return;
+
+    // Single-pointer rotation (fluid orbit/pan)
     const dx = e.clientX - lastPointerPosRef.current.x;
     const dy = e.clientY - lastPointerPosRef.current.y;
     lastPointerPosRef.current = { x: e.clientX, y: e.clientY };
-    const SENSITIVITY = 0.0032;
+
+    // Adaptive touch sensitivity: Touch screens have high pixel density and short thumb travel
+    const isTouch = e.pointerType === 'touch';
+    const SENSITIVITY = isTouch ? 0.0068 : 0.0035;
+
     setTargetYaw((prev) => prev - dx * SENSITIVITY);
     setTargetPitch((prev) => Math.max(-Math.PI / 4, Math.min(Math.PI / 4, prev - dy * SENSITIVITY)));
   };
 
   const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
-    isPointerDownRef.current = false;
+    activePointersRef.current.delete(e.pointerId);
+    if (activePointersRef.current.size < 2) {
+      lastPinchDistRef.current = null;
+    }
+    if (activePointersRef.current.size === 0) {
+      isPointerDownRef.current = false;
+    }
     try { (e.target as HTMLElement).releasePointerCapture(e.pointerId); } catch (_) {}
   };
 
@@ -374,7 +499,7 @@ export function VirtualTourClient() {
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
-      className={`relative w-full h-screen bg-[#070709] overflow-hidden select-none touch-none transition-opacity duration-300 ${
+      className={`dark relative w-full h-screen bg-[#070709] text-[#F5F3EC] overflow-hidden select-none touch-none transition-opacity duration-300 ${
         isNavigating ? 'opacity-85 pointer-events-none' : 'opacity-100'
       }`}
     >
@@ -389,6 +514,12 @@ export function VirtualTourClient() {
         performance={{ min: 0.5 }}
       >
         <Suspense fallback={null}>
+          {/* Active 60fps Native Right Joystick Look Controller */}
+          <JoystickLookRigController
+            joystickLookRef={joystickLookRef}
+            onRotate={handleJoystickRotate}
+          />
+
           {/* Grand Lobby */}
           {currentScene === 'lobby' && (
             <LobbyScene
@@ -404,11 +535,14 @@ export function VirtualTourClient() {
               artworks={paintingArtworks}
               locale={locale}
               targetZ={targetZ}
+              targetX={targetX}
+              moveVector={joystickMove}
               moveDirection={moveDirection}
               targetYaw={targetYaw}
               targetPitch={targetPitch}
               focusedArtworkIndex={focusedArtworkIndex}
               onUpdateTargetZ={setTargetZ}
+              onUpdateTargetX={setTargetX}
               onUpdateActiveIndex={setActiveArtworkIndex}
               onFocusArtwork={handleFocusArtwork}
               onOpenModal={(item) => setSelectedModalArtwork(item)}
@@ -421,6 +555,7 @@ export function VirtualTourClient() {
               artworks={sculptureArtworks}
               locale={locale}
               targetZ={targetZ}
+              moveVector={joystickMove}
               moveDirection={moveDirection}
               targetYaw={targetYaw}
               targetPitch={targetPitch}
@@ -438,10 +573,13 @@ export function VirtualTourClient() {
               artworks={mixedArtworks}
               locale={locale}
               targetZ={targetZ}
+              targetX={targetX}
+              moveVector={joystickMove}
               moveDirection={moveDirection}
               targetYaw={targetYaw}
               targetPitch={targetPitch}
               onUpdateTargetZ={setTargetZ}
+              onUpdateTargetX={setTargetX}
               onUpdateActiveIndex={setActiveArtworkIndex}
             />
           )}
@@ -508,7 +646,7 @@ export function VirtualTourClient() {
             </span>
           </div>
           <span className="text-[11px] text-white/50 mt-1 font-serif">
-            {locale === 'ckb' ? 'پەیمانگای هونەرە جوانەکانی چەمچەماڵ' : 'Chamchamal Fine Arts Archive'}
+            {locale === 'ckb' ? 'پەیمانگەی هونەرە جوانەکانی چەمچەماڵ' : 'Chamchamal Fine Arts Archive'}
           </span>
         </div>
 
@@ -558,76 +696,148 @@ export function VirtualTourClient() {
         </button>
       )}
 
-      {/* ── Glassmorphism Ambient Multi-Track Media Player ── */}
-      <div className="fixed bottom-6 start-4 sm:start-6 z-30 pointer-events-auto max-w-[280px] sm:max-w-sm w-full">
-        <div className="p-3.5 sm:p-4 rounded-2xl bg-black/85 hover:bg-black/95 border border-gold/40 hover:border-gold/70 shadow-[0_15px_40px_rgba(0,0,0,0.85)] backdrop-blur-2xl flex flex-col gap-2.5 transition-all">
-          <div className="flex items-center gap-3 min-w-0">
-            <div
-              className={`w-9 h-9 rounded-xl border flex items-center justify-center shrink-0 transition-all ${
-                isPlaying
-                  ? 'bg-gradient-to-br from-gold/30 via-gold/15 to-amber-900/40 text-gold border-gold/60 shadow-gold-glow-sm'
-                  : 'bg-white/5 text-museum-secondary border-white/10'
-              }`}
-            >
-              <Music className={`w-4 h-4 ${isPlaying ? 'animate-pulse text-gold' : ''}`} />
-            </div>
-            <div className="flex flex-col min-w-0 flex-1">
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-[10px] font-mono text-gold uppercase tracking-wider">
-                  {locale === 'ckb' ? 'مۆسیقای باکگراوند' : locale === 'ar' ? 'موسيقى المعرض' : 'Ambient Music'} • {activeTrackIndex + 1}/{ambientTracks.length}
-                </span>
-                {isAudioResolving && <span className="text-[9px] font-mono text-gold animate-pulse">Loading...</span>}
+      {/* ── Collapsible Ambient Multi-Track Media Player ── */}
+      {!isAudioPlayerExpanded ? (
+        /* ── Compact Floating Audio Trigger Button ── */
+        <button
+          type="button"
+          onClick={() => setIsAudioPlayerExpanded(true)}
+          className={`fixed ${
+            isTouchDevice
+              ? 'top-20 start-3 sm:start-6'
+              : 'bottom-[max(5rem,calc(env(safe-area-inset-bottom)+4.25rem))] md:bottom-6 start-3 sm:start-6'
+          } z-35 pointer-events-auto w-10 h-10 sm:w-11 sm:h-11 rounded-full border flex items-center justify-center shadow-[0_8px_25px_rgba(0,0,0,0.85)] backdrop-blur-2xl transition-all active:scale-90 cursor-pointer group ${
+            isPlaying
+              ? 'bg-black/90 border-gold/70 text-gold shadow-gold-glow-sm hover:border-gold hover:shadow-gold-glow'
+              : 'bg-black/80 border-white/15 text-white/70 hover:text-gold hover:border-gold/40'
+          }`}
+          title={
+            locale === 'ckb'
+              ? `مۆسیقای باکگراوند: ${currentTrack?.title || ''}`
+              : locale === 'ar'
+              ? `الموسيقى: ${currentTrack?.title || ''}`
+              : `Audio Guide: ${currentTrack?.title || ''}`
+          }
+          aria-label="Open Audio Player"
+        >
+          <Music className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:scale-110 ${isPlaying ? 'text-gold animate-pulse' : ''}`} />
+
+          {/* Active audio pulsating indicator badge */}
+          {isPlaying && (
+            <span className="absolute -top-1 -end-1 flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold opacity-75" />
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-gradient-to-r from-gold to-amber-500 border border-obsidian" />
+            </span>
+          )}
+        </button>
+      ) : (
+        /* ── Expanded Full Media Player Card with Minimize/Close Button ── */
+        <div
+          className={`fixed ${
+            isTouchDevice
+              ? 'top-20 start-3 sm:start-6'
+              : 'bottom-[max(5rem,calc(env(safe-area-inset-bottom)+4.25rem))] md:bottom-6 start-3 sm:start-6'
+          } z-50 pointer-events-auto max-w-[280px] sm:max-w-sm w-[calc(100vw-24px)] transition-all animate-in fade-in zoom-in-95 duration-200`}
+        >
+          <div className="p-3 sm:p-4 rounded-2xl bg-black/95 border border-gold/60 shadow-[0_20px_50px_rgba(0,0,0,0.95)] backdrop-blur-2xl flex flex-col gap-2.5 transition-all">
+            {/* Header with Title and Close Button */}
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <div
+                  className={`w-7 h-7 rounded-lg border flex items-center justify-center shrink-0 transition-all ${
+                    isPlaying
+                      ? 'bg-gold/20 text-gold border-gold/60 shadow-gold-glow-sm'
+                      : 'bg-white/5 text-museum-secondary border-white/10'
+                  }`}
+                >
+                  <Music className={`w-3.5 h-3.5 ${isPlaying ? 'animate-pulse text-gold' : ''}`} />
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-[10px] font-mono text-gold uppercase tracking-wider truncate">
+                    {locale === 'ckb' ? 'مۆسیقای باکگراوند' : locale === 'ar' ? 'موسيقى المعرض' : 'Ambient Music'} • {activeTrackIndex + 1}/{ambientTracks.length}
+                  </span>
+                  {isAudioResolving && <span className="text-[9px] font-mono text-gold animate-pulse">Loading...</span>}
+                </div>
+              </div>
+
+              <div className="flex items-center gap-1.5 shrink-0">
                 {isPlaying && (
-                  <div className="flex items-center gap-0.5">
+                  <div className="flex items-center gap-0.5 me-1">
                     <span className="w-0.5 h-2 bg-gold animate-bounce" style={{ animationDelay: '0ms' }} />
-                    <span className="w-0.5 h-3.5 bg-gold animate-bounce" style={{ animationDelay: '150ms' }} />
-                    <span className="w-0.5 h-2.5 bg-gold animate-bounce" style={{ animationDelay: '300ms' }} />
+                    <span className="w-0.5 h-3 bg-gold animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <span className="w-0.5 h-2 bg-gold animate-bounce" style={{ animationDelay: '300ms' }} />
                   </div>
                 )}
+                {/* Minimize / Close Button */}
+                <button
+                  type="button"
+                  onClick={() => setIsAudioPlayerExpanded(false)}
+                  className="p-1 rounded-lg text-white/60 hover:text-gold hover:bg-gold/15 active:scale-95 transition-all cursor-pointer"
+                  title={locale === 'ckb' ? 'داخستنی پەنجەرە' : locale === 'ar' ? 'تصغير' : 'Minimize Audio Player'}
+                  aria-label="Close Audio Player"
+                >
+                  <X className="w-4 h-4" />
+                </button>
               </div>
-              <h4 className="text-xs font-bold text-parchment-pure truncate font-serif mt-0.5" title={currentTrack?.title}>
-                {currentTrack?.title || 'Ambient Track'}
-              </h4>
             </div>
-          </div>
 
-          <div className="flex items-center justify-between gap-3 pt-2 border-t border-white/10">
-            <div className="flex items-center gap-1.5">
-              <button onClick={handlePrevTrack} className="p-1.5 rounded-lg hover:bg-gold/15 text-museum-secondary hover:text-gold transition-colors cursor-pointer" title="Previous Track">
-                <SkipBack className="w-3.5 h-3.5" />
-              </button>
-              <button
-                onClick={handleTogglePlay}
-                className="w-7 h-7 rounded-full bg-gradient-to-r from-gold via-amber-400 to-amber-500 text-obsidian flex items-center justify-center shadow-gold-glow-sm hover:shadow-gold-glow transition-all active:scale-95 cursor-pointer"
-                title={isPlaying ? 'Pause' : 'Play'}
-              >
-                {isPlaying ? <Pause className="w-3.5 h-3.5 fill-obsidian" /> : <Play className="w-3.5 h-3.5 fill-obsidian ms-0.5" />}
-              </button>
-              <button onClick={handleNextTrack} className="p-1.5 rounded-lg hover:bg-gold/15 text-museum-secondary hover:text-gold transition-colors cursor-pointer" title="Next Track">
-                <SkipForward className="w-3.5 h-3.5" />
-              </button>
-            </div>
-            <div className="flex items-center gap-2">
-              <Volume2 className="w-3 h-3 text-gold/80 shrink-0" />
-              <input
-                type="range" min="0" max="1" step="0.05" value={volume}
-                onChange={handleVolumeChange}
-                className="w-16 sm:w-20 h-1 bg-white/20 rounded-full accent-gold cursor-pointer"
-                title={`Volume: ${Math.round(volume * 100)}%`}
-              />
+            {/* Track Title */}
+            <h4 className="text-xs font-bold text-parchment-pure truncate font-serif px-0.5" title={currentTrack?.title}>
+              {currentTrack?.title || 'Ambient Track'}
+            </h4>
+
+            {/* Player Controls & Volume Slider */}
+            <div className="flex items-center justify-between gap-3 pt-2 border-t border-white/10">
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={handlePrevTrack}
+                  className="p-1.5 rounded-lg hover:bg-gold/15 text-museum-secondary hover:text-gold transition-colors cursor-pointer active:scale-95"
+                  title="Previous Track"
+                >
+                  <SkipBack className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={handleTogglePlay}
+                  className="w-7 h-7 rounded-full bg-gradient-to-r from-gold via-amber-400 to-amber-500 text-obsidian flex items-center justify-center shadow-gold-glow-sm hover:shadow-gold-glow transition-all active:scale-90 cursor-pointer"
+                  title={isPlaying ? 'Pause' : 'Play'}
+                >
+                  {isPlaying ? <Pause className="w-3.5 h-3.5 fill-obsidian" /> : <Play className="w-3.5 h-3.5 fill-obsidian ms-0.5" />}
+                </button>
+                <button
+                  onClick={handleNextTrack}
+                  className="p-1.5 rounded-lg hover:bg-gold/15 text-museum-secondary hover:text-gold transition-colors cursor-pointer active:scale-95"
+                  title="Next Track"
+                >
+                  <SkipForward className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Volume2 className="w-3 h-3 text-gold/80 shrink-0" />
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.05"
+                  value={volume}
+                  onChange={handleVolumeChange}
+                  className="w-16 sm:w-20 h-1 bg-white/20 rounded-full accent-gold cursor-pointer"
+                  title={`Volume: ${Math.round(volume * 100)}%`}
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* ── Bottom Center HUD: Nav Pad + Artwork Card (shown only in halls) ── */}
       {isInHall && (
-        <footer className="absolute bottom-0 inset-x-0 p-4 sm:p-6 flex flex-col items-center pointer-events-none z-20 bg-gradient-to-t from-black/95 via-black/60 to-transparent gap-3.5">
+        <footer className="fixed bottom-3 sm:bottom-4 inset-x-2 sm:inset-x-4 pointer-events-none z-30 flex flex-col items-center gap-2 max-w-sm sm:max-w-md mx-auto w-full">
           {/* Active / Focused Artwork Pill Card (Painting and Sculpture halls) */}
           {(isPaintingHall || currentScene === 'sculpture') && (focusedArtwork || currentArtwork) && (
-            <div className="pointer-events-auto px-5 py-2.5 rounded-2xl bg-black/80 border border-gold/40 hover:border-gold/70 shadow-[0_10px_35px_rgba(0,0,0,0.8)] backdrop-blur-xl flex items-center gap-4 transition-all max-w-xl w-full justify-between">
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="relative w-11 h-11 rounded-lg overflow-hidden border border-gold/50 shrink-0 bg-black">
+            <div className="pointer-events-auto px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl bg-black/85 border border-gold/40 hover:border-gold/70 shadow-[0_10px_35px_rgba(0,0,0,0.85)] backdrop-blur-xl flex items-center gap-2.5 sm:gap-3 transition-all max-w-sm sm:max-w-md w-full justify-between">
+              <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                <div className="relative w-9 h-9 sm:w-11 sm:h-11 rounded-lg overflow-hidden border border-gold/50 shrink-0 bg-black">
                   <SafeImage
                     src={(focusedArtwork || currentArtwork).imageUrl}
                     alt={(focusedArtwork || currentArtwork).title[locale] || (focusedArtwork || currentArtwork).title.en}
@@ -638,132 +848,125 @@ export function VirtualTourClient() {
                 <div className="flex flex-col min-w-0">
                   <div className="flex items-center gap-1.5">
                     {focusedArtwork && (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-gold/20 text-gold border border-gold/40">
+                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[8px] sm:text-[9px] font-bold bg-gold/20 text-gold border border-gold/40">
                         <Crosshair className="w-2.5 h-2.5" />
                         <span>{locale === 'ckb' ? 'سەرنجدراو' : 'Focused'}</span>
                       </span>
                     )}
-                    <span className="text-[10px] text-gold font-mono uppercase tracking-wider truncate">
+                    <span className="text-[9px] sm:text-[10px] text-gold font-mono uppercase tracking-wider truncate">
                       {getArtworkDepartmentLabel((focusedArtwork || currentArtwork).departmentLabel || (focusedArtwork || currentArtwork).department, locale)} • {(focusedArtwork || currentArtwork).year}
                     </span>
                   </div>
-                  <h3 className="text-sm font-bold text-parchment-pure truncate font-serif mt-0.5">
+                  <h3 className="text-xs sm:text-sm font-bold text-parchment-pure truncate font-serif mt-0.5">
                     {(focusedArtwork || currentArtwork).title[locale] || (focusedArtwork || currentArtwork).title.ckb}
                   </h3>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                 {focusedArtwork && (
                   <button
                     onClick={handleResetFocus}
-                    className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-gold/20 text-white hover:text-gold border border-white/15 hover:border-gold/50 text-xs font-mono transition-all cursor-pointer flex items-center gap-1.5 shadow-sm"
+                    className="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full bg-white/10 hover:bg-gold/20 text-white hover:text-gold border border-white/15 hover:border-gold/50 text-[10px] sm:text-xs font-mono transition-all cursor-pointer flex items-center gap-1 shadow-sm"
                   >
-                    <X className="w-3.5 h-3.5" />
-                    <span className="text-[11px] font-sans font-medium">
+                    <X className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                    <span className="font-sans font-medium">
                       {locale === 'ckb' ? 'داخستن' : locale === 'ar' ? 'إلغاء' : 'Exit Focus'}
                     </span>
                   </button>
                 )}
                 <button
                   onClick={() => setSelectedModalArtwork(focusedArtwork || currentArtwork)}
-                  className="px-3.5 py-1.5 rounded-full bg-gradient-to-r from-gold via-amber-400 to-amber-500 text-obsidian text-xs font-bold flex items-center gap-1.5 shadow-gold-glow-sm hover:shadow-gold-glow transition-all cursor-pointer"
+                  className="px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-gradient-to-r from-gold via-amber-400 to-amber-500 text-obsidian text-[11px] sm:text-xs font-bold flex items-center gap-1 shadow-gold-glow-sm hover:shadow-gold-glow transition-all cursor-pointer"
                 >
-                  <Eye className="w-3.5 h-3.5 text-obsidian" />
+                  <Eye className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-obsidian" />
                   <span>{locale === 'ckb' ? 'وردەکاری' : locale === 'ar' ? 'معاينة' : 'Inspect'}</span>
                 </button>
               </div>
             </div>
           )}
 
-          {/* On-Screen Navigation Pad */}
-          <div className="pointer-events-auto flex items-center justify-center gap-3 sm:gap-4 select-none">
-            {/* Backward */}
-            <button
-              disabled={isPaintingHall && focusedArtworkIndex !== null}
-              onPointerDown={(e) => { if (isPaintingHall && focusedArtworkIndex !== null) return; e.preventDefault(); setMoveDirection(1); }}
-              onPointerUp={() => setMoveDirection(0)}
-              onPointerLeave={() => setMoveDirection(0)}
-              onTouchStart={(e) => { if (isPaintingHall && focusedArtworkIndex !== null) return; e.preventDefault(); setMoveDirection(1); }}
-              onTouchEnd={() => setMoveDirection(0)}
-              onTouchCancel={() => setMoveDirection(0)}
-              className={`group px-5 sm:px-7 py-3 sm:py-3.5 rounded-2xl bg-black/75 border border-gold/40 text-parchment-pure shadow-art-card backdrop-blur-2xl flex items-center gap-2.5 transition-all ${
-                isPaintingHall && focusedArtworkIndex !== null
-                  ? 'opacity-35 cursor-not-allowed pointer-events-none'
-                  : 'hover:bg-gold/20 active:bg-gold/30 hover:border-gold hover:text-gold active:scale-95 cursor-pointer'
-              }`}
-            >
-              <ArrowDown className="w-4 h-4 text-gold group-hover:-translate-y-0.5 transition-transform" />
-              <div className="flex flex-col text-start">
-                <span className="text-xs sm:text-sm font-bold">
-                  {locale === 'ckb' ? '↓ دواوە' : locale === 'ar' ? '↓ للخلف' : '↓ Backward'}
-                </span>
-                <span className="text-[9px] font-mono text-white/40 uppercase">Step Back</span>
-              </div>
-            </button>
+          {/* Desktop Only Navigation Controls (Old clunky buttons are removed on mobile/touch, where Dual Joysticks take over) */}
+          {!isTouchDevice && (
+            <div className="pointer-events-auto hidden md:flex items-center justify-center gap-2 select-none">
+              <button
+                type="button"
+                onClick={handleTurnLeft}
+                className="w-10 h-10 rounded-xl bg-black/80 hover:bg-gold/20 active:bg-gold/30 border border-gold/40 hover:border-gold flex items-center justify-center text-gold shadow-art-card backdrop-blur-xl transition-all cursor-pointer"
+                title="Turn Left 45°"
+              >
+                <RotateCcw className="w-4 h-4 text-gold" />
+              </button>
 
-            {/* Re-center / Exit Focus */}
-            <button
-              onClick={handleResetFocus}
-              className={`w-12 h-12 rounded-2xl bg-black/75 hover:bg-gold/20 active:bg-gold/30 border border-gold/40 hover:border-gold flex items-center justify-center text-gold shadow-art-card backdrop-blur-2xl transition-all active:scale-95 cursor-pointer ${
-                focusedArtworkIndex !== null ? 'ring-2 ring-gold/50 shadow-gold-glow-sm' : ''
-              }`}
-              title={focusedArtworkIndex !== null ? 'داخستنی تەرکیز و سەیرکردنی پێشەوە' : 'ڕێکخستنەوەی ڕوانگە'}
-            >
-              <Compass className="w-5 h-5 text-gold hover:rotate-45 transition-transform" />
-            </button>
+              <button
+                disabled={isPaintingHall && focusedArtworkIndex !== null}
+                onClick={() => {
+                  if (isPaintingHall && focusedArtworkIndex !== null) return;
+                  setTargetZ((prev) => Math.min(1.8, prev + 2.5));
+                }}
+                className="px-4 py-2 rounded-xl bg-black/80 hover:bg-gold/20 border border-gold/40 text-parchment-pure shadow-art-card backdrop-blur-xl flex items-center gap-1.5 cursor-pointer text-xs font-bold"
+              >
+                <ArrowDown className="w-3.5 h-3.5 text-gold" />
+                <span>{locale === 'ckb' ? 'دواوە' : 'Back'}</span>
+              </button>
 
-            {/* Forward */}
-            <button
-              disabled={isPaintingHall && focusedArtworkIndex !== null}
-              onPointerDown={(e) => { if (isPaintingHall && focusedArtworkIndex !== null) return; e.preventDefault(); setMoveDirection(-1); }}
-              onPointerUp={() => setMoveDirection(0)}
-              onPointerLeave={() => setMoveDirection(0)}
-              onTouchStart={(e) => { if (isPaintingHall && focusedArtworkIndex !== null) return; e.preventDefault(); setMoveDirection(-1); }}
-              onTouchEnd={() => setMoveDirection(0)}
-              onTouchCancel={() => setMoveDirection(0)}
-              className={`group px-6 sm:px-8 py-3 sm:py-3.5 rounded-2xl bg-gradient-to-r from-gold/25 via-gold/15 to-amber-900/30 border border-gold/60 text-gold-light backdrop-blur-2xl flex items-center gap-2.5 transition-all ${
-                isPaintingHall && focusedArtworkIndex !== null
-                  ? 'opacity-35 cursor-not-allowed pointer-events-none'
-                  : 'hover:bg-gold/30 active:bg-gold/40 hover:border-gold hover:text-white shadow-gold-glow-sm hover:shadow-gold-glow active:scale-95 cursor-pointer'
-              }`}
-            >
-              <ArrowUp className="w-4 h-4 text-gold group-hover:-translate-y-0.5 transition-transform" />
-              <div className="flex flex-col text-start">
-                <span className="text-xs sm:text-sm font-bold text-parchment-pure">
-                  {locale === 'ckb' ? '↑ پێشەوە' : locale === 'ar' ? '↑ للأمام' : '↑ Forward'}
-                </span>
-                <span className="text-[9px] font-mono text-gold/80 uppercase">Walk Forward</span>
-              </div>
-            </button>
-          </div>
+              <button
+                onClick={handleResetFocus}
+                className="w-10 h-10 rounded-xl bg-black/80 hover:bg-gold/20 border border-gold/40 hover:border-gold flex items-center justify-center text-gold shadow-art-card backdrop-blur-xl transition-all cursor-pointer"
+                title="Recenter View"
+              >
+                <Compass className="w-4 h-4 text-gold" />
+              </button>
+
+              <button
+                disabled={isPaintingHall && focusedArtworkIndex !== null}
+                onClick={() => {
+                  if (isPaintingHall && focusedArtworkIndex !== null) return;
+                  setTargetZ((prev) => Math.max(-200, prev - 2.5));
+                }}
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-gold/30 to-amber-900/35 border border-gold/60 text-gold-light backdrop-blur-xl flex items-center gap-1.5 cursor-pointer text-xs font-bold"
+              >
+                <ArrowUp className="w-3.5 h-3.5 text-gold" />
+                <span>{locale === 'ckb' ? 'پێشەوە' : 'Forward'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleTurnRight}
+                className="w-10 h-10 rounded-xl bg-black/80 hover:bg-gold/20 active:bg-gold/30 border border-gold/40 hover:border-gold flex items-center justify-center text-gold shadow-art-card backdrop-blur-xl transition-all cursor-pointer"
+                title="Turn Right 45°"
+              >
+                <RotateCw className="w-4 h-4 text-gold" />
+              </button>
+            </div>
+          )}
 
           {/* Guidance hint + Progress bar (Painting hall only) */}
-          <div className="flex flex-col items-center gap-1.5 w-full max-w-md">
-            <div className="flex items-center gap-2 text-[11px] text-white/50 font-mono">
-              <Move className="w-3 h-3 text-gold" />
-              <span>
-                {locale === 'ckb'
-                  ? 'ڕاکێشان بە 360° بۆ سەیرکردن • دوگمەکان بۆ ڕۆیشتن'
-                  : locale === 'ar'
-                  ? 'اسحب بـ 360 درجة للنظر • الأزرار للمشي'
-                  : 'Swipe to Look 360° • Hold Buttons to Walk'}
-              </span>
-            </div>
+          <div className="flex flex-col items-center gap-1 w-full max-w-sm sm:max-w-md">
+            {!isTouchDevice && (
+              <div className="hidden md:flex items-center gap-1.5 text-[10px] text-white/50 font-mono text-center">
+                <Move className="w-3 h-3 text-gold shrink-0" />
+                <span>
+                  {locale === 'ckb'
+                    ? 'W/A/S/D یان دوگمەکانی تەختەکلیل بۆ ڕۆیشتن • ڕاکێشانی ماوس بۆ سەیرکردن'
+                    : 'W/A/S/D or Arrow Keys to Walk • Click & Drag Mouse to Look'}
+                </span>
+              </div>
+            )}
             {isPaintingHall && (
-              <>
-                <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden relative shadow-inner">
+              <div className="w-full flex flex-col gap-1 px-1">
+                <div className="w-full h-1 sm:h-1.5 rounded-full bg-white/10 overflow-hidden relative shadow-inner">
                   <div
                     className="h-full bg-gradient-to-r from-gold via-amber-400 to-amber-600 transition-all duration-150"
                     style={{ width: `${Math.round(progressRatio * 100)}%` }}
                   />
                 </div>
-                <div className="flex items-center justify-between w-full text-[10px] font-mono text-white/40 px-1">
+                <div className="flex items-center justify-between w-full text-[9px] font-mono text-white/40 px-0.5">
                   <span>{locale === 'ckb' ? 'دەروازەی پێشانگا' : 'Grand Entrance'}</span>
                   <span className="text-gold font-bold">{Math.round(progressRatio * 100)}%</span>
                   <span>{locale === 'ckb' ? 'کۆتایی هۆڵ' : 'Rotunda End'}</span>
                 </div>
-              </>
+              </div>
             )}
           </div>
         </footer>
@@ -771,13 +974,15 @@ export function VirtualTourClient() {
 
       {/* Lobby hint when in lobby */}
       {!isInHall && (
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
-          <div className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-black/60 border border-gold/30 backdrop-blur-xl text-[11px] text-white/60 font-mono">
-            <Move className="w-3 h-3 text-gold" />
+        <div className="fixed bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 z-20 pointer-events-none px-4 w-full max-w-sm sm:max-w-md flex justify-center">
+          <div className="flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-black/75 border border-gold/30 shadow-[0_8px_30px_rgba(0,0,0,0.85)] backdrop-blur-xl text-[10px] sm:text-[11px] text-white/70 font-mono text-center">
+            <Move className="w-3 h-3 text-gold shrink-0" />
             <span>
               {locale === 'ckb'
-                ? 'ڕاکێشان بۆ سەیرکردن • کلیک لە دەروازەکان بۆ چوونە ژوورەوە'
-                : 'Drag to Look • Click Doors to Enter'}
+                ? 'دەستلێدان و ڕاکێشان بۆ سەیرکردن • دوو پەنجە بۆ زووم • کلیک لە دەروازەکان بکە'
+                : locale === 'ar'
+                ? 'اسحب للنظر • إصبعان للتكبير • انقر على الأبواب للدخول'
+                : 'Swipe to Look • Pinch to Zoom • Tap Doors to Enter'}
             </span>
           </div>
         </div>
@@ -877,6 +1082,22 @@ export function VirtualTourClient() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* ── Landscape Orientation Recommendation Prompt for Mobile Viewports ── */}
+      <LandscapeOrientationPrompt
+        locale={locale}
+        isDismissed={isLandscapePromptDismissed}
+        onDismiss={() => setIsLandscapePromptDismissed(true)}
+      />
+
+      {/* ── Modern Mobile-Game Style Dual Virtual Joysticks (Subtle & Faint) ── */}
+      {isTouchDevice && (isLandscape || isLandscapePromptDismissed) && (
+        <DualVirtualJoysticks
+          onMoveChange={handleJoystickMove}
+          onLookChange={handleJoystickLook}
+          locale={locale}
+        />
       )}
     </div>
   );

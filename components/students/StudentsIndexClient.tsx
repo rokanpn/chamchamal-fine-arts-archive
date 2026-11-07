@@ -51,7 +51,7 @@ export function StudentsIndexClient() {
           <GraduationCap className="w-4 h-4 text-gold" />
           <span>
             {locale === 'ckb'
-              ? 'تۆماری خوێندکاران و هونەرمەندانی پەیمانگا'
+              ? 'تۆماری خوێندکاران و هونەرمەندانی پەیمانگە'
               : locale === 'ar'
               ? 'دليل طلبة وخريجي معهد الفنون الجميلة'
               : 'Student Artists & Alumni Directory'}
@@ -60,7 +60,7 @@ export function StudentsIndexClient() {
 
         <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-parchment-pure leading-tight">
           {locale === 'ckb'
-            ? 'داهێنەرانی پەیمانگای چەمچەماڵ'
+            ? 'داهێنەرانی پەیمانگەی چەمچەماڵ'
             : locale === 'ar'
             ? 'مبدعو معهد الفنون الجميلة في جمجمال'
             : 'Artists & Creators of Chamchamal'}
@@ -68,7 +68,7 @@ export function StudentsIndexClient() {
 
         <p className="mt-4 text-sm sm:text-base text-museum-secondary max-w-2xl leading-relaxed">
           {locale === 'ckb'
-            ? 'تۆمارێکی زیندووی دەرچووان و قوتابیانی پەیمانگا؛ لەگەڵ دەقی هونەری، ناسنامەی داهێنان، و ئەو بەرهەمانەی کە لە ئەرشیفی دیجیتاڵیدا پارێزراون.'
+            ? 'تۆمارێکی زیندووی دەرچووان و قوتابیانی پەیمانگە؛ لەگەڵ دەقی هونەری، ناسنامەی داهێنان، و ئەو بەرهەمانەی کە لە ئەرشیفی دیجیتاڵیدا پارێزراون.'
             : locale === 'ar'
             ? 'سجل حي يضم نخبة خريجي وطلبة المعهد عبر مختلف الدفعات، مع بياناتهم الفنية ومعارض أعمالهم الدائمة.'
             : 'A living curatorial register celebrating the artists, scholars, and sculptors shaping contemporary Kurdish fine arts across all academic cohorts.'}
@@ -91,8 +91,8 @@ export function StudentsIndexClient() {
                 onClick={() => setSelectedDept(dept.key)}
                 className={`relative px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-colors duration-200 select-none flex items-center gap-2 ${
                   isSelected
-                    ? 'text-obsidian font-semibold'
-                    : 'text-parchment-muted hover:text-parchment bg-obsidian-surface/60 border border-museum-border'
+                    ? 'text-stone-950 font-bold'
+                    : 'text-stone-700 dark:text-parchment-muted hover:text-stone-950 dark:hover:text-parchment bg-stone-100 dark:bg-obsidian-surface/60 border border-stone-200 dark:border-museum-border'
                 }`}
               >
                 {isSelected && (
@@ -134,7 +134,7 @@ export function StudentsIndexClient() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.5, delay: (idx % 3) * 0.1 }}
-                className="group relative rounded-3xl bg-obsidian-surface/80 border border-museum-border hover:border-gold/40 shadow-art-card p-6 flex flex-col justify-between overflow-hidden backdrop-blur-xl transition-all duration-300"
+                className="group relative rounded-3xl bg-white dark:bg-obsidian-surface/80 border border-stone-200/80 dark:border-museum-border hover:border-gold/40 shadow-sm dark:shadow-art-card p-6 flex flex-col justify-between overflow-hidden backdrop-blur-xl transition-all duration-300"
               >
                 {/* Top Specular Line */}
                 <div className="absolute inset-x-8 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none" />

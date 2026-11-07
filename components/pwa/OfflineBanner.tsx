@@ -36,7 +36,7 @@ export function OfflineBanner() {
           transition={{ duration: 0.4 }}
           className="fixed top-20 inset-x-4 max-w-lg mx-auto z-50 print:hidden"
         >
-          <div className="flex items-center justify-between gap-3 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-obsidian-surface via-[#18181f] to-obsidian-surface border border-gold/50 shadow-gold-glow backdrop-blur-2xl text-xs text-parchment">
+          <div className="flex items-center justify-between gap-3 px-4 py-2.5 rounded-2xl bg-white dark:bg-gradient-to-r dark:from-obsidian-surface dark:via-[#18181f] dark:to-obsidian-surface border border-stone-200/80 dark:border-gold/50 shadow-md dark:shadow-gold-glow backdrop-blur-2xl text-xs text-stone-900 dark:text-parchment">
             <div className="flex items-center gap-2.5">
               <span className="p-1.5 rounded-full bg-gold/20 text-gold">
                 <WifiOff className="w-3.5 h-3.5" />

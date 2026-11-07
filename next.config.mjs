@@ -18,6 +18,28 @@ const nextConfig = {
       },
     ],
   },
+  async headers() {
+    return [
+      {
+        // Enforce zero caching on all dynamic HTML routes so mobile devices always get fresh live data
+        source: '/((?!_next/static|_next/image|favicon.ico).*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-cache, no-store, must-revalidate',
+          },
+          {
+            key: 'Pragma',
+            value: 'no-cache',
+          },
+          {
+            key: 'Expires',
+            value: '0',
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

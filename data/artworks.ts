@@ -213,7 +213,7 @@ export const ARTWORKS_DATA: Artwork[] = [
     },
     artistId: 'shwan-karim-ahmed',
     artistBio: {
-      ckb: 'شێوەکار و مامۆستای بەشی شێوەکاری، دەرچووی خولی یەکەمی پەیمانگای هونەرە جوانەکانی چەمچەماڵ.',
+      ckb: 'شێوەکار و مامۆستای بەشی شێوەکاری، دەرچووی خولی یەکەمی پەیمانگەی هونەرە جوانەکانی چەمچەماڵ.',
       ar: 'فنان تشكيلي وأستاذ بقسم الرسم، خريج الدورة الأولى لمعهد الفنون الجميلة في جمجمال.',
       en: 'Painter and faculty member at Chamchamal Fine Arts Institute, Class of 2018.',
     },
@@ -274,7 +274,7 @@ export const ARTWORKS_DATA: Artwork[] = [
     },
     artistId: 'rebwar-hussein-baban',
     artistBio: {
-      ckb: 'پەیکەرسازی نێودەوڵەتی و بەرپرسی تاقیگەی فۆتۆگرامەتری و سێ ڕەهەندی پەیمانگا.',
+      ckb: 'پەیکەرسازی نێودەوڵەتی و بەرپرسی تاقیگەی فۆتۆگرامەتری و سێ ڕەهەندی پەیمانگە.',
       ar: 'نحات دولي ومسؤول مختبر الفحص والتوثيق ثلاثي الأبعاد بمعهد جمجمال.',
       en: 'Acclaimed Kurdish sculptor and director of the Institute 3D Photogrammetry Atelier.',
     },
@@ -810,7 +810,7 @@ export const ARTWORKS_DATA: Artwork[] = [
       en: 'A contemporary kinetic-feeling sculpture re-forging industrial steel fragments into an outstretched bird soaring toward enduring peace.',
     },
     locationInInstitute: {
-      ckb: 'هۆڵی چوونەژوورەوەی سەرەکی پەیمانگا',
+      ckb: 'هۆڵی چوونەژوورەوەی سەرەکی پەیمانگە',
       ar: 'بهو الاستقبال الرئيسي للمعهد',
       en: 'Institute Grand Entrance Foyer',
     },
@@ -867,7 +867,7 @@ export const ARTWORKS_DATA: Artwork[] = [
     audioUrl: 'https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=ambient-piano-amp-strings-10711.mp3',
     audioDurationSeconds: 245,
     description: {
-      ckb: 'تۆمارێکی زەینی لە مەقامی کوردی بە ئامێری تاری دەستکردی دارگوێز، کە لە ستۆدیۆی تۆمارکردنی پەیمانگا ئەنجامدراوە.',
+      ckb: 'تۆمارێکی زەینی لە مەقامی کوردی بە ئامێری تاری دەستکردی دارگوێز، کە لە ستۆدیۆی تۆمارکردنی پەیمانگە ئەنجامدراوە.',
       ar: 'تسجيل استثنائي للمقامات الكردية بآلة التار المصنوعة يدوياً من خشب الجوز، تم توثيقه في استوديو المعهد.',
       en: 'A sublime recording of Kurdish traditional Maqam performed on a handcrafted walnut Tar, captured in the institute acoustic hall.',
     },
@@ -898,7 +898,7 @@ export const ARTWORKS_DATA: Artwork[] = [
     },
     artistId: 'diden-mustafa-karim',
     artistBio: {
-      ckb: 'دەرهێنەر و ئەکتەری بەشی شانۆ، داهێنەری شێوازی سینۆگرافیای سێبەر و نواندنی جەستەیی لە پەیمانگا.',
+      ckb: 'دەرهێنەر و ئەکتەری بەشی شانۆ، داهێنەری شێوازی سینۆگرافیای سێبەر و نواندنی جەستەیی لە پەیمانگە.',
       ar: 'مخرج وممثل بقسم المسرح، رائد في السينوغرافيا التعبيرية والمسرح الحركي.',
       en: 'Theatrical director and performer at the Theater Department, pioneering shadow scenography and physical drama.',
     },
@@ -927,12 +927,12 @@ export const ARTWORKS_DATA: Artwork[] = [
     has3DModel: false,
     featured: true,
     description: {
-      ckb: 'شانۆگەرییەکی درامی بەهێز کە لە هۆڵی شانۆی گەورەی پەیمانگا نمایشکرا؛ گێڕانەوەی قوربانیدانی گەلی کورد بە زمانی جەستە و سێبەر.',
+      ckb: 'شانۆگەرییەکی درامی بەهێز کە لە هۆڵی شانۆی گەورەی پەیمانگە نمایشکرا؛ گێڕانەوەی قوربانیدانی گەلی کورد بە زمانی جەستە و سێبەر.',
       ar: 'عمل مسرحي تعبيري عُرض على مسرح المعهد الرئيسي؛ يجسد ذاكرة الصمود عبر السينوغرافيا الحركية ولغة الإضاءة.',
       en: 'A powerful theatrical production staged at the institute main theater hall; dramatizing historic resilience via expressive scenography and shadow play.',
     },
     locationInInstitute: {
-      ckb: 'هۆڵی سەرەکی شانۆی پەیمانگا، سەکۆی ئازادی',
+      ckb: 'هۆڵی سەرەکی شانۆی پەیمانگە، سەکۆی ئازادی',
       ar: 'المسرح الرئيسي للمعهد، منصة الحرية',
       en: 'Main Theater Hall, Liberty Proscenium',
     },

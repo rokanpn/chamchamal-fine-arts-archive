@@ -88,7 +88,7 @@ export function InstallPrompt() {
         transition={{ type: 'spring', damping: 25, stiffness: 350 }}
         className="fixed bottom-20 md:bottom-6 inset-x-4 max-w-md mx-auto z-50 print:hidden"
       >
-        <div className="relative rounded-3xl bg-gradient-to-b from-[#18181f] via-obsidian-surface to-[#101014] border-2 border-gold/50 p-5 shadow-art-card backdrop-blur-2xl flex flex-col gap-3 overflow-hidden">
+        <div className="relative rounded-3xl bg-white dark:bg-gradient-to-b dark:from-[#18181f] dark:via-obsidian-surface dark:to-[#101014] border border-stone-200/90 dark:border-2 dark:border-gold/50 p-5 shadow-lg dark:shadow-art-card backdrop-blur-2xl flex flex-col gap-3 overflow-hidden">
           {/* Close Dismiss Button */}
           <button
             onClick={handleDismiss}

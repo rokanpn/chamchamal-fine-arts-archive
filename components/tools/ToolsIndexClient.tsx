@@ -39,11 +39,12 @@ export function ToolsIndexClient() {
   }, [tools, selectedCategory]);
 
   return (
-    <div className="flex flex-col gap-10 sm:gap-14 w-full pb-32 safe-bottom">
+    <div className="flex flex-col gap-6 sm:gap-12 w-full pb-32 safe-bottom">
       {/* Header Section */}
-      <section className="relative pt-4 sm:pt-8 flex flex-col items-center text-center max-w-3xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gold/10 border border-gold/30 text-gold-light text-xs font-medium tracking-wide mb-4 shadow-gold-glow">
-          <Wrench className="w-3.5 h-3.5 text-gold" />
+      <section className="relative pt-2 sm:pt-8 flex flex-col items-center text-center max-w-3xl mx-auto px-1 sm:px-4">
+        {/* Top Eyebrow Badge */}
+        <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-gold/10 border border-gold/30 text-gold-dark dark:text-gold-light text-[10px] sm:text-xs font-medium tracking-wide mb-2 sm:mb-4 shadow-gold-glow">
+          <Wrench className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gold shrink-0" />
           <span>
             {locale === 'ckb'
               ? 'کەرەستەناسی و ئامرازەکانی ئاتلیێ'
@@ -53,7 +54,8 @@ export function ToolsIndexClient() {
           </span>
         </div>
 
-        <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-parchment-pure leading-tight">
+        {/* Main Title */}
+        <h1 className="text-xl sm:text-3xl md:text-5xl font-bold tracking-tight text-stone-900 dark:text-parchment-pure leading-snug sm:leading-tight text-balance">
           {locale === 'ckb'
             ? 'ئامرازەکانی داهێنانی هونەری'
             : locale === 'ar'
@@ -61,9 +63,10 @@ export function ToolsIndexClient() {
             : 'Instruments of Fine Art & Craft'}
         </h1>
 
-        <p className="mt-4 text-sm sm:text-base text-museum-secondary max-w-2xl leading-relaxed">
+        {/* Subtitle / Description */}
+        <p className="mt-2 sm:mt-4 text-[11px] sm:text-sm md:text-base text-stone-600 dark:text-museum-secondary max-w-2xl leading-relaxed text-balance line-clamp-3 sm:line-clamp-none px-2 sm:px-0">
           {locale === 'ckb'
-            ? 'ڕوانگەیەکی ورد و فرەمیدیا بۆ ئەو فڵچە، قەڵەمی تاشین، قوڕی خۆماڵی، خەڵووز و ئامرازانەی کە مامۆستایان و قوتابیانی پەیمانگا شاکارەکانی پێ دەخولقێنن؛ لەگەڵ سکانی ۳D، فێرکاری ڤیدیۆیی و ڕێنمایی دەنگی.'
+            ? 'ڕوانگەیەکی ورد و فرەمیدیا بۆ ئەو فڵچە، قەڵەمی تاشین، قوڕی خۆماڵی، خەڵووز و ئامرازانەی کە مامۆستایان و قوتابیانی پەیمانگە شاکارەکانی پێ دەخولقێنن؛ لەگەڵ سکانی ۳D، فێرکاری ڤیدیۆیی و ڕێنمایی دەنگی.'
             : locale === 'ar'
             ? 'دليل متعدد الوسائط يضم مجسمات ثلاثية الأبعاد، مقاطع فيديو تعليمية، وشروحات صوتية للأدوات والخامات المستخدمة في معهد جمجمال.'
             : 'An interactive multimedia encyclopedia spotlighting bespoke brushes, carving gouges, indigenous terracotta clays, and reed pens with unique 3D photogrammetry, video workshops, and audio guides.'}
@@ -73,7 +76,7 @@ export function ToolsIndexClient() {
         <div
           role="tablist"
           aria-label="Tool Categories"
-          className="mt-8 flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 scrollbar-none no-scrollbar max-w-full"
+          className="mt-4 sm:mt-8 flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-2 sm:pb-0 scrollbar-none no-scrollbar max-w-full -mx-4 px-4 sm:mx-0 sm:px-0"
         >
           {TOOL_CATEGORIES.map((cat) => {
             const isSelected = selectedCategory === cat.key;
@@ -85,10 +88,10 @@ export function ToolsIndexClient() {
                 role="tab"
                 aria-selected={isSelected}
                 onClick={() => setSelectedCategory(cat.key)}
-                className={`relative px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-colors duration-200 select-none flex items-center gap-2 ${
+                className={`relative px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs font-medium whitespace-nowrap transition-colors duration-200 select-none flex items-center gap-1.5 sm:gap-2 ${
                   isSelected
-                    ? 'text-obsidian font-semibold'
-                    : 'text-parchment-muted hover:text-parchment bg-obsidian-surface/60 border border-museum-border'
+                    ? 'text-stone-950 font-bold'
+                    : 'text-stone-700 dark:text-parchment-muted hover:text-stone-950 dark:hover:text-parchment bg-stone-100 dark:bg-obsidian-surface/60 border border-stone-200 dark:border-museum-border'
                 }`}
               >
                 {isSelected && (
@@ -100,8 +103,8 @@ export function ToolsIndexClient() {
                 )}
                 <span>{label}</span>
                 <span
-                  className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                    isSelected ? 'bg-black/20 text-obsidian' : 'bg-white/10 text-museum-secondary'
+                  className={`text-[9px] sm:text-[10px] px-1.5 py-0.2 rounded-full ${
+                    isSelected ? 'bg-black/20 text-stone-950 font-bold' : 'bg-black/5 dark:bg-white/10 text-stone-600 dark:text-museum-secondary'
                   }`}
                 >
                   {cat.key === 'all'
@@ -114,10 +117,10 @@ export function ToolsIndexClient() {
         </div>
       </section>
 
-      {/* Tools Grid */}
+      {/* Tools Grid (2-Column Mobile, 3-Column Desktop) */}
       <motion.div
         layout
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
+        className="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-6 lg:gap-8"
       >
         <AnimatePresence mode="popLayout">
           {filteredTools.map((tool, idx) => {
@@ -139,79 +142,83 @@ export function ToolsIndexClient() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.5, delay: (idx % 3) * 0.1 }}
-                className="group relative rounded-3xl bg-obsidian-surface/80 border border-museum-border hover:border-gold/40 shadow-art-card flex flex-col justify-between overflow-hidden backdrop-blur-xl transition-all duration-300"
+                className="group relative rounded-xl sm:rounded-3xl bg-white dark:bg-obsidian-surface/80 border border-stone-200/80 dark:border-museum-border hover:border-gold/40 shadow-sm dark:shadow-art-card flex flex-col justify-between overflow-hidden backdrop-blur-xl transition-all duration-300"
               >
-                <div className="absolute inset-x-8 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none" />
+                <div className="absolute inset-x-8 top-0 h-[1px] bg-gradient-to-r from-transparent via-stone-400/20 dark:via-white/15 to-transparent pointer-events-none" />
 
-                <div>
+                <div className="flex flex-col flex-1">
                   {/* Tool Thumbnail Stage */}
-                  <div className="relative aspect-[16/10] w-full overflow-hidden bg-obsidian-elevated">
+                  <div className="relative aspect-[4/3] sm:aspect-[16/10] w-full overflow-hidden bg-stone-100 dark:bg-obsidian-elevated">
                     <SafeImage
                       src={tool.imageUrl}
                       alt={toolName}
                       fill
                       className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/30 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-transparent dark:from-obsidian dark:via-obsidian/30 dark:to-transparent" />
 
-                    {/* Top Floating Badge */}
-                    <div className="absolute top-3.5 inset-x-3.5 flex items-center justify-between">
-                      <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-black/60 text-parchment-pure border border-white/10 backdrop-blur-md">
+                    {/* Top Floating Badges */}
+                    <div className="absolute top-1.5 sm:top-3.5 inset-x-1.5 sm:inset-x-3.5 flex items-center justify-between gap-1 pointer-events-none z-10">
+                      <span className="px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[8px] sm:text-[10px] font-semibold bg-black/65 text-parchment-pure border border-white/10 backdrop-blur-md shadow-glass-pill truncate max-w-[55%] sm:max-w-none">
                         {categoryLabel}
                       </span>
 
                       {/* Multimedia 3D & Audio Inspector Trigger */}
                       <button
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
                           setPreviewTool(tool);
                           setModalTab('3d');
                         }}
-                        className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-gold/20 hover:bg-gold/30 text-gold-light border border-gold/40 backdrop-blur-md transition-all shadow-gold-glow cursor-pointer"
+                        className="pointer-events-auto flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[8px] sm:text-[10px] font-bold bg-gold/25 hover:bg-gold/35 text-gold-shimmer border border-gold/40 backdrop-blur-md transition-all shadow-gold-glow cursor-pointer shrink-0"
                       >
-                        <Box className="w-3.5 h-3.5 text-gold animate-spin-slow" />
-                        <span>3D & Media</span>
+                        <Box className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 text-gold animate-spin-slow shrink-0" />
+                        <span className="hidden sm:inline">3D & Media</span>
+                        <span className="sm:hidden">3D</span>
                       </button>
                     </div>
                   </div>
 
                   {/* Body Content */}
-                  <div className="p-5 sm:p-6 flex flex-col gap-3">
-                    <div className="flex items-center gap-1.5 text-[11px] text-museum-secondary">
-                      <MapPin className="w-3.5 h-3.5 text-gold shrink-0" />
+                  <div className="p-2 sm:p-4 md:p-5 flex flex-col gap-1 sm:gap-2.5 flex-1">
+                    <div className="flex items-center gap-1 text-[8px] sm:text-[11px] text-stone-500 dark:text-museum-secondary">
+                      <MapPin className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 text-gold shrink-0" />
                       <span className="line-clamp-1">{origin}</span>
                     </div>
 
                     <Link href={`/tools/${tool.slug}`} className="group-hover:text-gold transition-colors">
-                      <h2 className="text-lg font-bold text-parchment-pure line-clamp-1">
+                      <h2 className="text-xs sm:text-base md:text-lg font-bold text-stone-900 dark:text-parchment-pure line-clamp-1">
                         {toolName}
                       </h2>
                     </Link>
 
-                    <p className="text-xs text-museum-secondary leading-relaxed line-clamp-3">
+                    <p className="text-[9px] sm:text-xs text-stone-600 dark:text-museum-secondary leading-relaxed line-clamp-2 sm:line-clamp-3">
                       {description}
                     </p>
 
                     {/* Multimedia Badges Ribbon */}
-                    <div className="flex items-center gap-3 text-[11px] text-gold/90 font-mono pt-1">
-                      <span className="flex items-center gap-1">
-                        <Box className="w-3.5 h-3.5 text-gold" />
-                        <span>3D Model</span>
+                    <div className="flex items-center gap-1.5 sm:gap-3 text-[8px] sm:text-[11px] text-gold-dark dark:text-gold/90 font-mono pt-1 border-t border-stone-200/60 dark:border-white/5 flex-wrap">
+                      <span className="flex items-center gap-0.5 sm:gap-1">
+                        <Box className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 text-gold shrink-0" />
+                        <span className="hidden sm:inline">3D Model</span>
+                        <span className="sm:hidden">3D</span>
                       </span>
                       <span>•</span>
-                      <span className="flex items-center gap-1">
-                        <Headphones className="w-3.5 h-3.5 text-gold" />
+                      <span className="flex items-center gap-0.5 sm:gap-1">
+                        <Headphones className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 text-gold shrink-0" />
                         <span>{tool.audioDuration}</span>
                       </span>
-                      <span>•</span>
-                      <span className="flex items-center gap-1">
-                        <Video className="w-3.5 h-3.5 text-gold" />
+                      <span className="hidden sm:inline">•</span>
+                      <span className="hidden sm:flex items-center gap-1">
+                        <Video className="w-3.5 h-3.5 text-gold shrink-0" />
                         <span>Video</span>
                       </span>
                     </div>
 
-                    {/* Connected Artworks Live Badges */}
+                    {/* Connected Artworks Live Badges (compact on mobile, full on desktop) */}
                     {connectedArtworks.length > 0 && (
-                      <div className="mt-2 pt-3 border-t border-museum-divider flex flex-col gap-1.5">
+                      <div className="hidden sm:flex mt-1 pt-2 border-t border-stone-200/60 dark:border-museum-divider flex-col gap-1.5">
                         <span className="text-[10px] font-medium text-gold uppercase tracking-wider">
                           {locale === 'ckb'
                             ? 'کارە پەیوەندیدارەکان بەم کەرەستەیە:'
@@ -220,14 +227,14 @@ export function ToolsIndexClient() {
                             : 'Masterworks Made With This Tool:'}
                         </span>
                         <div className="flex flex-wrap gap-1.5">
-                          {connectedArtworks.map((art) => (
+                          {connectedArtworks.slice(0, 2).map((art) => (
                             <Link
                               key={art.id}
                               href={`/artworks/${art.slug}`}
-                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] bg-obsidian-elevated hover:bg-gold/15 border border-white/5 hover:border-gold/30 text-parchment-muted hover:text-gold-light transition-all"
+                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] bg-stone-100 dark:bg-obsidian-elevated hover:bg-gold/15 border border-stone-200 dark:border-white/5 hover:border-gold/30 text-stone-700 dark:text-parchment-muted hover:text-gold-dark dark:hover:text-gold-light transition-all"
                             >
-                              <span className="w-1.5 h-1.5 rounded-full bg-gold" />
-                              <span className="truncate max-w-[150px]">
+                              <span className="w-1.5 h-1.5 rounded-full bg-gold shrink-0" />
+                              <span className="truncate max-w-[120px]">
                                 {art.title[locale] || art.title.ckb}
                               </span>
                               <ArrowUpRight className="w-3 h-3" />
@@ -240,13 +247,18 @@ export function ToolsIndexClient() {
                 </div>
 
                 {/* Card Footer Action */}
-                <div className="p-5 sm:p-6 pt-0">
+                <div className="p-2 sm:p-4 md:p-5 pt-0 mt-auto">
                   <Link
                     href={`/tools/${tool.slug}`}
-                    className="w-full py-2.5 rounded-full bg-obsidian-elevated/70 hover:bg-gold hover:text-obsidian border border-museum-border hover:border-gold text-parchment text-xs font-semibold flex items-center justify-center gap-2 transition-all duration-300 shadow-glass-pill"
+                    className="w-full py-1.5 sm:py-2.5 px-2 rounded-full bg-stone-100 dark:bg-obsidian-elevated/70 hover:bg-gold hover:text-stone-950 dark:hover:text-obsidian border border-stone-200 dark:border-museum-border hover:border-gold text-stone-800 dark:text-parchment text-[9px] sm:text-xs font-semibold flex items-center justify-center gap-1 sm:gap-2 transition-all duration-300 shadow-glass-pill text-center"
                   >
-                    <span>{locale === 'ckb' ? 'بینینی ئەناتۆمی و فرەمیدیا' : locale === 'ar' ? 'فحص تفاصيل الأداة والوسائط' : 'Inspect Instrument Anatomy'}</span>
-                    <ArrowUpRight className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">
+                      {locale === 'ckb' ? 'بینینی ئەناتۆمی و فرەمیدیا' : locale === 'ar' ? 'فحص تفاصيل الأداة والوسائط' : 'Inspect Instrument Anatomy'}
+                    </span>
+                    <span className="sm:hidden">
+                      {locale === 'ckb' ? 'بینینی وردەکاری' : locale === 'ar' ? 'فحص التفاصيل' : 'Inspect'}
+                    </span>
+                    <ArrowUpRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
                   </Link>
                 </div>
               </motion.div>
@@ -413,7 +425,7 @@ export function ToolsIndexClient() {
                   <div className="flex flex-col gap-4">
                     <span className="text-xs text-museum-secondary">
                       {locale === 'ckb'
-                        ? 'وێنەی ڕاستەقینەی بەکارهێنانی کەرەستەکە لە ئاتلیێی پەیمانگای چەمچەماڵ:'
+                        ? 'وێنەی ڕاستەقینەی بەکارهێنانی کەرەستەکە لە ئاتلیێی پەیمانگەی چەمچەماڵ:'
                         : 'High-resolution multi-angle photography of instrument application in the atelier:'}
                     </span>
 
@@ -468,7 +480,7 @@ export function ToolsIndexClient() {
                     <div className="p-5 rounded-2xl bg-gold/10 border border-gold/30 flex flex-col gap-2.5">
                       <h4 className="text-xs font-bold text-gold-light uppercase tracking-wider flex items-center gap-1.5">
                         <Sparkles className="w-3.5 h-3.5 text-gold" />
-                        <span>{locale === 'ckb' ? 'ئامۆژگارییە زێڕینەکانی مامۆستایانی پەیمانگا (Pro-Tips)' : 'Master Artisan Pro-Tips'}</span>
+                        <span>{locale === 'ckb' ? 'ئامۆژگارییە زێڕینەکانی مامۆستایانی پەیمانگە (Pro-Tips)' : 'Master Artisan Pro-Tips'}</span>
                       </h4>
                       <div className="flex flex-col gap-2 text-xs text-parchment-muted">
                         {(previewTool.proTips[locale] || previewTool.proTips.ckb).map((tip, idx) => (

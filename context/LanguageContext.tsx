@@ -29,7 +29,7 @@ export const LANGUAGES: LanguageOption[] = [
 
 export const TRANSLATIONS: TranslationsRecord = {
   ckb: {
-    instituteName: 'پەیمانگای هونەرە جوانەکانی چەمچەماڵ',
+    instituteName: 'پەیمانگەی هونەرە جوانەکانی چەمچەماڵ',
     instituteSubline: 'ئەرشیفی دیجیتاڵی نەتەوەیی و پاراستنی کەلەپوور',
     archiveBadge: 'ئەرشیفی فەرمی',
     liveArchive: 'ئەرشیفی کراوە',
@@ -44,13 +44,13 @@ export const TRANSLATIONS: TranslationsRecord = {
     },
     hero: {
       topBadge: 'پاراستنی کەلەپوور و داهێنانی هونەری هاوچەرخ',
-      instituteName: 'پەیمانگای هونەرە جوانەکانی چەمچەماڵ',
+      instituteName: 'پەیمانگەی هونەرە جوانەکانی چەمچەماڵ',
       subtitle: 'دەروازەی فەرمی ئەرشیفی نیشتمانی و داهێنانی ئەکادیمی',
       description: 'مەڵبەندێکی ڕەسەنی بونیادنانی هونەری هاوچەرخ لە ناوچەی گەرمیان (دامەزراو لە ٢٠٠٨). لێرەدا، مێژووی دەوڵەمەند و داهێنانی خوێندکاران و مامۆستایان بە تەکنەلۆجیای سێ ڕەهەندی و واقیعی زیادکراو دەپارێزرێت و نمایش دەکرێت.',
       scanQr: 'QR سکان بکە 🔍',
       exploreGallery: 'بینینی پێشانگای سەرەکی 🏛️',
       tagline: 'پاراستنی کەلەپوور و داهێنانی هونەری هاوچەرخ',
-      headline: 'پەیمانگای هونەرە جوانەکانی چەمچەماڵ',
+      headline: 'پەیمانگەی هونەرە جوانەکانی چەمچەماڵ',
       subheadline: 'دەروازەی فەرمی ئەرشیفی نیشتمانی و داهێنانی ئەکادیمی',
       view3DArchive: 'گەشتی سێ ڕەهەندی',
       featuredCount: '+١,٤٢٠ بەرهەم',
@@ -60,7 +60,7 @@ export const TRANSLATIONS: TranslationsRecord = {
     dashboard: {
       academicAnalytics: 'ئامارە فەرمییەکانی ئەکادیمی',
       realtimeBoardTitle: 'دەستەی بەشەکان و ئامارە فەرمییە ڕاستەوخۆکان',
-      realtimeBoardSubtitle: 'بەشە ئەکادیمییە مێژووییەکانی پەیمانگای هونەرە جوانەکانی چەمچەماڵ (شێوەکاری، مۆسیقا، شانۆ)',
+      realtimeBoardSubtitle: 'بەشە ئەکادیمییە مێژووییەکانی پەیمانگەی هونەرە جوانەکانی چەمچەماڵ (شێوەکاری، مۆسیقا، شانۆ)',
       totalArtworksPill: 'بەرهەمی کەتەلۆگکراو',
       scansPill: 'سکانی سێ ڕەهەندی',
       departmentsPill: 'بەشی زانستی',

@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Chamchamal Fine Arts Institute Digital Archive (ئەرشیفی پەیمانگای چەمچەماڵ)',
+    name: 'Chamchamal Fine Arts Institute Digital Archive (ئەرشیفی پەیمانگەی چەمچەماڵ)',
     short_name: 'Chamchamal Art',
     description: 'Museum-grade Digital Archive, 3D Photogrammetric Repository & Biennial Collection for Chamchamal Fine Arts Institute.',
     start_url: '/',

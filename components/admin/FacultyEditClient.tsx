@@ -352,7 +352,7 @@ export function FacultyEditClient({ id }: FacultyEditClientProps) {
                   required
                   value={roleCkb}
                   onChange={(e) => setRoleCkb(e.target.value)}
-                  placeholder="وەک: ڕاگری پەیمانگا یان سەرۆکی بەش"
+                  placeholder="وەک: ڕاگری پەیمانگە یان سەرۆکی بەش"
                   className="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-museum-border text-sm text-parchment outline-none focus:border-gold text-end"
                   dir="rtl"
                 />

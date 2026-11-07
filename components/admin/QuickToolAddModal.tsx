@@ -70,12 +70,12 @@ export function QuickToolAddModal({ isOpen, onClose, onToolCreated }: QuickToolA
       category,
       categoryLabel: categoryLabels[category] || categoryLabels.painting,
       description: {
-        ckb: descriptionCkb || 'کەرەستەیەکی پیشەیی بەکارهاتوو لە ئاتلیێی پەیمانگای چەمچەماڵ.',
+        ckb: descriptionCkb || 'کەرەستەیەکی پیشەیی بەکارهاتوو لە ئاتلیێی پەیمانگەی چەمچەماڵ.',
         ar: descriptionCkb || 'أداة احترافية مستخدمة في محترفات معهد جمجمال.',
         en: 'Professional studio instrument used in Chamchamal Fine Arts ateliers.',
       },
       historicalSignificance: {
-        ckb: 'بەشێک لە کەلەپوور و مێژووی دەستڕەنگینی هونەرمەندانی پەیمانگا.',
+        ckb: 'بەشێک لە کەلەپوور و مێژووی دەستڕەنگینی هونەرمەندانی پەیمانگە.',
         ar: 'جزء من تراث المعهد وتاريخه الفني.',
         en: 'Part of the institute material heritage.',
       },
@@ -90,7 +90,7 @@ export function QuickToolAddModal({ isOpen, onClose, onToolCreated }: QuickToolA
         en: 'Archival atelier materials',
       },
       origin: {
-        ckb: 'پەیمانگای هونەرە جوانەکانی چەمچەماڵ',
+        ckb: 'پەیمانگەی هونەرە جوانەکانی چەمچەماڵ',
         ar: 'معهد الفنون الجميلة بجمجمال',
         en: 'Chamchamal Fine Arts Institute Foundry',
       },
@@ -245,7 +245,7 @@ export function QuickToolAddModal({ isOpen, onClose, onToolCreated }: QuickToolA
               type="text"
               value={descriptionCkb}
               onChange={(e) => setDescriptionCkb(e.target.value)}
-              placeholder="تایبەتمەندی بەکارهێنانی ئەم ئامرازە لە پەیمانگادا..."
+              placeholder="تایبەتمەندی بەکارهێنانی ئەم ئامرازە لە پەیمانگەدا..."
               className="w-full px-3.5 py-2 rounded-xl bg-black/50 border border-museum-border text-xs text-parchment outline-none focus:border-gold"
             />
           </div>

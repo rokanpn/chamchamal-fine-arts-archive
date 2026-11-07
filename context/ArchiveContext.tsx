@@ -10,6 +10,7 @@ import { Collaborator } from '@/types/collaborators';
 import { COLLABORATORS_DATA } from '@/data/collaborators';
 import { CuratorUser } from '@/types/admin';
 import { 
+  supabase,
   fetchArtworksFromSupabase, 
   insertArtworkToSupabase, 
   updateArtworkInSupabase, 
@@ -151,7 +152,7 @@ const DEMO_CURATOR: CuratorUser = {
   id: 'curator-01',
   name: 'مامۆستا زریان بەرزنجی (Curator Zryan)',
   role: 'سەرپەرشتیاری ئەرشیفی دیجیتاڵی (Chief Archivist)',
-  department: 'پەیمانگای هونەرە جوانەکانی چەمچەماڵ',
+  department: 'پەیمانگەی هونەرە جوانەکانی چەمچەماڵ',
   avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=400&q=80',
   lastActive: 'ئێستا چالاکە • Active Now',
 };
@@ -245,24 +246,60 @@ export function ArchiveProvider({ children }: { children: ReactNode }) {
         setCurator(DEMO_CURATOR);
       }
 
-      // Live Supabase Artworks Synchronization
-      fetchArtworksFromSupabase()
-        .then((liveArtworks) => {
+      // Define real-time live synchronization function
+      const syncLiveArtworks = async () => {
+        try {
+          const liveArtworks = await fetchArtworksFromSupabase();
           if (liveArtworks && liveArtworks.length > 0) {
-            setArtworks((prev) => {
-              const liveIds = new Set(liveArtworks.map((a) => a.id));
-              const remaining = prev.filter((a) => !liveIds.has(a.id));
-              return [...liveArtworks, ...remaining];
-            });
+            const liveIds = new Set(liveArtworks.map((a) => a.id));
+            const staticFallback = ARTWORKS_DATA.filter((a) => !liveIds.has(a.id));
+            const freshList = [...liveArtworks, ...staticFallback];
+            setArtworks(freshList);
+            try {
+              localStorage.setItem(ARTWORKS_STORAGE_KEY, JSON.stringify(freshList));
+            } catch (_) {}
           }
-        })
-        .catch((err) => {
+        } catch (err) {
           console.warn('[ArchiveContext] Live Supabase fetch fallback to local', err);
-        });
+        }
+      };
+
+      // 1. Initial live synchronization on mount
+      syncLiveArtworks();
+
+      // 2. Real-time Supabase channel: instantly updates when admin adds/edits on desktop
+      const channel = supabase
+        .channel('realtime_artworks_sync')
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'artworks' },
+          () => {
+            syncLiveArtworks();
+          }
+        )
+        .subscribe();
+
+      // 3. Mobile screen wake / app switch / tab focus listener for instant cache-free refresh
+      const handleRevalidate = () => {
+        if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+          syncLiveArtworks();
+        }
+      };
+
+      window.addEventListener('visibilitychange', handleRevalidate);
+      window.addEventListener('focus', handleRevalidate);
+
+      setIsHydrated(true);
+
+      return () => {
+        supabase.removeChannel(channel);
+        window.removeEventListener('visibilitychange', handleRevalidate);
+        window.removeEventListener('focus', handleRevalidate);
+      };
     } catch (err) {
       console.warn('Storage sync warning', err);
+      setIsHydrated(true);
     }
-    setIsHydrated(true);
   }, []);
 
   // Artworks Handlers

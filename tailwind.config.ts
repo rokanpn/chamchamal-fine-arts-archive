@@ -10,20 +10,20 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Core Gallery Palette
+        // Core Gallery Palette (Dynamic CSS Variables for Theme Switcher)
         obsidian: {
-          DEFAULT: '#0A0A0C', // Deep Gallery Obsidian background
-          base: '#0A0A0C',
-          surface: '#121215', // Layered surface for cards & elevation
-          elevated: '#17171C', // Higher modal / dropdown level
-          overlay: 'rgba(10, 10, 12, 0.85)',
-          glass: 'rgba(10, 10, 12, 0.65)',
+          DEFAULT: 'rgb(var(--obsidian-base) / <alpha-value>)',
+          base: 'rgb(var(--obsidian-base) / <alpha-value>)',
+          surface: 'rgb(var(--obsidian-surface) / <alpha-value>)',
+          elevated: 'rgb(var(--obsidian-elevated) / <alpha-value>)',
+          overlay: 'var(--obsidian-overlay)',
+          glass: 'var(--obsidian-glass)',
         },
         parchment: {
-          DEFAULT: '#F5F3EC', // Warm Museum Parchment primary typography
-          pure: '#FAF9F5',
-          subtle: '#EBE7DC',
-          muted: '#C4C2BA',
+          DEFAULT: 'rgb(var(--parchment-base) / <alpha-value>)',
+          pure: 'rgb(var(--parchment-pure) / <alpha-value>)',
+          subtle: 'rgb(var(--parchment-subtle) / <alpha-value>)',
+          muted: 'rgb(var(--parchment-muted) / <alpha-value>)',
         },
         gold: {
           DEFAULT: '#D4AF37', // Fine Art Gold accent
@@ -34,12 +34,12 @@ const config: Config = {
           subtle: 'rgba(212, 175, 55, 0.12)',
         },
         museum: {
-          secondary: '#8E8D8A', // Muted secondary text
-          caption: '#636260',
-          border: 'rgba(255, 255, 255, 0.08)', // Ultra-subtle border frames
-          'border-hover': 'rgba(255, 255, 255, 0.16)',
+          secondary: 'rgb(var(--museum-secondary) / <alpha-value>)',
+          caption: 'rgb(var(--museum-caption) / <alpha-value>)',
+          border: 'var(--museum-border)',
+          'border-hover': 'var(--museum-border-hover)',
           'border-gold': 'rgba(212, 175, 55, 0.3)',
-          divider: 'rgba(245, 243, 236, 0.06)',
+          divider: 'var(--museum-divider)',
         },
       },
       fontFamily: {

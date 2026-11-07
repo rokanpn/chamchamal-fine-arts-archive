@@ -593,10 +593,10 @@ function CircularSculptureDisplay({
         <pointLight
           ref={lightRef}
           position={[0, 3.4, 0.4]}
-          intensity={hovered || isFocused ? 26 : 14}
-          distance={5.5}
+          intensity={hovered || isFocused ? 34 : 20}
+          distance={6.2}
           decay={2}
-          color={hovered || isFocused ? '#fff5d8' : '#ffeed0'}
+          color={hovered || isFocused ? '#fff7e0' : '#fff5d8'}
         />
       )}
 
@@ -886,7 +886,7 @@ function FloatingRotundaTitle({ radius }: { radius: number }) {
         textAlign="center"
         maxWidth={5.0}
       >
-        ئەمانە بەرهەمی پەیمانگای هونەرە جوانەکانی چەمچەماڵە
+        ئەمانە بەرهەمی پەیمانگەی هونەرە جوانەکانی چەمچەماڵە
       </Text>
 
       {/* Kurdish & English Subtitle */}
@@ -913,6 +913,7 @@ interface CircularCameraRigProps {
   focusedArtworkIndex: number | null;
   sculptures: Artwork[];
   onUpdateActiveIndex: (index: number) => void;
+  moveVector?: { x: number; y: number };
 }
 
 function CircularCameraRig({
@@ -923,6 +924,7 @@ function CircularCameraRig({
   focusedArtworkIndex,
   sculptures,
   onUpdateActiveIndex,
+  moveVector,
 }: CircularCameraRigProps) {
   const currentYaw = useRef(0);
   const currentPitch = useRef(0);
@@ -969,16 +971,25 @@ function CircularCameraRig({
       // Return camera height to standing eye-level when un-focused
       currentPos.current.y = THREE.MathUtils.damp(currentPos.current.y, 1.65, 4.0, safeDelta);
 
-      // 2. Free walk along the camera's gaze direction when holding forward/backward
-      if (moveDirection !== 0) {
-        const WALKING_SPEED = 5.5;
-        const forwardStep = -moveDirection * WALKING_SPEED * safeDelta;
+      // 2. Free walk along the camera's gaze direction when holding forward/backward or using dual joysticks
+      const effectiveMoveY = moveVector && moveVector.y !== 0
+        ? moveVector.y
+        : (moveDirection !== 0 ? -moveDirection : 0);
+      const effectiveMoveX = moveVector?.x ?? 0;
+
+      if (effectiveMoveY !== 0 || effectiveMoveX !== 0) {
+        const WALKING_SPEED = 7.5;
+        const forwardStep = effectiveMoveY * WALKING_SPEED * safeDelta;
+        const strafeStep = effectiveMoveX * WALKING_SPEED * safeDelta;
 
         const forwardDirX = -Math.sin(currentYaw.current);
         const forwardDirZ = -Math.cos(currentYaw.current);
 
-        const nextX = currentPos.current.x + forwardDirX * forwardStep;
-        const nextZ = currentPos.current.z + forwardDirZ * forwardStep;
+        const strafeDirX = Math.cos(currentYaw.current);
+        const strafeDirZ = -Math.sin(currentYaw.current);
+
+        const nextX = currentPos.current.x + forwardDirX * forwardStep + strafeDirX * strafeStep;
+        const nextZ = currentPos.current.z + forwardDirZ * forwardStep + strafeDirZ * strafeStep;
 
         const nextDist = Math.sqrt(nextX * nextX + nextZ * nextZ);
         const maxDist = rotundaRadius - 0.9;
@@ -1049,6 +1060,7 @@ export interface SculptureSceneProps {
   onUpdateActiveIndex: (index: number) => void;
   onFocusArtwork?: (artwork: Artwork, index: number, coords?: { x: number; y: number; z: number }) => void;
   onOpenModal?: (artwork: Artwork) => void;
+  moveVector?: { x: number; y: number };
 }
 
 export function SculptureScene({
@@ -1061,6 +1073,7 @@ export function SculptureScene({
   onUpdateActiveIndex,
   onFocusArtwork,
   onOpenModal,
+  moveVector,
 }: SculptureSceneProps) {
   // Filter artworks that belong to sculpture department or feature 3D models
   const sculptureArtworks = useMemo(() => {
@@ -1102,20 +1115,41 @@ export function SculptureScene({
       <color attach="background" args={['#ece7df']} />
       <fog attach="fog" args={['#ece7df', rotundaRadius * 0.9, rotundaRadius * 2.4]} />
 
-      {/* Daylight Illumination */}
-      <ambientLight intensity={0.95} color="#fff9f2" />
+      {/* 2. Soft Studio Lighting Setup (Bright, High-Key, Zero Harsh Shadows) */}
+      <ambientLight intensity={1.4} color="#fffcf5" />
+
+      {/* Key Light: Elevated warm daylight studio spotlight */}
       <directionalLight
-        position={[rotundaRadius * 0.4, 12, rotundaRadius * 0.3]}
-        intensity={1.8}
-        color="#fffaf0"
+        position={[rotundaRadius * 0.45, 14, rotundaRadius * 0.35]}
+        intensity={2.3}
+        color="#fffbf2"
         castShadow
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
         shadow-camera-near={0.5}
         shadow-camera-far={Math.max(50, rotundaRadius * 2.5)}
-        shadow-bias={-0.0005}
+        shadow-bias={-0.0003}
       />
-      <hemisphereLight args={['#ffffff', '#e8dfd5', 0.85]} />
+
+      {/* Fill Light: Soft cool-white opposing light to eliminate black crevices */}
+      <directionalLight
+        position={[-rotundaRadius * 0.45, 12, -rotundaRadius * 0.35]}
+        intensity={1.35}
+        color="#f5f8ff"
+      />
+
+      {/* Rim / Silhouette Light: Accentuates sculpture contours & marble columns */}
+      <directionalLight
+        position={[0, 13, -rotundaRadius * 0.5]}
+        intensity={1.1}
+        color="#fff9ea"
+      />
+
+      {/* Sky & Floor Bounce Light: Warm Carrara marble floor bounce */}
+      <hemisphereLight args={['#ffffff', '#e8dfd3', 1.2]} />
+
+      {/* Central Oculus Volumetric Down-Light */}
+      <pointLight position={[0, 8, 0]} intensity={45} distance={rotundaRadius * 1.5} decay={2} color="#fff6e2" />
 
       {/* 2. Free-Look & Circular Rotunda Camera Rig */}
       <CircularCameraRig
@@ -1126,6 +1160,7 @@ export function SculptureScene({
         focusedArtworkIndex={focusedArtworkIndex}
         sculptures={sculptureArtworks}
         onUpdateActiveIndex={onUpdateActiveIndex}
+        moveVector={moveVector}
       />
 
       {/* 3. Grand Roman Classical Rotunda Architecture */}

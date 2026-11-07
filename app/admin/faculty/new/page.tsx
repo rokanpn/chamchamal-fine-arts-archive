@@ -85,7 +85,7 @@ export default function NewFacultyPage() {
       id: generatedSlug,
       slug: generatedSlug,
       name: {
-        ckb: nameCkb || 'مامۆستای پەیمانگا',
+        ckb: nameCkb || 'مامۆستای پەیمانگە',
         ar: nameAr || nameCkb || 'أستاذ المعهد',
         en: nameEn || 'Institute Professor',
       },
@@ -100,7 +100,7 @@ export default function NewFacultyPage() {
         en: deptEn,
       },
       bio: {
-        ckb: bioCkb || 'مامۆستا و پەروەردەکاری دێرین لە پەیمانگای هونەرە جوانەکانی چەمچەماڵ.',
+        ckb: bioCkb || 'مامۆستا و پەروەردەکاری دێرین لە پەیمانگەی هونەرە جوانەکانی چەمچەماڵ.',
         ar: bioAr || bioCkb || 'أكاديمي وأستاذ بمعهد الفنون الجميلة بجمجمال.',
         en: bioEn || 'Educator and faculty member at Chamchamal Fine Arts Institute.',
       },

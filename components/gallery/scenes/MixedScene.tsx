@@ -24,11 +24,15 @@ interface FreeLookRigProps {
   onUpdateTargetZ: (z: number) => void;
   onUpdateActiveIndex: (index: number) => void;
   totalItems: number;
+  targetX?: number;
+  moveVector?: { x: number; y: number };
+  onUpdateTargetX?: (x: number) => void;
 }
 
 function FreeLookCameraRig({
   targetZ, moveDirection, targetYaw, targetPitch,
   maxTravelDistance, onUpdateTargetZ, onUpdateActiveIndex, totalItems,
+  targetX = 0, moveVector, onUpdateTargetX,
 }: FreeLookRigProps) {
   const currentYaw = useRef(0);
   const currentPitch = useRef(0);
@@ -36,16 +40,35 @@ function FreeLookCameraRig({
   useFrame((state, delta) => {
     const safeDelta = Number.isFinite(delta) && delta > 0 ? Math.min(delta, 0.1) : 0.016;
 
-    if (moveDirection !== 0) {
-      const step = moveDirection * WALKING_SPEED * safeDelta;
-      const safeTargetZ = Number.isFinite(targetZ) ? targetZ : 1.8;
-      const nextZ = Math.max(-maxTravelDistance, Math.min(1.8, safeTargetZ + step));
-      if (nextZ !== targetZ) onUpdateTargetZ(nextZ);
+    const effectiveMoveY = moveVector && moveVector.y !== 0
+      ? moveVector.y
+      : (moveDirection !== 0 ? -moveDirection : 0);
+    const effectiveMoveX = moveVector?.x ?? 0;
+
+    if (effectiveMoveY !== 0 || effectiveMoveX !== 0) {
+      if (effectiveMoveY !== 0) {
+        const step = -effectiveMoveY * WALKING_SPEED * safeDelta;
+        const safeTargetZ = Number.isFinite(targetZ) ? targetZ : 1.8;
+        const nextZ = Math.max(-maxTravelDistance, Math.min(1.8, safeTargetZ + step));
+        if (nextZ !== targetZ) onUpdateTargetZ(nextZ);
+      }
+      if (effectiveMoveX !== 0 && onUpdateTargetX) {
+        const STRAFE_SPEED = 4.0;
+        const stepX = effectiveMoveX * STRAFE_SPEED * safeDelta;
+        const safeTargetX = Number.isFinite(targetX) ? targetX : 0;
+        const nextX = Math.max(-1.3, Math.min(1.3, safeTargetX + stepX));
+        if (nextX !== targetX) onUpdateTargetX(nextX);
+      }
     }
 
-    state.camera.position.set(0, 1.7,
-      THREE.MathUtils.damp(state.camera.position.z, Number.isFinite(targetZ) ? targetZ : 1.8, 4.0, safeDelta)
+    const safeTargetZ = Number.isFinite(targetZ) ? targetZ : 1.8;
+    const safeTargetX = Number.isFinite(targetX) ? targetX : 0;
+    state.camera.position.set(
+      THREE.MathUtils.damp(state.camera.position.x, safeTargetX, 4.0, safeDelta),
+      1.7,
+      THREE.MathUtils.damp(state.camera.position.z, safeTargetZ, 4.0, safeDelta)
     );
+    if (!Number.isFinite(state.camera.position.x)) state.camera.position.x = 0;
     if (!Number.isFinite(state.camera.position.z)) state.camera.position.z = 1.8;
 
     if (!Number.isFinite(currentYaw.current)) currentYaw.current = 0;
@@ -125,7 +148,7 @@ function MixedFrame({ artwork, index, locale }: { artwork: Artwork; index: numbe
 
   return (
     <group position={[xPosition, CORRIDOR_HEIGHT * 0.48, zPosition]} rotation={[0, rotationY, 0]}>
-      <pointLight position={[0, frameH / 2 + 0.4, 0.6]} intensity={12} distance={4} decay={2} color="#ffecc4" />
+      <pointLight position={[0, frameH / 2 + 0.4, 0.6]} intensity={20} distance={5.2} decay={2} color="#fff6dc" />
       <group>
         {/* Invisible hit target for raycasting */}
         <mesh
@@ -275,12 +298,16 @@ export interface MixedSceneProps {
   targetPitch: number;
   onUpdateTargetZ: (z: number) => void;
   onUpdateActiveIndex: (index: number) => void;
+  targetX?: number;
+  moveVector?: { x: number; y: number };
+  onUpdateTargetX?: (x: number) => void;
 }
 
 export function MixedScene({
   artworks, locale, targetZ, moveDirection,
   targetYaw, targetPitch,
   onUpdateTargetZ, onUpdateActiveIndex,
+  targetX = 0, moveVector, onUpdateTargetX,
 }: MixedSceneProps) {
   const corridorLength = useMemo(() =>
     Math.max(30, artworks.length * SPACING_INTERVAL + ENTRY_BUFFER + EXIT_BUFFER),
@@ -290,10 +317,28 @@ export function MixedScene({
 
   return (
     <>
-      <color attach="background" args={['#070709']} />
-      <fog attach="fog" args={['#070709', 4, 32]} />
-      <ambientLight intensity={0.45} color="#d8e8ff" />
-      <hemisphereLight args={['#c8d8ff', '#060608', 0.5]} />
+      <color attach="background" args={['#0c0c10']} />
+      <fog attach="fog" args={['#0c0c10', 8, 38]} />
+
+      {/* Soft Studio Museum Lighting (Bright, High-Key, Zero Harsh Shadows) */}
+      <ambientLight intensity={1.35} color="#fffcf5" />
+
+      {/* Key Studio Directional Light */}
+      <directionalLight
+        position={[3, 7, 4]}
+        intensity={2.2}
+        color="#fffbf2"
+        castShadow
+        shadow-mapSize-width={1024}
+        shadow-mapSize-height={1024}
+        shadow-bias={-0.0003}
+      />
+
+      {/* Soft Opposing Fill Light to lift all shadows */}
+      <directionalLight position={[-3, 6, -10]} intensity={1.35} color="#f5f8ff" />
+
+      {/* Floor & Ceiling Upward Bounce Light */}
+      <hemisphereLight args={['#ffffff', '#ded5c5', 1.15]} />
 
       <FreeLookCameraRig
         targetZ={targetZ}
@@ -304,6 +349,9 @@ export function MixedScene({
         onUpdateTargetZ={onUpdateTargetZ}
         onUpdateActiveIndex={onUpdateActiveIndex}
         totalItems={artworks.length}
+        targetX={targetX}
+        moveVector={moveVector}
+        onUpdateTargetX={onUpdateTargetX}
       />
 
       <MixedCorridorEnvironment corridorLength={corridorLength} />

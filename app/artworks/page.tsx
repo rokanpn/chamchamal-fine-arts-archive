@@ -1,9 +1,13 @@
 import React, { Suspense } from 'react';
 import { ArtworksDirectoryClient } from '@/components/artworks/ArtworksDirectoryClient';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+export const fetchCache = 'force-no-store';
+
 export const metadata = {
   title: 'پێشانگای بەرهەمەکان | Chamchamal Fine Arts Archive',
-  description: 'ئەرشیفی فەرمی بەشە ئەکادیمییەکانی پەیمانگای هونەرە جوانەکانی چەمچەماڵ: شێوەکاری، مۆسیقا، شانۆ.',
+  description: 'ئەرشیفی فەرمی بەشە ئەکادیمییەکانی پەیمانگەی هونەرە جوانەکانی چەمچەماڵ: شێوەکاری، مۆسیقا، شانۆ.',
 };
 
 export default function ArtworksPage() {

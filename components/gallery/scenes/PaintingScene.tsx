@@ -147,10 +147,10 @@ function ArtworkFrame3D({ artwork, index, total, isFocused, locale, onFocus, onO
       <pointLight
         ref={lightRef}
         position={[0, frameH / 2 + 0.4, 0.6]}
-        intensity={14}
-        distance={4.8}
+        intensity={hovered || isFocused ? 22 : 16}
+        distance={5.5}
         decay={2}
-        color={hovered || isFocused ? '#fff3d1' : '#ffecc4'}
+        color={hovered || isFocused ? '#fff7dc' : '#fff3d1'}
       />
 
       {/* Artwork frame assembly */}
@@ -346,7 +346,7 @@ function CorridorEnvironment({ corridorLength }: { corridorLength: number }) {
   );
 }
 
-// --- FPS Free-Look Camera Rig (identical to original) ---
+// --- FPS Free-Look Camera Rig (enhanced with Dual Joystick Strafe & Move) ---
 interface FreeLookCameraRigProps {
   targetZ: number;
   moveDirection: number;
@@ -357,12 +357,16 @@ interface FreeLookCameraRigProps {
   onUpdateActiveIndex: (index: number) => void;
   totalArtworks: number;
   isFocused: boolean;
+  targetX?: number;
+  moveVector?: { x: number; y: number };
+  onUpdateTargetX?: (newX: number) => void;
 }
 
 function FreeLookCameraRig({
   targetZ, moveDirection, targetYaw, targetPitch,
   maxTravelDistance, onUpdateTargetZ, onUpdateActiveIndex,
   totalArtworks, isFocused,
+  targetX = 0, moveVector, onUpdateTargetX,
 }: FreeLookCameraRigProps) {
   const currentYaw = useRef(0);
   const currentPitch = useRef(0);
@@ -370,15 +374,32 @@ function FreeLookCameraRig({
   useFrame((state, delta) => {
     const safeDelta = Number.isFinite(delta) && delta > 0 ? Math.min(delta, 0.1) : 0.016;
 
-    if (!isFocused && moveDirection !== 0) {
-      const step = moveDirection * WALKING_SPEED * safeDelta;
-      const safeTargetZ = Number.isFinite(targetZ) ? targetZ : 1.8;
-      const nextZ = Math.max(-maxTravelDistance, Math.min(1.8, safeTargetZ + step));
-      if (nextZ !== targetZ) onUpdateTargetZ(nextZ);
+    // Translation logic: combines moveVector (dual joystick) and moveDirection (keyboard fallback)
+    const effectiveMoveY = moveVector && moveVector.y !== 0
+      ? moveVector.y
+      : (moveDirection !== 0 ? -moveDirection : 0);
+    const effectiveMoveX = moveVector?.x ?? 0;
+
+    if (!isFocused && (effectiveMoveY !== 0 || effectiveMoveX !== 0)) {
+      if (effectiveMoveY !== 0) {
+        // Pushing forward (+y) walks forward into corridor (-Z)
+        const stepZ = -effectiveMoveY * WALKING_SPEED * safeDelta;
+        const safeTargetZ = Number.isFinite(targetZ) ? targetZ : 1.8;
+        const nextZ = Math.max(-maxTravelDistance, Math.min(1.8, safeTargetZ + stepZ));
+        if (nextZ !== targetZ) onUpdateTargetZ(nextZ);
+      }
+      if (effectiveMoveX !== 0 && onUpdateTargetX) {
+        const STRAFE_SPEED = 4.0;
+        const stepX = effectiveMoveX * STRAFE_SPEED * safeDelta;
+        const safeTargetX = Number.isFinite(targetX) ? targetX : 0;
+        const nextX = Math.max(-1.4, Math.min(1.4, safeTargetX + stepX));
+        if (nextX !== targetX) onUpdateTargetX(nextX);
+      }
     }
 
     const safeTargetZ = Number.isFinite(targetZ) ? targetZ : 1.8;
-    state.camera.position.x = 0;
+    const safeTargetX = Number.isFinite(targetX) ? targetX : 0;
+    state.camera.position.x = THREE.MathUtils.damp(state.camera.position.x, safeTargetX, 4.0, safeDelta);
     state.camera.position.y = 1.7;
     state.camera.position.z = THREE.MathUtils.damp(state.camera.position.z, safeTargetZ, 4.0, safeDelta);
 
@@ -430,12 +451,16 @@ export interface PaintingSceneProps {
   onUpdateActiveIndex: (index: number) => void;
   onFocusArtwork: (artwork: Artwork, index: number) => void;
   onOpenModal: (artwork: Artwork) => void;
+  targetX?: number;
+  moveVector?: { x: number; y: number };
+  onUpdateTargetX?: (x: number) => void;
 }
 
 export function PaintingScene({
   artworks, locale, targetZ, moveDirection,
   targetYaw, targetPitch, focusedArtworkIndex,
   onUpdateTargetZ, onUpdateActiveIndex, onFocusArtwork, onOpenModal,
+  targetX = 0, moveVector, onUpdateTargetX,
 }: PaintingSceneProps) {
   const corridorLength = useMemo(() =>
     Math.max(30, artworks.length * SPACING_INTERVAL + ENTRY_BUFFER + EXIT_BUFFER),
@@ -445,10 +470,31 @@ export function PaintingScene({
 
   return (
     <>
-      <color attach="background" args={['#070709']} />
-      <fog attach="fog" args={['#070709', 4, 30]} />
-      <ambientLight intensity={0.5} color="#dbe5ff" />
-      <hemisphereLight args={['#ffe8bd', '#070709', 0.6]} />
+      <color attach="background" args={['#0c0c10']} />
+      <fog attach="fog" args={['#0c0c10', 8, 38]} />
+
+      {/* Soft Studio Museum Lighting (Bright, High-Key, Zero Harsh Shadows) */}
+      <ambientLight intensity={1.35} color="#fffcf5" />
+
+      {/* Key Studio Directional Light */}
+      <directionalLight
+        position={[3, 7, 4]}
+        intensity={2.2}
+        color="#fffbf2"
+        castShadow
+        shadow-mapSize-width={1024}
+        shadow-mapSize-height={1024}
+        shadow-bias={-0.0003}
+      />
+
+      {/* Soft Opposing Fill Light to lift all shadows */}
+      <directionalLight position={[-3, 6, -10]} intensity={1.35} color="#f5f8ff" />
+
+      {/* Distant Corridor Fill Light */}
+      <directionalLight position={[0, 5, -25]} intensity={1.15} color="#fff8ee" />
+
+      {/* Floor & Ceiling Upward Bounce Light */}
+      <hemisphereLight args={['#ffffff', '#ded5c5', 1.15]} />
 
       <FreeLookCameraRig
         targetZ={targetZ}
@@ -460,6 +506,9 @@ export function PaintingScene({
         onUpdateActiveIndex={onUpdateActiveIndex}
         totalArtworks={artworks.length}
         isFocused={focusedArtworkIndex !== null}
+        targetX={targetX}
+        moveVector={moveVector}
+        onUpdateTargetX={onUpdateTargetX}
       />
 
       <CorridorEnvironment corridorLength={corridorLength} />

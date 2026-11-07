@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
 import { useNavigationTransition } from '@/context/NavigationTransitionContext';
+import { useTheme } from 'next-themes';
 import { 
   Menu, 
   X, 
@@ -16,15 +17,28 @@ import {
   Building2, 
   Globe, 
   ChevronRight,
-  Loader2
+  Loader2,
+  Sun,
+  Moon
 } from 'lucide-react';
 
 export function Navbar() {
   const { locale, setLocale, availableLanguages, t, isRTL } = useLanguage();
   const { navigateTo, prefetch, navigatingHref } = useNavigationTransition();
+  const { theme, setTheme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isDark = mounted ? resolvedTheme === 'dark' : false;
+  const toggleTheme = () => {
+    setTheme(isDark ? 'light' : 'dark');
+  };
 
   // Close mobile drawer on route change
   useEffect(() => {
@@ -91,15 +105,17 @@ export function Navbar() {
       {/* Premium 3D-Effect Museum Glassmorphism Navigation Capsule */}
       <nav
         aria-label="Main Navigation"
-        className={`relative flex items-center justify-between px-3 sm:px-5 py-2 sm:py-2.5 rounded-full backdrop-blur-2xl bg-black/55 border-double border-t-white/10 border-b-gold/20 border-x-white/[0.04] shadow-[0_12px_40px_-8px_rgba(0,0,0,0.85),0_0_25px_rgba(212,175,55,0.08),inset_0_1px_1px_rgba(255,255,255,0.18),inset_0_-1px_2px_rgba(212,175,55,0.15)] transition-all duration-500 ${
-          scrolled ? 'bg-black/75 shadow-[0_16px_50px_-8px_rgba(0,0,0,0.95),0_0_30px_rgba(212,175,55,0.12)]' : ''
+        className={`relative flex items-center justify-between px-3 sm:px-5 py-2 sm:py-2.5 rounded-full backdrop-blur-2xl transition-all duration-500 ${
+          scrolled
+            ? 'bg-white/90 dark:bg-black/75 border border-stone-200/90 dark:border-t-white/10 dark:border-b-gold/20 dark:border-x-white/[0.04] shadow-[0_16px_40px_-8px_rgba(0,0,0,0.12),0_0_20px_rgba(212,175,55,0.1)] dark:shadow-[0_16px_50px_-8px_rgba(0,0,0,0.95),0_0_30px_rgba(212,175,55,0.12)]'
+            : 'bg-white/80 dark:bg-black/55 border border-stone-200/70 dark:border-t-white/10 dark:border-b-gold/20 dark:border-x-white/[0.04] shadow-[0_10px_30px_-8px_rgba(0,0,0,0.08),0_0_15px_rgba(212,175,55,0.06)] dark:shadow-[0_12px_40px_-8px_rgba(0,0,0,0.85),0_0_25px_rgba(212,175,55,0.08)]'
         }`}
       >
         {/* Specular Edge Highlights */}
-        <div className="absolute inset-x-8 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none" />
+        <div className="absolute inset-x-8 top-0 h-[1px] bg-gradient-to-r from-transparent via-stone-400/20 dark:via-white/25 to-transparent pointer-events-none" />
         <div className="absolute inset-x-12 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-gold/30 to-transparent pointer-events-none" />
 
-        {/* 1. Left: Interstellar Gold-Plated Seal & Official Typography */}
+        {/* 1. Left: Official Dynamic Logo & Official Typography */}
         <a
           href="/"
           onClick={(e) => {
@@ -112,47 +128,43 @@ export function Navbar() {
           onPointerDown={() => prefetch('/')}
           className="flex items-center gap-2.5 sm:gap-3 group focus:outline-none focus-visible:ring-1 focus-visible:ring-gold rounded-full shrink-0 cursor-pointer active:scale-95 transition-transform"
         >
-          {/* Interstellar Seal Monogram */}
-          <div className="relative flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gradient-to-br from-obsidian-surface via-black to-obsidian-elevated border border-gold/50 shadow-[0_0_16px_rgba(212,175,55,0.25),inset_0_1px_2px_rgba(255,255,255,0.3)] group-hover:border-gold group-hover:shadow-[0_0_24px_rgba(212,175,55,0.45)] transition-all duration-500 overflow-hidden shrink-0">
-            <div className="absolute inset-0 bg-gold/5 group-hover:bg-gold/15 transition-colors duration-500" />
+          {/* Dynamic Institute Logo Medallion (Transparent in Dark Mode, Solid White in Light Mode) */}
+          <div className="relative flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white dark:bg-obsidian-surface/90 border border-gold/40 shadow-[0_2px_10px_rgba(0,0,0,0.08)] dark:shadow-[0_0_16px_rgba(212,175,55,0.25)] group-hover:border-gold group-hover:shadow-[0_0_22px_rgba(212,175,55,0.45)] transition-all duration-300 overflow-hidden shrink-0 p-1">
+            <div className="absolute inset-0 bg-gold/5 group-hover:bg-gold/15 transition-colors duration-500 pointer-events-none" />
 
-            {/* Sacred Geometric 8-Point Interstellar Star SVG */}
-            <svg
-              className="w-5 h-5 text-gold group-hover:scale-110 group-hover:rotate-12 transition-transform duration-500 drop-shadow-[0_0_4px_rgba(212,175,55,0.6)]"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              {/* Outer Star Radiance */}
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-              {/* Inner Concentric Core */}
-              <circle cx="12" cy="12" r="3.2" stroke="currentColor" strokeWidth="1" fill="rgba(212,175,55,0.15)" />
-              {/* Central Pivot Diamond */}
-              <polygon points="12 10 13.5 12 12 14 10.5 12" fill="currentColor" stroke="none" />
-            </svg>
+            {/* Dark Mode Logo: Transparent background */}
+            <img
+              src="/logo-dark.png"
+              alt={t.instituteName}
+              className="w-full h-full object-contain rounded-full hidden dark:block transition-transform duration-300 group-hover:scale-105"
+            />
+
+            {/* Light Mode Logo: Solid white background */}
+            <img
+              src="/logo-light.png"
+              alt={t.instituteName}
+              className="w-full h-full object-contain rounded-full block dark:hidden transition-transform duration-300 group-hover:scale-105"
+            />
 
             {/* Micro Gold Twinkle Flare */}
-            <span className="absolute top-1.5 right-1.5 w-1 h-1 rounded-full bg-gold shadow-[0_0_6px_#D4AF37] animate-ping opacity-80" />
+            <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-gold shadow-[0_0_6px_#D4AF37] opacity-80 pointer-events-none" />
           </div>
 
           {/* Typography Moniker & Official Medallion */}
           <div className="flex flex-col text-start">
             <div className="flex items-center gap-2">
-              <span className="text-xs sm:text-sm font-bold tracking-wide text-parchment group-hover:text-gold-light transition-colors duration-200">
+              <span className="text-xs sm:text-sm font-bold tracking-wide text-stone-900 dark:text-parchment group-hover:text-gold-dark dark:group-hover:text-gold-light transition-colors duration-200">
                 {t.instituteName}
               </span>
 
               {/* 2. Badge: Golden Metallic Medallion "ئەرشیفی فەرمی" */}
-              <span className="hidden xl:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-medium tracking-wider bg-gradient-to-br from-amber-500/20 via-gold/15 to-amber-900/40 text-gold-shimmer border border-gold/40 shadow-[inset_0_1px_2px_rgba(255,255,255,0.2),0_2px_8px_rgba(212,175,55,0.15)] select-none">
+              <span className="hidden xl:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-medium tracking-wider bg-gold/15 text-gold-dark dark:text-gold-shimmer border border-gold/40 shadow-sm select-none">
                 <span className="w-1.5 h-1.5 rounded-full bg-gold animate-pulse shadow-[0_0_6px_#D4AF37]" />
                 <span>{t.archiveBadge}</span>
               </span>
             </div>
 
-            <span className="text-[9px] sm:text-[10px] text-museum-secondary tracking-widest line-clamp-1 font-serif uppercase">
+            <span className="text-[9px] sm:text-[10px] text-stone-500 dark:text-museum-secondary tracking-widest line-clamp-1 font-serif uppercase">
               CHAMCHAMAL FINE ARTS DIGITAL ARCHIVE
             </span>
           </div>
@@ -219,13 +231,13 @@ export function Navbar() {
           })}
         </div>
 
-        {/* 4. Right: Segmented Frosted Localization Capsule & Mobile Toggle */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        {/* 4. Right: Theme Switcher Toggle, Segmented Frosted Localization Capsule & Mobile Toggle */}
+        <div className="flex items-center gap-1.5 sm:gap-2.5">
           {/* Localization: Multi-Segmented Sliding Frosted Capsule */}
           <div
             role="radiogroup"
             aria-label="Language and Direction Selector"
-            className="relative hidden sm:flex items-center p-1 rounded-full bg-black/40 border border-white/5 backdrop-blur-xl shadow-glass-pill"
+            className="relative hidden sm:flex items-center p-1 rounded-full bg-stone-100/80 dark:bg-black/40 border border-stone-200/80 dark:border-white/5 backdrop-blur-xl shadow-sm dark:shadow-glass-pill"
           >
             <div className="sr-only">Current Language: {locale}</div>
 
@@ -244,8 +256,8 @@ export function Navbar() {
                   }}
                   className={`relative z-10 px-2.5 sm:px-3 py-1 rounded-full text-xs font-medium transition-colors duration-200 select-none cursor-pointer active:scale-95 ${
                     isSelected
-                      ? 'text-parchment-pure font-bold'
-                      : 'text-museum-secondary hover:text-parchment'
+                      ? 'text-stone-900 dark:text-parchment-pure font-bold'
+                      : 'text-stone-600 hover:text-stone-900 dark:text-museum-secondary dark:hover:text-parchment'
                   }`}
                 >
                   {/* Sliding Frosted Gold Pill */}
@@ -266,11 +278,45 @@ export function Navbar() {
             })}
           </div>
 
+          {/* Theme Switcher Toggle Button (Sun / Moon) */}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label={isDark ? 'گۆڕین بۆ دۆخی ڕۆژ (Light Mode)' : 'گۆڕین بۆ دۆخی شەو (Dark Mode)'}
+            title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            className="relative p-2 sm:p-2.5 rounded-full bg-stone-100/90 dark:bg-black/40 hover:bg-gold/15 dark:hover:bg-gold/15 border border-stone-200/90 dark:border-white/10 text-stone-700 dark:text-parchment hover:text-gold-dark dark:hover:text-gold transition-all duration-300 shadow-sm focus:outline-none cursor-pointer active:scale-95 group shrink-0"
+          >
+            <span className="sr-only">Toggle theme</span>
+            <AnimatePresence mode="wait" initial={false}>
+              {isDark ? (
+                <motion.div
+                  key="sun"
+                  initial={{ rotate: -90, scale: 0.5, opacity: 0 }}
+                  animate={{ rotate: 0, scale: 1, opacity: 1 }}
+                  exit={{ rotate: 90, scale: 0.5, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Sun className="w-4 h-4 text-amber-400 group-hover:rotate-45 transition-transform" />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="moon"
+                  initial={{ rotate: 90, scale: 0.5, opacity: 0 }}
+                  animate={{ rotate: 0, scale: 1, opacity: 1 }}
+                  exit={{ rotate: 90, scale: 0.5, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Moon className="w-4 h-4 text-stone-700 group-hover:-rotate-12 transition-transform" />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </button>
+
           {/* Mobile Drawer Hamburger Trigger */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-full bg-white/5 hover:bg-white/10 active:scale-95 border border-white/10 text-parchment hover:text-gold transition-all focus:outline-none cursor-pointer"
+            className="lg:hidden p-2 rounded-full bg-stone-100/90 dark:bg-white/5 hover:bg-stone-200/80 dark:hover:bg-white/10 active:scale-95 border border-stone-200/90 dark:border-white/10 text-stone-700 dark:text-parchment hover:text-gold-dark dark:hover:text-gold transition-all focus:outline-none cursor-pointer"
             aria-label={mobileMenuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
             aria-expanded={mobileMenuOpen}
           >
@@ -287,17 +333,20 @@ export function Navbar() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -12, scale: 0.98 }}
             transition={{ type: 'spring', stiffness: 450, damping: 30 }}
-            className="lg:hidden mt-2 p-4 rounded-3xl bg-black/85 backdrop-blur-3xl border border-gold/30 shadow-[0_20px_60px_rgba(0,0,0,0.9),0_0_30px_rgba(212,175,55,0.15)] flex flex-col gap-4 overflow-hidden"
+            className="lg:hidden mt-2 p-4 rounded-3xl bg-white/95 dark:bg-black/85 backdrop-blur-3xl border border-stone-200/90 dark:border-gold/30 shadow-[0_20px_60px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.9),0_0_30px_rgba(212,175,55,0.15)] flex flex-col gap-4 overflow-hidden"
           >
-            {/* Mobile Header Medallion */}
-            <div className="flex items-center justify-between border-b border-museum-divider pb-3">
+            {/* Mobile Header Medallion with dynamic logo */}
+            <div className="flex items-center justify-between border-b border-stone-200/80 dark:border-museum-divider pb-3">
               <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-gold animate-pulse shadow-[0_0_8px_#D4AF37]" />
-                <span className="text-xs font-bold text-parchment font-serif">
+                <div className="w-6 h-6 rounded-full overflow-hidden border border-gold/40 shrink-0">
+                  <img src="/logo-dark.png" alt={t.instituteName} className="w-full h-full object-contain hidden dark:block" />
+                  <img src="/logo-light.png" alt={t.instituteName} className="w-full h-full object-contain block dark:hidden" />
+                </div>
+                <span className="text-xs font-bold text-stone-900 dark:text-parchment font-serif">
                   {t.instituteName}
                 </span>
               </div>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-gold/15 text-gold border border-gold/30">
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-gold/15 text-gold-dark dark:text-gold border border-gold/30">
                 {t.archiveBadge}
               </span>
             </div>
@@ -318,13 +367,13 @@ export function Navbar() {
                     onPointerDown={() => prefetch(link.href)}
                     className={`flex items-center justify-between p-3 rounded-2xl transition-all cursor-pointer active:scale-95 ${
                       link.isActive || isPendingNav
-                        ? 'bg-gold/15 text-gold border border-gold/40 shadow-[0_0_14px_rgba(212,175,55,0.2)]'
-                        : 'text-parchment-muted hover:text-parchment hover:bg-white/5 border border-transparent'
+                        ? 'bg-gold/15 text-gold-dark dark:text-gold border border-gold/40 shadow-sm dark:shadow-[0_0_14px_rgba(212,175,55,0.2)]'
+                        : 'text-stone-700 dark:text-parchment-muted hover:text-stone-950 dark:hover:text-parchment hover:bg-stone-100/80 dark:hover:bg-white/5 border border-transparent'
                     }`}
                   >
                     <div className="flex items-center gap-3">
                       <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${
-                        link.isActive ? 'bg-gold text-obsidian font-bold shadow-gold-glow' : 'bg-white/5 text-museum-secondary'
+                        link.isActive ? 'bg-gold text-obsidian font-bold shadow-gold-glow' : 'bg-stone-200/60 dark:bg-white/5 text-stone-600 dark:text-museum-secondary'
                       }`}>
                         {isPendingNav ? <Loader2 className="w-4 h-4 animate-spin text-gold" /> : <Icon className="w-4 h-4" />}
                       </div>
@@ -336,19 +385,43 @@ export function Navbar() {
                     ) : link.isActive ? (
                       <span className="w-2 h-2 rounded-full bg-gold shadow-[0_0_6px_#D4AF37] animate-pulse" />
                     ) : (
-                      <ChevronRight className="w-4 h-4 text-museum-caption rtl:rotate-180" />
+                      <ChevronRight className="w-4 h-4 text-stone-400 dark:text-museum-caption rtl:rotate-180" />
                     )}
                   </button>
                 );
               })}
             </div>
 
+            {/* Mobile Theme Switcher Bar */}
+            <div className="pt-2 border-t border-stone-200/80 dark:border-museum-divider flex items-center justify-between">
+              <span className="text-[10px] font-mono text-stone-500 dark:text-museum-secondary uppercase">
+                {locale === 'ckb' ? 'شێوازی ڕووکار' : 'Appearance'}
+              </span>
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-stone-100 dark:bg-black/60 border border-stone-200/80 dark:border-white/10 text-xs font-semibold text-stone-800 dark:text-parchment hover:text-gold-dark dark:hover:text-gold cursor-pointer active:scale-95 transition-all"
+              >
+                {isDark ? (
+                  <>
+                    <Sun className="w-3.5 h-3.5 text-amber-500" />
+                    <span>{locale === 'ckb' ? 'دۆخی ڕۆژ (ڕووناک)' : 'Light Mode'}</span>
+                  </>
+                ) : (
+                  <>
+                    <Moon className="w-3.5 h-3.5 text-stone-700" />
+                    <span>{locale === 'ckb' ? 'دۆخی شەو (تاریک)' : 'Dark Mode'}</span>
+                  </>
+                )}
+              </button>
+            </div>
+
             {/* Mobile Localization Segmented Bar */}
-            <div className="pt-2 border-t border-museum-divider flex flex-col gap-2">
-              <span className="text-[10px] font-mono text-museum-secondary uppercase">
+            <div className="pt-2 border-t border-stone-200/80 dark:border-museum-divider flex flex-col gap-2">
+              <span className="text-[10px] font-mono text-stone-500 dark:text-museum-secondary uppercase">
                 {locale === 'ckb' ? 'هەڵبژاردنی زمان' : 'Interface Language'}
               </span>
-              <div className="grid grid-cols-3 gap-2 p-1 rounded-2xl bg-black/60 border border-white/5">
+              <div className="grid grid-cols-3 gap-2 p-1 rounded-2xl bg-stone-100/90 dark:bg-black/60 border border-stone-200/80 dark:border-white/5">
                 {availableLanguages.map((lang) => {
                   const isSelected = locale === lang.code;
                   return (
@@ -362,7 +435,7 @@ export function Navbar() {
                       className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer active:scale-95 ${
                         isSelected
                           ? 'bg-gradient-to-r from-gold via-gold-light to-gold text-obsidian shadow-gold-glow'
-                          : 'text-museum-secondary hover:text-parchment'
+                          : 'text-stone-600 dark:text-museum-secondary hover:text-stone-900 dark:hover:text-parchment'
                       }`}
                     >
                       {lang.label}

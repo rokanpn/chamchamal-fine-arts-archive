@@ -1,45 +1,25 @@
 import type { Metadata, Viewport } from 'next';
-import { Vazirmatn, Cormorant_Garamond, Cinzel, Inter } from 'next/font/google';
 import './globals.css';
+import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import { LanguageProvider } from '@/context/LanguageContext';
 import { ArchiveProvider } from '@/context/ArchiveContext';
 import { NavigationTransitionProvider } from '@/context/NavigationTransitionContext';
 import { AppShell } from '@/components/layout/AppShell';
 
-// Primary typography for Kurdish (Sorani) and Arabic
-const vazirmatn = Vazirmatn({
-  subsets: ['arabic', 'latin'],
-  variable: '--font-vazirmatn',
-  display: 'swap',
-  weight: ['300', '400', '500', '600', '700', '800'],
-});
+// Primary typography variables for bi-directional Kurdish, Arabic & Latin editorial styles
+const vazirmatn = { variable: 'var(--font-vazirmatn)' };
+const cormorant = { variable: 'var(--font-cormorant)' };
+const cinzel = { variable: 'var(--font-cinzel)' };
+const inter = { variable: 'var(--font-inter)' };
 
-// Editorial luxury serif for Western classical gallery titles
-const cormorant = Cormorant_Garamond({
-  subsets: ['latin'],
-  variable: '--font-cormorant',
-  display: 'swap',
-  weight: ['400', '500', '600', '700'],
-});
-
-// High-end Roman inscription display font for brand seals and monograms
-const cinzel = Cinzel({
-  subsets: ['latin'],
-  variable: '--font-cinzel',
-  display: 'swap',
-  weight: ['500', '600', '700', '800'],
-});
-
-// Modern neutral sans-serif for UI labels and tabular numerical indices
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-});
+// Enforce real-time dynamic rendering & disable static HTML caching across all devices
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+export const fetchCache = 'force-no-store';
 
 // PWA Viewport Configuration: 100dvh optimization & notch safe-area
 export const viewport: Viewport = {
-  themeColor: '#0A0A0C',
+  themeColor: '#F8F7F4',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
@@ -50,10 +30,10 @@ export const viewport: Viewport = {
 // Museum Curatorial Metadata & PWA Inscription
 export const metadata: Metadata = {
   title: {
-    default: 'Chamchamal Fine Arts Institute Digital Archive | ئەرشیفی پەیمانگای هونەرە جوانەکانی چەمچەماڵ',
+    default: 'Chamchamal Fine Arts Institute Digital Archive | ئەرشیفی پەیمانگەی هونەرە جوانەکانی چەمچەماڵ',
     template: '%s | Chamchamal Fine Arts Archive',
   },
-  description: 'The official digital archive, student biennial repository, and 3D photogrammetric artifact collection for Chamchamal Fine Arts Institute (پەیمانگای هونەرە جوانەکانی چەمچەماڵ).',
+  description: 'The official digital archive, student biennial repository, and 3D photogrammetric artifact collection for Chamchamal Fine Arts Institute (پەیمانگەی هونەرە جوانەکانی چەمچەماڵ).',
   applicationName: 'Chamchamal Fine Arts Archive',
   appleWebApp: {
     capable: true,
@@ -87,15 +67,17 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="bg-obsidian text-parchment font-kurdish antialiased min-h-screen selection:bg-gold/30 selection:text-gold-shimmer">
-        <LanguageProvider>
-          <ArchiveProvider>
-            <NavigationTransitionProvider>
-              <AppShell>
-                {children}
-              </AppShell>
-            </NavigationTransitionProvider>
-          </ArchiveProvider>
-        </LanguageProvider>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+          <LanguageProvider>
+            <ArchiveProvider>
+              <NavigationTransitionProvider>
+                <AppShell>
+                  {children}
+                </AppShell>
+              </NavigationTransitionProvider>
+            </ArchiveProvider>
+          </LanguageProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

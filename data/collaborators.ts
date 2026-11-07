@@ -38,7 +38,7 @@ export const COLLABORATORS_DATA: Collaborator[] = [
       'https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=800&q=80',
     ],
     curatorialSummary: {
-      ckb: 'لە پایزی ٢٠١٧، مامۆستا ئیسماعیل خەیات ماستەرکلاسێکی سێ ڕۆژەی لەگەڵ خوێندکارانی پەیمانگا لە هۆڵی پێشانگا سازکرد؛ لە میانیدا چەندین تابلۆی هاوبەش لەسەر بەردی سروشتی کێشران.',
+      ckb: 'لە پایزی ٢٠١٧، مامۆستا ئیسماعیل خەیات ماستەرکلاسێکی سێ ڕۆژەی لەگەڵ خوێندکارانی پەیمانگە لە هۆڵی پێشانگا سازکرد؛ لە میانیدا چەندین تابلۆی هاوبەش لەسەر بەردی سروشتی کێشران.',
       ar: 'في خريف 2017، قدم الأستاذ خياط ورشة مكثفة استمرت ثلاثة أيام لطلبة المعهد نتج عنها أعمال مشتركة رسمت على صخور المنطقة.',
       en: 'In Autumn 2017, Maestro Ismail Khayat conducted a landmark 3-day masterclass on natural stone pigments, co-producing archival installations with inaugural students.',
     },
@@ -80,7 +80,7 @@ export const COLLABORATORS_DATA: Collaborator[] = [
       'https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?auto=format&fit=crop&w=800&q=80',
     ],
     curatorialSummary: {
-      ckb: 'وۆرکشۆپێکی چڕ دەربارەی تێپەڕاندنی فۆڕمی کلاسیکی بەرەو هونەری ئەدایی و چەمکگەری لە هۆڵی کتێبخانەی پەیمانگا پێشکەشکرا.',
+      ckb: 'وۆرکشۆپێکی چڕ دەربارەی تێپەڕاندنی فۆڕمی کلاسیکی بەرەو هونەری ئەدایی و چەمکگەری لە هۆڵی کتێبخانەی پەیمانگە پێشکەشکرا.',
       ar: 'ورشة مكثفة حول الانتقال من الشكلانية الكلاسيكية إلى فنون الأداء والمفاهيمية لطلبة قسمي الرسم والتصميم.',
       en: 'Conducted a boundary-pushing workshop on experimental typography, spontaneous performance art, and manifesto writing.',
     },
@@ -112,7 +112,7 @@ export const COLLABORATORS_DATA: Collaborator[] = [
     avatarUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=600&q=80',
     collaborationType: 'residency',
     collaborationTypeLabel: {
-      ckb: 'ئیقامەی هونەری لە پەیمانگا (Residency)',
+      ckb: 'ئیقامەی هونەری لە پەیمانگە (Residency)',
       ar: 'إقامة فنية في أتيلييه النحت',
       en: 'Sculpture Atelier Residency',
     },
@@ -122,7 +122,7 @@ export const COLLABORATORS_DATA: Collaborator[] = [
       'https://images.unsplash.com/photo-1582562124811-c09040d0a901?auto=format&fit=crop&w=800&q=80',
     ],
     curatorialSummary: {
-      ckb: 'ئیقامەیەکی دوو هەفتەیی لەگەڵ قوتابیانی پەیکەرسازی کە تێیدا پەیکەرێکی ٤ مەتری بە قوڕی چەمچەماڵ بۆ باخچەی پەیمانگا دروستکرا.',
+      ckb: 'ئیقامەیەکی دوو هەفتەیی لەگەڵ قوتابیانی پەیکەرسازی کە تێیدا پەیکەرێکی ٤ مەتری بە قوڕی چەمچەماڵ بۆ باخچەی پەیمانگە دروستکرا.',
       ar: 'إقامة لمدة أسبوعين مع طلبة قسم النحت نتج عنها نصب تذكاري من طين جمجمال بارتفاع 4 أمتار في الحديقة الخارجية للمعهد.',
       en: 'Two-week creative residency culminating in a 4-meter monumental clay and terracotta sculpture installed in the Institute Sculpture Garden.',
     },
@@ -189,7 +189,7 @@ export const COLLABORATORS_DATA: Collaborator[] = [
       en: 'Italy / Florence',
     },
     bio: {
-      ckb: 'شارەزای شێوەکاری ڕۆنی ئیتالی و بووژێنەرەوەی کانڤاسی کۆن لە فلۆرێنس؛ خاوەنی خولی ڕاهێنانی پاراستنی ئەرشیفی بۆ پەیمانگا لە کاتی دامەزراندندا.',
+      ckb: 'شارەزای شێوەکاری ڕۆنی ئیتالی و بووژێنەرەوەی کانڤاسی کۆن لە فلۆرێنس؛ خاوەنی خولی ڕاهێنانی پاراستنی ئەرشیفی بۆ پەیمانگە لە کاتی دامەزراندندا.',
       ar: 'خبير إيطالي في ترميم اللوحات التاريخية والتقنيات الزيتية الكلاسيكية من أكاديمية فلورنسا.',
       en: 'Florentine conservation specialist and figurative painter; consulted on archival temperature protocols and oil glazes for Chamchamal.',
     },

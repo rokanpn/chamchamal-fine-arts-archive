@@ -76,7 +76,7 @@ export default function NewStudentPage() {
       id: 'award-1',
       title: 'خەڵاتی یەکەمی خولی دەرچوون لە بەشەکەیدا',
       year: `${new Date().getFullYear()}`,
-      issuer: 'وەزارەتی ڕۆشنبیری و پەیمانگای چەمچەماڵ',
+      issuer: 'وەزارەتی ڕۆشنبیری و پەیمانگەی چەمچەماڵ',
       description: 'ڕێزلێنان بۆ باڵادەستی ئەکادیمی و پرۆژەی دەرچوون',
     },
   ]);
@@ -172,7 +172,7 @@ export default function NewStudentPage() {
       id: generatedSlug,
       slug: generatedSlug,
       fullName: {
-        ckb: fullNameCkb || 'خوێندکاری پەیمانگا',
+        ckb: fullNameCkb || 'خوێندکاری پەیمانگە',
         ar: fullNameAr || fullNameCkb || 'طالب المعهد',
         en: fullNameEn || 'Institute Student Artist',
       },
@@ -185,7 +185,7 @@ export default function NewStudentPage() {
       },
       avatarUrl: avatarUrl || PRESET_AVATARS[0],
       bio: {
-        ckb: bioCkb || 'خوێندکار و دەرچووی دەستڕەنگینی پەیمانگای هونەرە جوانەکانی چەمچەماڵ.',
+        ckb: bioCkb || 'خوێندکار و دەرچووی دەستڕەنگینی پەیمانگەی هونەرە جوانەکانی چەمچەماڵ.',
         ar: bioAr || bioCkb || 'فنان واعد من خريجي معهد الفنون الجميلة بجمجمال.',
         en: bioEn || 'Promising student artist and alumnus of Chamchamal Fine Arts Institute.',
       },
@@ -315,7 +315,7 @@ export default function NewStudentPage() {
             {/* Department Selection */}
             <div className="flex flex-col gap-2">
               <label className="text-xs font-mono text-museum-secondary uppercase">
-                {locale === 'ckb' ? 'بەشی خوێندن لە پەیمانگا *' : 'Academic Department *'}
+                {locale === 'ckb' ? 'بەشی خوێندن لە پەیمانگە *' : 'Academic Department *'}
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[
@@ -582,7 +582,7 @@ export default function NewStudentPage() {
                         type="text"
                         value={item.issuer}
                         onChange={(e) => handleUpdateAward(idx, 'issuer', e.target.value)}
-                        placeholder="وەک: وەزارەتی ڕۆشنبیری یان پەیمانگای چەمچەماڵ"
+                        placeholder="وەک: وەزارەتی ڕۆشنبیری یان پەیمانگەی چەمچەماڵ"
                         className="w-full px-3 py-2 rounded-xl bg-black/60 border border-museum-border text-xs text-parchment outline-none focus:border-gold"
                       />
                     </div>

@@ -458,7 +458,7 @@ function MobileOptimizedWelcomeText() {
         textAlign="center"
         maxWidth={1.55}
       >
-        پەیمانگای هونەرە جوانەکانی چەمچەماڵ
+        پەیمانگەی هونەرە جوانەکانی چەمچەماڵ
       </Text>
 
       {/* Latin Caption */}
@@ -488,15 +488,24 @@ export function LobbyScene({ onNavigate, targetYaw, targetPitch }: LobbyScenePro
       {/* Bright Roman Classical Marble Background */}
       <color attach="background" args={['#ece7df']} />
 
-      {/* Bright Classical Roman Daylight & Illumination */}
-      <ambientLight intensity={0.9} color="#fff9f2" />
+      {/* Bright Soft Studio Roman Daylight & Illumination (Zero Harsh Shadows) */}
+      <ambientLight intensity={1.4} color="#fffcf5" />
       <directionalLight
-        position={[2.5, 5.0, 1.5]}
-        intensity={1.4}
-        color="#fff5ea"
+        position={[3.5, 6.5, 2.5]}
+        intensity={2.2}
+        color="#fffbf2"
         castShadow
+        shadow-mapSize-width={1024}
+        shadow-mapSize-height={1024}
+        shadow-bias={-0.0003}
       />
-      <hemisphereLight args={['#ffffff', '#ded6c8', 0.85]} />
+      <directionalLight
+        position={[-3.5, 5.5, -2.5]}
+        intensity={1.3}
+        color="#f5f8ff"
+      />
+      <pointLight position={[0, 4.5, 0]} intensity={35} distance={12} decay={2} color="#fff6e0" />
+      <hemisphereLight args={['#ffffff', '#e8dfd3', 1.2]} />
 
       {/* Smooth Free-Look Camera Rig */}
       <LobbyFreeLookRig targetYaw={targetYaw} targetPitch={targetPitch} />

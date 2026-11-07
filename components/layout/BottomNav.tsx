@@ -32,11 +32,11 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Mobile Bottom Navigation"
-      className="fixed bottom-3 inset-x-3 z-40 max-w-md mx-auto md:hidden print:hidden"
+      className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] inset-x-3 z-40 max-w-md mx-auto md:hidden landscape:hidden print:hidden"
     >
-      <div className="relative flex items-center justify-around px-1.5 py-2 rounded-full backdrop-blur-2xl bg-obsidian-surface/90 border border-museum-border shadow-glass-nav">
+      <div className="relative flex items-center justify-around px-1.5 py-2 rounded-full backdrop-blur-2xl bg-white/90 dark:bg-obsidian-surface/90 border border-stone-200/90 dark:border-museum-border shadow-lg dark:shadow-glass-nav">
         {/* Subtle top edge light line */}
-        <div className="absolute inset-x-6 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+        <div className="absolute inset-x-6 top-0 h-[1px] bg-gradient-to-r from-transparent via-stone-400/20 dark:via-white/20 to-transparent pointer-events-none" />
 
         {DESTINATIONS.map((dest) => {
           const Icon = dest.icon;
@@ -80,7 +80,7 @@ export function BottomNav() {
                   ) : (
                     <Icon
                       className={`w-4 h-4 transition-colors duration-200 ${
-                        isActive ? 'text-gold' : 'text-museum-secondary'
+                        isActive ? 'text-gold-dark dark:text-gold' : 'text-stone-500 dark:text-museum-secondary'
                       }`}
                       strokeWidth={isActive ? 2.2 : 1.7}
                     />
@@ -97,8 +97,8 @@ export function BottomNav() {
                 <span
                   className={`text-[9px] tracking-tight transition-colors duration-200 truncate max-w-[55px] ${
                     isActive || isPendingNav
-                      ? 'text-parchment font-semibold'
-                      : 'text-museum-secondary font-medium'
+                      ? 'text-stone-900 dark:text-parchment font-semibold'
+                      : 'text-stone-500 dark:text-museum-secondary font-medium'
                   }`}
                 >
                   {label}

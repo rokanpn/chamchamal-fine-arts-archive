@@ -88,10 +88,10 @@ export function ModelViewer3D({
           auto-rotate-delay={1000}
           rotation-per-second="25deg"
           camera-controls
-          shadow-intensity="1.6"
-          shadow-softness="0.8"
+          shadow-intensity="0.85"
+          shadow-softness="1.0"
           environment-image="neutral"
-          exposure="1.1"
+          exposure="1.25"
           ar
           ar-modes="webxr scene-viewer quick-look"
           ar-scale="auto"

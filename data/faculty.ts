@@ -10,7 +10,7 @@ export const FACULTY_DATA: FacultyMember[] = [
       en: 'Prof. Zryan Barzanji',
     },
     role: {
-      ckb: 'ڕاگری پەیمانگای هونەرە جوانەکانی چەمچەماڵ',
+      ckb: 'ڕاگری پەیمانگەی هونەرە جوانەکانی چەمچەماڵ',
       ar: 'عميد معهد الفنون الجميلة بجمجمال',
       en: 'Dean of Chamchamal Fine Arts Institute',
     },
@@ -64,7 +64,7 @@ export const FACULTY_DATA: FacultyMember[] = [
       en: 'Academic Affairs & Research',
     },
     bio: {
-      ckb: 'توێژەر و مێژوونووسی هونەری کوردی؛ سەرپەرشتیاری تێزەکانی دەرچوون و گەشەپێدەری پرۆگرامی شیکاری ڕەخنەیی هاوچەرخ لە پەیمانگا.',
+      ckb: 'توێژەر و مێژوونووسی هونەری کوردی؛ سەرپەرشتیاری تێزەکانی دەرچوون و گەشەپێدەری پرۆگرامی شیکاری ڕەخنەیی هاوچەرخ لە پەیمانگە.',
       ar: 'باحثة ومؤرخة للفن الكردي المعاصر؛ مشرفة على أطروحات التخرج وتطوير مناهج النقد الفني.',
       en: 'Kurdish art historian and researcher; oversees graduation theses and contemporary critical curricula.',
     },
@@ -181,7 +181,7 @@ export const FACULTY_DATA: FacultyMember[] = [
       en: 'Ceramics Department',
     },
     bio: {
-      ckb: 'هونەرمەندی سیرامیک و خاوەنی خەڵاتی داهێنانی کەرەستەی خاو؛ یەکەم کەس کە کورەی غازیی پلەبەرزی پێشکەوتووی لە پەیمانگا دامەزراند.',
+      ckb: 'هونەرمەندی سیرامیک و خاوەنی خەڵاتی داهێنانی کەرەستەی خاو؛ یەکەم کەس کە کورەی غازیی پلەبەرزی پێشکەوتووی لە پەیمانگە دامەزراند.',
       ar: 'خزافة حائزة على جوائز ابتكار الخامات؛ رائدة تأسيس أفران الحرق الغازية الحديثة بالمعهد.',
       en: 'Ceramicist and kiln specialist; pioneered high-fire reduction and raku firing techniques in the regional atelier.',
     },
@@ -220,7 +220,7 @@ export const FACULTY_DATA: FacultyMember[] = [
       en: 'Design & Printmaking Dept.',
     },
     bio: {
-      ckb: 'دیزاینەر و تایپۆگرافەری پیتە کوردییەکان؛ سەرپەرشتیاری تاقیگەی چاپی دار و ئیتچینگ و ڕابەری تەکنەلۆژیای دیجیتاڵ لە پەیمانگا.',
+      ckb: 'دیزاینەر و تایپۆگرافەری پیتە کوردییەکان؛ سەرپەرشتیاری تاقیگەی چاپی دار و ئیتچینگ و ڕابەری تەکنەلۆژیای دیجیتاڵ لە پەیمانگە.',
       ar: 'مصمم جرافيكي وباحث في التايبوغرافي الكردي؛ المشرف على مختبر الطباعة اليدوية والرقمية.',
       en: 'Graphic designer and Kurdish typography researcher; directs printmaking, serigraphy, and digital design ateliers.',
     },

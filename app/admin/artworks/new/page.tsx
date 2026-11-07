@@ -158,13 +158,13 @@ export default function NewArtworkIngestionPage() {
       id: `art-${Date.now()}`,
       slug: generatedSlug,
       title: {
-        ckb: formData.titleCkb || formData.titleEn || 'شاکاری نوێی پەیمانگا',
+        ckb: formData.titleCkb || formData.titleEn || 'شاکاری نوێی پەیمانگە',
         ar: formData.titleAr || formData.titleCkb || formData.titleEn || 'عمل فني جديد',
         en: formData.titleEn || formData.titleCkb || 'New Archival Masterwork',
       },
-      artist: selectedArtist ? selectedArtist.fullName : { ckb: 'هونەرمەندی پەیمانگا', ar: 'فنان المعهد', en: 'Institute Artist' },
+      artist: selectedArtist ? selectedArtist.fullName : { ckb: 'هونەرمەندی پەیمانگە', ar: 'فنان المعهد', en: 'Institute Artist' },
       artistId: selectedArtist ? selectedArtist.id : 'faculty-collection',
-      artistBio: selectedArtist ? selectedArtist.bio : { ckb: 'دەرچووی پەیمانگای هونەرە جوانەکان', ar: 'خريج معهد الفنون', en: 'Alumnus of Fine Arts Institute' },
+      artistBio: selectedArtist ? selectedArtist.bio : { ckb: 'دەرچووی پەیمانگەی هونەرە جوانەکان', ar: 'خريج معهد الفنون', en: 'Alumnus of Fine Arts Institute' },
       artistGraduationYear: selectedArtist ? selectedArtist.graduationYear : 2022,
       category: formData.category || 'painting',
       categoryLabel: categoryLabels[formData.category || 'painting'],
@@ -187,7 +187,7 @@ export default function NewArtworkIngestionPage() {
       modelPolygons: has3D ? formData.modelPolygons : undefined,
       featured: false,
       description: {
-        ckb: formData.descriptionCkb || 'شاکاری پەسەندکراو لەلایەن کۆمیتەی ئەرشیفی پەیمانگای هونەرە جوانەکانی چەمچەماڵ.',
+        ckb: formData.descriptionCkb || 'شاکاری پەسەندکراو لەلایەن کۆمیتەی ئەرشیفی پەیمانگەی هونەرە جوانەکانی چەمچەماڵ.',
         ar: formData.descriptionAr || formData.descriptionCkb || 'عمل فني معتمد لدى لجنة الأرشيف بمعهد جمجمال.',
         en: formData.descriptionEn || 'Acquisition ratified by the Curatorial Board of Chamchamal Fine Arts Institute.',
       },
@@ -463,7 +463,7 @@ export default function NewArtworkIngestionPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 pt-3 border-t border-museum-divider">
               <div>
                 <label className="block text-xs font-medium text-parchment mb-1">
-                  {locale === 'ckb' ? 'بەشی پەیمانگا (هۆڵی ٣D)' : '3D Tour Department'}
+                  {locale === 'ckb' ? 'بەشی پەیمانگە (هۆڵی ٣D)' : '3D Tour Department'}
                 </label>
                 <select
                   value={formData.department || 'painting'}

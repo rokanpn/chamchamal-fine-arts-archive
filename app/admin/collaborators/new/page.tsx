@@ -107,7 +107,7 @@ export default function NewCollaboratorPage() {
         en: countryEn,
       },
       bio: {
-        ckb: bioCkb || 'هونەرمەندی خاوەن ئەزموون کە بەشداربووە لە چالاکییە هاوبەشەکانی پەیمانگادا.',
+        ckb: bioCkb || 'هونەرمەندی خاوەن ئەزموون کە بەشداربووە لە چالاکییە هاوبەشەکانی پەیمانگەدا.',
         ar: bioAr || bioCkb || 'فنان متميز شارك في فعاليات المعهد المشتركة.',
         en: bioEn || 'Renowned artist who contributed to academic collaborations at the institute.',
       },
@@ -117,7 +117,7 @@ export default function NewCollaboratorPage() {
       collaborationYear: Number(collaborationYear),
       galleryPhotos: parsedPhotos.length > 0 ? parsedPhotos : [avatarUrl],
       curatorialSummary: {
-        ckb: curatorialSummaryCkb || 'ئەنجامدانی خولی بەرهەمهێنانی هاوبەش لەگەڵ خوێندکارانی پەیمانگا.',
+        ckb: curatorialSummaryCkb || 'ئەنجامدانی خولی بەرهەمهێنانی هاوبەش لەگەڵ خوێندکارانی پەیمانگە.',
         ar: curatorialSummaryAr || curatorialSummaryCkb || 'إقامة مشاريع إنتاج فني مشترك مع طلبة المعهد.',
         en: curatorialSummaryEn || curatorialSummaryCkb || 'Conducted collaborative atelier production with Chamchamal students.',
       },
@@ -282,7 +282,7 @@ export default function NewCollaboratorPage() {
 
                 <div>
                   <label className="block text-xs font-medium text-parchment mb-1">
-                    دەستکەوتی هاوبەشی لەگەڵ قوتابیانی پەیمانگا
+                    دەستکەوتی هاوبەشی لەگەڵ قوتابیانی پەیمانگە
                   </label>
                   <textarea
                     rows={2}

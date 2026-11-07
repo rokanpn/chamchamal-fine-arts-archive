@@ -61,7 +61,7 @@ export const STUDENTS_DATA: StudentArtist[] = [
     },
     avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80',
     bio: {
-      ckb: 'شێوەکار و توێژەری ڕەنگ لە سروشتی گەرمیاندا؛ یەکێک لە دەرچووە سەرکەوتووەکانی خولی یەکەمی پەیمانگا کە ئێستا ئەندامی دەستەی وانەبێژانە.',
+      ckb: 'شێوەکار و توێژەری ڕەنگ لە سروشتی گەرمیاندا؛ یەکێک لە دەرچووە سەرکەوتووەکانی خولی یەکەمی پەیمانگە کە ئێستا ئەندامی دەستەی وانەبێژانە.',
       ar: 'فنان تشكيلي وباحث لوني في بيئة كرميان؛ من أوائل خريجي المعهد المتميزين وأستاذ مشارك بقسم الرسم.',
       en: 'Painter and chromatic researcher specializing in the Garmian regional terrain; prominent alumnus of the inaugural class and visiting mentor.',
     },
@@ -80,7 +80,7 @@ export const STUDENTS_DATA: StudentArtist[] = [
       },
       {
         id: 'shwan-award-2',
-        title: 'مەدالیای زێڕینی داهێنانی پەیمانگای چەمچەماڵ',
+        title: 'مەدالیای زێڕینی داهێنانی پەیمانگەی چەمچەماڵ',
         year: '2018',
         issuer: 'Chamchamal Fine Arts Institute',
         description: 'ڕێزلێنان لە خوێندکاری یەکەمی خول بۆ باڵادەستی لە تەکنیکەکانی ڕەنگی زەیتی.',
@@ -126,7 +126,7 @@ export const STUDENTS_DATA: StudentArtist[] = [
     },
     avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80',
     bio: {
-      ckb: 'پەیکەرسازی نێودەوڵەتی، خاوەنی دەیان پەیکەری مەیدانی لە شارەکانی کوردستان، و بەڕێوەبەری تاقیگەی سکانی سێ ڕەهەندی لە پەیمانگا.',
+      ckb: 'پەیکەرسازی نێودەوڵەتی، خاوەنی دەیان پەیکەری مەیدانی لە شارەکانی کوردستان، و بەڕێوەبەری تاقیگەی سکانی سێ ڕەهەندی لە پەیمانگە.',
       ar: 'نحات دولي أشرف على تصميم نصب تذكارية عامة في مدن كردستان، ويدير مختبر التوثيق ثلاثي الأبعاد بالمعهد.',
       en: 'International monumental sculptor responsible for civic monuments across Kurdistan, and Director of the Institute 3D Scan Lab.',
     },
@@ -160,7 +160,7 @@ export const STUDENTS_DATA: StudentArtist[] = [
     artworkSlugs: ['chamchamal-freedom-monument'],
     email: 'rebwar.baban@chamchamal-finearts.edu.krd',
     studioLocation: {
-      ckb: 'حەوشەی پەیکەرسازی گەورە، پەیمانگای چەمچەماڵ',
+      ckb: 'حەوشەی پەیکەرسازی گەورە، پەیمانگەی چەمچەماڵ',
       ar: 'فناء النحت الضخم، معهد جمجمال',
       en: 'Monumental Foundry Atrium, Chamchamal',
     },
@@ -317,7 +317,7 @@ export const STUDENTS_DATA: StudentArtist[] = [
     awards: [
       {
         id: 'lava-award-1',
-        title: 'خەڵاتی لاوانی داهێنەری پەیمانگاکانی کوردستان (Youth Innovation Award)',
+        title: 'خەڵاتی لاوانی داهێنەری پەیمانگەکانی کوردستان (Youth Innovation Award)',
         year: '2022',
         issuer: 'وەزارەتی پەروەردە و فێرکردنی باڵا',
         description: 'بۆ پڕۆژەی تێکەڵکردنی گەڵای زێڕین لەگەڵ تابلۆی سروشتی شاخەکان.',

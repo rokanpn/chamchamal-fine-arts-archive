@@ -19,13 +19,13 @@ export function ArtworkFeed() {
   }, [artworks, selectedCategory]);
 
   return (
-    <section id="gallery-feed" className="relative flex flex-col gap-8 scroll-mt-24">
+    <section id="gallery-feed" className="relative flex flex-col gap-5 sm:gap-8 scroll-mt-24">
       {/* Category Filter Pill Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-museum-divider pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 border-b border-stone-200/80 dark:border-museum-divider pb-3 sm:pb-5">
         <div>
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-gold" />
-            <h2 className="text-xl sm:text-2xl font-bold text-parchment-pure">
+            <h2 className="text-lg sm:text-2xl font-bold text-stone-900 dark:text-parchment-pure">
               {locale === 'ckb'
                 ? 'پێشانگای بەرهەمە هەڵبژێردراوەکان'
                 : locale === 'ar'
@@ -33,7 +33,7 @@ export function ArtworkFeed() {
                 : 'Curated Permanent Collection'}
             </h2>
           </div>
-          <p className="text-xs text-museum-secondary mt-1">
+          <p className="text-[11px] sm:text-xs text-stone-600 dark:text-museum-secondary mt-0.5 sm:mt-1">
             {locale === 'ckb'
               ? 'تەواوی شاکارە هونەرییەکان، پەیکەرەکان و نموونە سێ ڕەهەندییەکان'
               : locale === 'ar'
@@ -46,7 +46,7 @@ export function ArtworkFeed() {
         <div
           role="tablist"
           aria-label="Artwork Categories"
-          className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 scrollbar-none no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0"
+          className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-2 sm:pb-0 scrollbar-none no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0"
         >
           {CATEGORIES.map((cat) => {
             const isSelected = selectedCategory === cat.key;
@@ -58,10 +58,10 @@ export function ArtworkFeed() {
                 role="tab"
                 aria-selected={isSelected}
                 onClick={() => setSelectedCategory(cat.key)}
-                className={`relative px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-colors duration-200 select-none flex items-center gap-2 ${
+                className={`relative px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs font-medium whitespace-nowrap transition-colors duration-200 select-none flex items-center gap-1.5 sm:gap-2 ${
                   isSelected
-                    ? 'text-obsidian font-semibold'
-                    : 'text-parchment-muted hover:text-parchment bg-obsidian-surface/60 border border-museum-border'
+                    ? 'text-stone-950 font-bold'
+                    : 'text-stone-700 dark:text-parchment-muted hover:text-stone-950 dark:hover:text-parchment bg-stone-100 dark:bg-obsidian-surface/60 border border-stone-200 dark:border-museum-border'
                 }`}
               >
                 {/* Active Sliding Gold Pill */}
@@ -74,8 +74,8 @@ export function ArtworkFeed() {
                 )}
                 <span>{label}</span>
                 <span
-                  className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                    isSelected ? 'bg-black/20 text-obsidian' : 'bg-white/10 text-museum-secondary'
+                  className={`text-[9px] sm:text-[10px] px-1.5 py-0.2 rounded-full ${
+                    isSelected ? 'bg-black/20 text-stone-950 font-bold' : 'bg-black/5 dark:bg-white/10 text-stone-600 dark:text-museum-secondary'
                   }`}
                 >
                   {cat.key === 'all'
@@ -88,10 +88,10 @@ export function ArtworkFeed() {
         </div>
       </div>
 
-      {/* Asymmetric Staggered Gallery Grid */}
+      {/* 2-Column Mobile & Responsive Gallery Grid */}
       <motion.div
         layout
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
+        className="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-6 lg:gap-8"
       >
         <AnimatePresence mode="popLayout">
           {filteredArtworks.map((artwork, idx) => (

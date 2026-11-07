@@ -10,6 +10,9 @@ interface PageProps {
 }
 
 export const dynamicParams = true;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+export const fetchCache = 'force-no-store';
 
 export async function generateStaticParams() {
   return ARTWORKS_DATA.map((artwork) => ({
@@ -54,9 +57,9 @@ export default function ArtworkDetailPage({ params }: PageProps) {
     id: `temp-${params.slug}`,
     slug: params.slug,
     title: { ckb: 'شاکاری پەسەندکراوی ئەرشیف', ar: 'عمل فني معتمد', en: 'Archival Masterwork' },
-    artist: { ckb: 'هونەرمەندی پەیمانگای چەمچەماڵ', ar: 'فنان المعهد', en: 'Institute Artist' },
+    artist: { ckb: 'هونەرمەندی پەیمانگەی چەمچەماڵ', ar: 'فنان المعهد', en: 'Institute Artist' },
     artistId: 'faculty-collection',
-    artistBio: { ckb: 'دەرچووی بەشی هونەری لە پەیمانگای هونەرە جوانەکان', ar: 'خريج قسم الفنون بالمعهد', en: 'Graduate of Chamchamal Fine Arts' },
+    artistBio: { ckb: 'دەرچووی بەشی هونەری لە پەیمانگەی هونەرە جوانەکان', ar: 'خريج قسم الفنون بالمعهد', en: 'Graduate of Chamchamal Fine Arts' },
     artistGraduationYear: 2022,
     category: 'painting',
     categoryLabel: { ckb: 'شێوەکاری', ar: 'رسم تشكيلي', en: 'Painting' },
@@ -67,7 +70,7 @@ export default function ArtworkDetailPage({ params }: PageProps) {
     imageUrl: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1200&q=80',
     aspectRatio: 'portrait',
     has3DModel: false,
-    description: { ckb: 'شاکاری تۆمارکراو لە ئەرشیفی دیجیتاڵی پەیمانگای هونەرە جوانەکانی چەمچەماڵ.', ar: 'عمل موثق في الأرشيف الرقمي.', en: 'Official archival acquisition at Chamchamal Fine Arts Institute.' },
+    description: { ckb: 'شاکاری تۆمارکراو لە ئەرشیفی دیجیتاڵی پەیمانگەی هونەرە جوانەکانی چەمچەماڵ.', ar: 'عمل موثق في الأرشيف الرقمي.', en: 'Official archival acquisition at Chamchamal Fine Arts Institute.' },
     locationInInstitute: { ckb: 'هۆڵی پێشانگای هەمیشەیی', ar: 'قاعة المعرض الدائم', en: 'Permanent Exhibition Hall' },
     provenancePedestal: 'WALL-GALLERY-N1',
     physicalPlaqueCode: 'CFA-ACQ-2026',

@@ -379,25 +379,35 @@ export function ModelPreviewStudio({
                 <color attach="background" args={['#ece7df']} />
                 <fog attach="fog" args={['#ece7df', 3.5, 9.5]} />
 
-                {/* 2. Exact Daylight Illumination matching SculptureScene */}
-                <ambientLight intensity={0.95} color="#fff9f2" />
+                {/* 2. Soft Studio Lighting Setup matching SculptureScene */}
+                <ambientLight intensity={1.4} color="#fffcf5" />
                 <directionalLight
-                  position={[3.2, 12, 2.4]}
-                  intensity={1.8}
-                  color="#fffaf0"
+                  position={[3.6, 14, 2.8]}
+                  intensity={2.3}
+                  color="#fffbf2"
                   castShadow
                   shadow-mapSize={[1024, 1024]}
-                  shadow-bias={-0.0001}
+                  shadow-bias={-0.0003}
                 />
-                <hemisphereLight args={['#ffffff', '#e8dfd5', 0.85]} />
+                <directionalLight
+                  position={[-3.6, 12, -2.8]}
+                  intensity={1.35}
+                  color="#f5f8ff"
+                />
+                <directionalLight
+                  position={[0, 13, -4.5]}
+                  intensity={1.1}
+                  color="#fff9ea"
+                />
+                <hemisphereLight args={['#ffffff', '#e8dfd3', 1.2]} />
 
                 {/* Overhead Warm Focused Gallery Luminaire (spotlight directly on the artwork) */}
                 <pointLight
                   position={[0, 3.4, 0.4]}
-                  intensity={14}
-                  distance={5.5}
+                  intensity={22}
+                  distance={6.2}
                   decay={2}
-                  color="#fff5d8"
+                  color="#fff7e0"
                 />
 
                 {/* 3. Studio Environment: Polished Marble Floor & Background Columns */}

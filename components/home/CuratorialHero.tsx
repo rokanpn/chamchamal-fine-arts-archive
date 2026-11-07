@@ -76,8 +76,8 @@ const GOLDEN_DROPLETS = [
 function MagicAtmosphere() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
-      {/* 1. Deep Obsidian Radial Foundation */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_25%,rgba(212,175,55,0.1)_0%,rgba(7,7,9,0.98)_75%)]" />
+      {/* 1. Deep Obsidian Radial Foundation (Dark Mode only) */}
+      <div className="absolute inset-0 bg-transparent dark:bg-[radial-gradient(circle_at_50%_25%,rgba(212,175,55,0.1)_0%,rgba(7,7,9,0.98)_75%)]" />
 
       {/* 2. Soft Breathing Gold Light Cones */}
       <motion.div
@@ -90,12 +90,12 @@ function MagicAtmosphere() {
           repeat: Infinity,
           ease: 'easeInOut',
         }}
-        className="absolute -top-36 left-1/2 -translate-x-1/2 w-[850px] h-[600px] bg-[conic-gradient(from_90deg_at_50%_0%,rgba(212,175,55,0.16)_0deg,transparent_60deg,transparent_120deg,rgba(212,175,55,0.14)_180deg)] blur-3xl rounded-full"
+        className="absolute -top-24 sm:-top-36 left-1/2 -translate-x-1/2 w-[340px] sm:w-[650px] md:w-[850px] h-[380px] sm:h-[500px] md:h-[600px] bg-[conic-gradient(from_90deg_at_50%_0%,rgba(212,175,55,0.16)_0deg,transparent_60deg,transparent_120deg,rgba(212,175,55,0.14)_180deg)] blur-2xl sm:blur-3xl rounded-full"
       />
 
       {/* Diagonal Ambient Light Rays */}
-      <div className="absolute -top-24 left-[8%] w-[380px] h-[750px] origin-top bg-gradient-to-b from-gold/10 via-amber-500/5 to-transparent blur-3xl transform -rotate-[22deg] opacity-60" />
-      <div className="absolute -top-24 right-[8%] w-[380px] h-[750px] origin-top bg-gradient-to-b from-gold/10 via-gold/5 to-transparent blur-3xl transform rotate-[22deg] opacity-60" />
+      <div className="hidden sm:block absolute -top-24 left-[8%] w-[380px] h-[750px] origin-top bg-gradient-to-b from-gold/10 via-amber-500/5 to-transparent blur-3xl transform -rotate-[22deg] opacity-60" />
+      <div className="hidden sm:block absolute -top-24 right-[8%] w-[380px] h-[750px] origin-top bg-gradient-to-b from-gold/10 via-gold/5 to-transparent blur-3xl transform rotate-[22deg] opacity-60" />
 
       {/* Layer A: Twinkling Micro-Stars */}
       {STAR_PARTICLES.map((particle, idx) => (
@@ -153,7 +153,7 @@ export function CuratorialHero({ onScanClick, onExploreClick }: CuratorialHeroPr
 
   return (
     <>
-      <section className="relative pt-6 sm:pt-12 pb-16 sm:pb-24 flex flex-col items-center text-center max-w-6xl mx-auto px-4 overflow-hidden">
+      <section className="relative pt-4 sm:pt-10 md:pt-12 pb-10 sm:pb-16 md:pb-24 flex flex-col items-center text-center max-w-6xl mx-auto px-3 sm:px-4 overflow-hidden">
         {/* Unified Magic Atmosphere with Stars & Falling Golden Rain */}
         <MagicAtmosphere />
 
@@ -162,13 +162,13 @@ export function CuratorialHero({ onScanClick, onExploreClick }: CuratorialHeroPr
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-black/60 border border-gold/30 text-gold-light text-xs font-medium tracking-wide mb-5 shadow-gold-glow-sm backdrop-blur-xl select-none"
+          className="inline-flex items-center gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-stone-100/90 dark:bg-black/60 border border-gold/40 text-gold-dark dark:text-gold-light text-xs font-medium tracking-wide mb-3 sm:mb-5 shadow-sm dark:shadow-gold-glow-sm backdrop-blur-xl select-none"
         >
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-gold shadow-[0_0_8px_#D4AF37]" />
           </span>
-          <span className="text-[11px] sm:text-xs font-semibold">
+          <span className="text-[10px] sm:text-xs font-semibold">
             {t.hero.topBadge}
           </span>
         </motion.div>
@@ -178,9 +178,9 @@ export function CuratorialHero({ onScanClick, onExploreClick }: CuratorialHeroPr
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1 }}
-          className={`text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-parchment-pure leading-[1.24] max-w-3xl text-balance ${
+          className={`text-2xl sm:text-3xl md:text-5xl font-bold tracking-tight text-stone-900 dark:text-parchment-pure leading-tight sm:leading-[1.24] max-w-3xl text-balance ${
             locale === 'en' ? 'font-serif' : 'font-kurdish'
-          } [text-shadow:_0_2px_24px_rgba(0,0,0,0.85),_0_0_40px_rgba(212,175,55,0.12)]`}
+          } dark:[text-shadow:_0_2px_24px_rgba(0,0,0,0.85),_0_0_40px_rgba(212,175,55,0.12)]`}
         >
           {t.hero.instituteName}
         </motion.h1>
@@ -190,7 +190,7 @@ export function CuratorialHero({ onScanClick, onExploreClick }: CuratorialHeroPr
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.18 }}
-          className="text-base sm:text-xl md:text-2xl font-semibold text-gold-light mt-3 sm:mt-4 font-serif tracking-wide max-w-2xl drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
+          className="text-sm sm:text-lg md:text-2xl font-semibold text-gold-dark dark:text-gold-light mt-2 sm:mt-4 font-serif tracking-wide max-w-2xl dark:drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
         >
           {t.hero.subtitle}
         </motion.h2>
@@ -200,7 +200,7 @@ export function CuratorialHero({ onScanClick, onExploreClick }: CuratorialHeroPr
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.25 }}
-          className="mt-4 sm:mt-5 text-xs sm:text-sm md:text-base text-museum-secondary/90 max-w-2xl font-normal leading-relaxed text-balance text-center mx-auto"
+          className="mt-2.5 sm:mt-4 md:mt-5 text-xs sm:text-sm md:text-base text-stone-600 dark:text-museum-secondary/90 max-w-2xl font-normal leading-relaxed text-balance text-center mx-auto line-clamp-3 sm:line-clamp-none"
         >
           {t.hero.description}
         </motion.p>
@@ -210,7 +210,7 @@ export function CuratorialHero({ onScanClick, onExploreClick }: CuratorialHeroPr
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.32 }}
-          className="mt-8 sm:mt-10 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3.5 sm:gap-4 w-full sm:w-auto"
+          className="mt-5 sm:mt-8 md:mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto max-w-xs sm:max-w-none mx-auto"
         >
           {/* Primary Action: QR Scanner */}
           <motion.button
@@ -220,10 +220,10 @@ export function CuratorialHero({ onScanClick, onExploreClick }: CuratorialHeroPr
               if (onScanClick) onScanClick();
               else setShowQRModal(true);
             }}
-            className="group relative flex items-center justify-center gap-2.5 px-6 sm:px-7 py-3 sm:py-3.5 rounded-full bg-gradient-to-r from-gold via-amber-400 to-amber-500 text-obsidian font-bold text-xs sm:text-sm shadow-gold-glow hover:shadow-gold-glow-lg transition-all duration-300 w-full sm:w-auto overflow-hidden cursor-pointer"
+            className="group relative flex items-center justify-center gap-2.5 px-6 sm:px-8 py-3 sm:py-3.5 rounded-full bg-gradient-to-r from-gold via-amber-400 to-amber-500 text-stone-950 font-bold text-xs sm:text-sm shadow-gold-glow hover:shadow-gold-glow-lg transition-all duration-300 w-full sm:w-auto overflow-hidden cursor-pointer"
           >
             <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/45 to-transparent" />
-            <QrCode className="w-4 h-4 text-obsidian group-hover:rotate-6 transition-transform" />
+            <QrCode className="w-4 h-4 text-stone-950 group-hover:rotate-6 transition-transform shrink-0" />
             <span>{t.hero.scanQr || 'QR سکان بکە 🔍'}</span>
           </motion.button>
 
@@ -232,34 +232,18 @@ export function CuratorialHero({ onScanClick, onExploreClick }: CuratorialHeroPr
             <motion.div
               whileTap={{ scale: 0.96 }}
               whileHover={{ scale: 1.03 }}
-              className="flex items-center justify-center gap-2.5 px-6 sm:px-7 py-3 sm:py-3.5 rounded-full border border-gold/40 hover:border-gold bg-gradient-to-r from-obsidian-surface/90 via-gold/15 to-obsidian-surface/90 text-gold-light hover:text-white backdrop-blur-md text-xs sm:text-sm font-semibold transition-all duration-300 shadow-gold-glow-sm hover:shadow-gold-glow cursor-pointer w-full sm:w-auto group"
+              className="flex items-center justify-center gap-2.5 px-6 sm:px-8 py-3 sm:py-3.5 rounded-full border border-gold/40 hover:border-gold bg-stone-100/90 dark:bg-gradient-to-r dark:from-obsidian-surface/90 dark:via-gold/15 dark:to-obsidian-surface/90 text-stone-900 dark:text-gold-light hover:text-gold-dark dark:hover:text-white backdrop-blur-md text-xs sm:text-sm font-semibold transition-all duration-300 shadow-sm dark:shadow-gold-glow-sm hover:shadow-md dark:hover:shadow-gold-glow cursor-pointer w-full sm:w-auto group"
             >
-              <Box className="w-4 h-4 text-gold group-hover:rotate-12 transition-transform" />
+              <Box className="w-4 h-4 text-gold group-hover:rotate-12 transition-transform shrink-0" />
               <span>
                 {locale === 'ckb'
-                  ? 'گەشتێکی خەیاڵی (Virtual Tour) 👓'
+                  ? 'گەشتێکی ۳D 👓'
                   : locale === 'ar'
-                  ? 'جولة افتراضية ثلاثية الأبعاد 👓'
-                  : 'Virtual 3D Tour 👓'}
+                  ? 'جولة ۳D 👓'
+                  : 'Virtual 3D 👓'}
               </span>
             </motion.div>
           </Link>
-
-          {/* Secondary Action: Explore Collection */}
-          <motion.a
-            href="#gallery-feed"
-            whileTap={{ scale: 0.96 }}
-            whileHover={{ scale: 1.03 }}
-            onClick={(e) => {
-              if (onExploreClick) {
-                e.preventDefault();
-                onExploreClick();
-              }
-            }}
-            className="flex items-center justify-center gap-2 px-6 sm:px-7 py-3 sm:py-3.5 rounded-full border border-white/15 hover:border-gold/40 bg-white/[0.04] hover:bg-white/[0.08] text-white/90 hover:text-white backdrop-blur-md text-xs sm:text-sm font-medium transition-all duration-300 shadow-glass-pill w-full sm:w-auto"
-          >
-            <span>{t.hero.exploreGallery}</span>
-          </motion.a>
         </motion.div>
 
         {/* 4. Organic Glassmorphism Dashboard (Continuous Capsule & Department Flow) */}
@@ -306,7 +290,7 @@ export function CuratorialHero({ onScanClick, onExploreClick }: CuratorialHeroPr
               </h3>
               <p className="text-xs text-museum-secondary mb-6 max-w-xs">
                 {locale === 'ckb'
-                  ? 'لە کاتی سەردانی پەیمانگا لە چەمچەماڵ، کامێراکەت بخەرە سەر هێمای تەنیشت بەرهەمەکە بۆ بینینی مۆدێلی ۳D و چیرۆکی شاکارەکە.'
+                  ? 'لە کاتی سەردانی پەیمانگە لە چەمچەماڵ، کامێراکەت بخەرە سەر هێمای تەنیشت بەرهەمەکە بۆ بینینی مۆدێلی ۳D و چیرۆکی شاکارەکە.'
                   : locale === 'ar'
                   ? 'أثناء زيارتك لمعهد جمجمال، امسح الرمز المجاور للعمل للوصول الفوري للمجسم ثلاثي الأبعاد.'
                   : 'While visiting the institute in Chamchamal, scan the physical plaque code for instant 3D model inspection.'}

@@ -66,7 +66,7 @@ export function CollaboratorsClient() {
 
         <p className="mt-4 text-sm sm:text-base text-museum-secondary max-w-2xl leading-relaxed">
           {locale === 'ckb'
-            ? 'تۆماری مێژوویی ئەو شێوەکار، پەیکەرساز، توێژەر و مامۆستا نێودەوڵەتییانەی کە ماستەرکلاس، ئیقامەی هونەری و پڕۆژەی هاوبەشیان لەگەڵ قوتابیانی پەیمانگای چەمچەماڵ ئەنجامداوە.'
+            ? 'تۆماری مێژوویی ئەو شێوەکار، پەیکەرساز، توێژەر و مامۆستا نێودەوڵەتییانەی کە ماستەرکلاس، ئیقامەی هونەری و پڕۆژەی هاوبەشیان لەگەڵ قوتابیانی پەیمانگەی چەمچەماڵ ئەنجامداوە.'
             : locale === 'ar'
             ? 'توثيق تاريخي لرواد الفن التشكيلي والأساتذة الزائرين الذين أقاموا ورش عمل وإقامات فنية مشتركة في رحاب معهد جمجمال.'
             : 'An archival directory commemorating international master artists, scholars, and residency mentors who have engaged in creative exchange with Chamchamal students.'}
@@ -83,8 +83,8 @@ export function CollaboratorsClient() {
                 onClick={() => setActiveFilter(tab.key as any)}
                 className={`px-4 py-2 rounded-full text-xs font-medium transition-all whitespace-nowrap ${
                   isSelected
-                    ? 'bg-gold text-obsidian shadow-gold-glow font-bold'
-                    : 'bg-obsidian-surface border border-museum-border text-museum-secondary hover:text-parchment'
+                    ? 'bg-gold text-stone-950 shadow-gold-glow font-bold'
+                    : 'bg-stone-100 dark:bg-obsidian-surface border border-stone-200 dark:border-museum-border text-stone-600 dark:text-museum-secondary hover:text-stone-900 dark:hover:text-parchment'
                 }`}
               >
                 {label}
@@ -102,7 +102,7 @@ export function CollaboratorsClient() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.08 }}
-            className="group rounded-3xl bg-obsidian-surface/80 border border-museum-border hover:border-gold/50 transition-all duration-300 shadow-art-card p-6 sm:p-8 flex flex-col justify-between gap-6 overflow-hidden relative"
+            className="group rounded-3xl bg-white dark:bg-obsidian-surface/80 border border-stone-200/80 dark:border-museum-border hover:border-gold/50 dark:hover:border-gold/50 transition-all duration-300 shadow-sm dark:shadow-art-card p-6 sm:p-8 flex flex-col justify-between gap-6 overflow-hidden relative"
           >
             {/* Top Card Bar: Avatar & Titles */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -149,7 +149,7 @@ export function CollaboratorsClient() {
 
               <div className="p-4 rounded-2xl bg-black/40 border border-museum-border/60 text-museum-secondary">
                 <span className="text-gold font-semibold block mb-1 text-[11px] uppercase tracking-wider font-mono">
-                  {locale === 'ckb' ? 'دەستکەوتی هاوبەشی لە پەیمانگا:' : 'Collaboration Dossier:'}
+                  {locale === 'ckb' ? 'دەستکەوتی هاوبەشی لە پەیمانگە:' : 'Collaboration Dossier:'}
                 </span>
                 <p>
                   {collaborator.curatorialSummary[locale] || collaborator.curatorialSummary.ckb}

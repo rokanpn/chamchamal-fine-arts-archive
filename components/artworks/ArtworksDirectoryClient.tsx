@@ -144,7 +144,7 @@ export function ArtworksDirectoryClient() {
             </h1>
             <p className="text-xs sm:text-sm text-museum-secondary mt-1 max-w-2xl">
               {locale === 'ckb'
-                ? 'کۆکراوەی سەرجەم بەرهەمە هونەرییەکان، تۆمارە دەنگییەکان و دۆکیۆمێنتەکانی سێ بەشە ڕەسەنەکەی پەیمانگا.'
+                ? 'کۆکراوەی سەرجەم بەرهەمە هونەرییەکان، تۆمارە دەنگییەکان و دۆکیۆمێنتەکانی سێ بەشە ڕەسەنەکەی پەیمانگە.'
                 : locale === 'ar'
                 ? 'المجموعة الكاملة للأعمال الفنية، التسجيلات الصوتية ووثائق الأقسام الثلاثة للمعهد.'
                 : 'Complete repository of artistic works, audio performances, and archival documentations across the 3 historic institute departments.'}
@@ -196,8 +196,8 @@ export function ArtworksDirectoryClient() {
         })}
       </div>
 
-      {/* Artworks Grid */}
-      <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+      {/* Artworks Grid (2-Column Mobile) */}
+      <motion.div layout className="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-6 lg:gap-8">
         <AnimatePresence mode="popLayout">
           {filteredArtworks.map((artwork, idx) => (
             <motion.div

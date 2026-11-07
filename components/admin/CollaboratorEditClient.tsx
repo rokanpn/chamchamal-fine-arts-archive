@@ -503,7 +503,7 @@ export function CollaboratorEditClient({ id }: CollaboratorEditClientProps) {
             {/* Curatorial Summary */}
             <div className="flex flex-col gap-2">
               <label className="text-xs font-mono text-museum-secondary">
-                {langTab === 'ckb' ? 'کورتەی پڕۆژەی هاوبەش لەگەڵ پەیمانگا' : langTab === 'ar' ? 'ملخص المشروع المشترك بالمعهد' : 'Curatorial Impact & Workshop Summary'}
+                {langTab === 'ckb' ? 'کورتەی پڕۆژەی هاوبەش لەگەڵ پەیمانگە' : langTab === 'ar' ? 'ملخص المشروع المشترك بالمعهد' : 'Curatorial Impact & Workshop Summary'}
               </label>
               <textarea
                 rows={3}
