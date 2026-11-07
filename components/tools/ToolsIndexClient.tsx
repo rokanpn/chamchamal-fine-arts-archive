@@ -54,9 +54,9 @@ export function ToolsIndexClient() {
           </span>
         </div>
 
-        {/* Main Title Container with top breathing space for Kurdish diacritics */}
-        <div className="pt-2 sm:pt-3 w-full">
-          <h1 className="text-xl sm:text-3xl md:text-5xl font-bold text-stone-900 dark:text-parchment-pure leading-relaxed sm:leading-normal text-balance">
+        {/* Main Title Container with aggressive top breathing space for Kurdish diacritics */}
+        <div className="pt-5 sm:pt-6 w-full overflow-visible">
+          <h1 className="text-xl sm:text-3xl md:text-5xl font-bold text-stone-900 dark:text-parchment-pure leading-[1.85] sm:leading-[1.5] text-balance overflow-visible pt-1">
             {locale === 'ckb'
               ? 'ئامرازەکانی داهێنانی هونەری'
               : locale === 'ar'

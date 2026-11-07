@@ -139,8 +139,8 @@ export function ArtworksDirectoryClient() {
               <Sparkles className="w-3.5 h-3.5" />
               <span>{locale === 'ckb' ? 'ئەرشیفی فەرمی بەشە ئەکادیمییەکان' : locale === 'ar' ? 'الأرشيف الرسمي للأقسام' : 'Official Academic Archive'}</span>
             </div>
-            <div className="pt-1 sm:pt-2">
-              <h1 className="text-2xl sm:text-4xl font-bold text-stone-900 dark:text-parchment-pure leading-relaxed sm:leading-normal font-serif">
+            <div className="pt-3 sm:pt-4 overflow-visible">
+              <h1 className="text-2xl sm:text-4xl font-bold text-stone-900 dark:text-parchment-pure leading-[1.8] sm:leading-[1.4] overflow-visible pt-1 font-serif">
                 {locale === 'ckb' ? 'تەواوی شاکار و بەرهەمە تۆمارکراوەکان' : locale === 'ar' ? 'سجل الأعمال والروائع الموثقة' : 'Archived Fine Arts Masterworks'}
               </h1>
             </div>

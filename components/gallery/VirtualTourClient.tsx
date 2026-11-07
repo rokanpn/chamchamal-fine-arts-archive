@@ -49,7 +49,7 @@ import { MixedScene } from './scenes/MixedScene';
 const ENTRY_BUFFER = 5.0;
 const SPACING_INTERVAL = 5.5;
 
-// High-frequency 60fps controller that maps Left Virtual Joystick to Smooth Free-Look / Panning
+// High-frequency 60fps controller that maps Right Virtual Joystick to Smooth Free-Look / Panning
 function JoystickLookRigController({
   joystickLookRef,
   onRotate,
@@ -514,7 +514,7 @@ export function VirtualTourClient() {
         performance={{ min: 0.5 }}
       >
         <Suspense fallback={null}>
-          {/* Active 60fps Native Left Joystick Look / Panning Controller */}
+          {/* Active 60fps Native Right Joystick Look / Panning Controller */}
           <JoystickLookRigController
             joystickLookRef={joystickLookRef}
             onRotate={handleJoystickRotate}

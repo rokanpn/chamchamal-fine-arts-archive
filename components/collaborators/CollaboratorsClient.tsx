@@ -44,7 +44,7 @@ export function CollaboratorsClient() {
   return (
     <div className="flex flex-col gap-12 sm:gap-16 w-full pb-32 safe-bottom">
       {/* Header Banner */}
-      <section className="relative pt-6 sm:pt-10 flex flex-col items-center text-center max-w-4xl mx-auto px-2 sm:px-4">
+      <section className="relative pt-6 sm:pt-10 flex flex-col items-center text-center max-w-4xl mx-auto px-2 sm:px-4 overflow-visible">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gold/10 border border-gold/30 text-gold-dark dark:text-gold-light text-xs font-medium tracking-wide mb-3 sm:mb-4 shadow-gold-glow">
           <Globe className="w-3.5 h-3.5 text-gold shrink-0" />
           <span>
@@ -56,9 +56,9 @@ export function CollaboratorsClient() {
           </span>
         </div>
 
-        {/* Title Container with top breathing room for Kurdish ascenders & diacritics */}
-        <div className="pt-2 sm:pt-3 w-full">
-          <h1 className="text-2xl sm:text-4xl md:text-6xl font-bold text-stone-900 dark:text-parchment-pure leading-relaxed sm:leading-normal text-balance font-serif">
+        {/* Title Container with aggressive top breathing room for Kurdish ascenders & diacritics */}
+        <div className="pt-5 sm:pt-6 w-full overflow-visible">
+          <h1 className="text-2xl sm:text-4xl md:text-6xl font-bold text-stone-900 dark:text-parchment-pure leading-[1.85] sm:leading-[1.5] text-balance overflow-visible pt-1 font-serif">
             {locale === 'ckb'
               ? 'پردی دیالۆگی هونەری و هاوبەشییەکان'
               : locale === 'ar'

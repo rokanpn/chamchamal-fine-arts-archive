@@ -46,7 +46,7 @@ export function StudentsIndexClient() {
   return (
     <div className="flex flex-col gap-10 sm:gap-14 w-full pb-32 safe-bottom">
       {/* Header */}
-      <section className="relative pt-4 sm:pt-8 flex flex-col items-center text-center max-w-3xl mx-auto px-2 sm:px-4">
+      <section className="relative pt-4 sm:pt-8 flex flex-col items-center text-center max-w-3xl mx-auto px-2 sm:px-4 overflow-visible">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gold/10 border border-gold/30 text-gold-dark dark:text-gold-light text-xs font-medium tracking-wide mb-3 sm:mb-4 shadow-gold-glow">
           <GraduationCap className="w-4 h-4 text-gold shrink-0" />
           <span>
@@ -58,9 +58,9 @@ export function StudentsIndexClient() {
           </span>
         </div>
 
-        {/* Title Container with top breathing room for Kurdish ascenders & diacritics */}
-        <div className="pt-2 sm:pt-3 w-full">
-          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-stone-900 dark:text-parchment-pure leading-relaxed sm:leading-normal text-balance">
+        {/* Title Container with aggressive top breathing room for Kurdish ascenders & diacritics */}
+        <div className="pt-5 sm:pt-6 w-full overflow-visible">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-stone-900 dark:text-parchment-pure leading-[1.85] sm:leading-[1.5] text-balance overflow-visible pt-1">
             {locale === 'ckb'
               ? 'داهێنەرانی پەیمانگەی چەمچەماڵ'
               : locale === 'ar'
