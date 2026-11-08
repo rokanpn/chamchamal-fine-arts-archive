@@ -4,6 +4,9 @@ import React, { useRef } from 'react';
 import * as THREE from 'three';
 import { useTexture } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
+import { withCacheBust } from '@/lib/cacheBust';
+
+const PAINTING_DOOR_TEXTURE = withCacheBust('/painting-door.jpg');
 
 interface PaintingDoorProps {
   hovered: boolean;
@@ -14,14 +17,14 @@ interface PaintingDoorProps {
  * PAINTING HALL ARTISTIC STUDIO DOOR
  * ─────────────────────────────────────────────────────────────
  * High-performance 3D textured door:
- * - Direct texture mapping via useTexture('/painting-door.jpg')
+ * - Direct texture mapping via useTexture('/painting-door.jpg?v=2')
  * - Contrast-optimized meshStandardMaterial (toneMapped={false}, color="#ffffff", roughness=0.92)
  *   so the natural text baked into the texture stands out dark and razor-sharp
  * - Scaled down for seamless mobile visibility (fits viewport without clipping)
  * - Proportional 3D antique bronze artist palette handle with interactive pull ring
  */
 export function PaintingDoor({ hovered }: PaintingDoorProps) {
-  const texture = useTexture('/painting-door.jpg');
+  const texture = useTexture(PAINTING_DOOR_TEXTURE);
   texture.colorSpace = THREE.SRGBColorSpace;
 
   const pullRingRef = useRef<THREE.Group>(null);
@@ -115,7 +118,7 @@ export function PaintingDoor({ hovered }: PaintingDoorProps) {
   );
 }
 
-useTexture.preload('/painting-door.jpg');
+useTexture.preload(PAINTING_DOOR_TEXTURE);
 
 // Backwards compatibility alias
 export const PaintingDoorLeaf = PaintingDoor;

@@ -6,6 +6,7 @@ import { Text, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { Artwork, getArtworkDepartment } from '@/data/artworks';
 import { useResolvedMediaUrl } from '@/hooks/useResolvedMediaUrl';
+import { withCacheBust } from '@/lib/cacheBust';
 
 // Configure Google Draco wasm decoder CDN for compressed 3D models
 if (typeof window !== 'undefined') {
@@ -458,8 +459,9 @@ function ActualGLBModel({
   scaleMultiplier?: number;
   castShadow?: boolean;
 }) {
-  // Pass true for Draco decompression & meshopt support
-  const { scene } = useGLTF(url, true, true);
+  // Pass true for Draco decompression & meshopt support (with cache-busting version query)
+  const bustedUrl = withCacheBust(url);
+  const { scene } = useGLTF(bustedUrl, true, true);
 
   // Compute bounding box, center on X/Z, and align bottom directly to Y = 0
   const { cloned, finalScale } = useMemo(() => {

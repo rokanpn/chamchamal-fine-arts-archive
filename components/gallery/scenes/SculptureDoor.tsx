@@ -4,6 +4,9 @@ import React, { useRef } from 'react';
 import * as THREE from 'three';
 import { useTexture } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
+import { withCacheBust } from '@/lib/cacheBust';
+
+const SCULPTURE_DOOR_TEXTURE = withCacheBust('/sculpture-door.jpg');
 
 interface SculptureDoorProps {
   hovered: boolean;
@@ -14,14 +17,14 @@ interface SculptureDoorProps {
  * SCULPTURE HALL CARVED STONE & MARBLE DOOR
  * ─────────────────────────────────────────────────────────────
  * High-performance 3D textured door:
- * - Direct texture mapping via useTexture('/sculpture-door.jpg')
+ * - Direct texture mapping via useTexture('/sculpture-door.jpg?v=2')
  * - Contrast-optimized meshStandardMaterial (toneMapped={false}, color="#ffffff", roughness=0.92)
  *   so the natural text baked into the texture stands out dark and razor-sharp
  * - Scaled down for seamless mobile visibility (fits viewport without clipping)
  * - Proportional 3D antique bronze ring knocker with hover physics
  */
 export function SculptureDoor({ hovered }: SculptureDoorProps) {
-  const texture = useTexture('/sculpture-door.jpg');
+  const texture = useTexture(SCULPTURE_DOOR_TEXTURE);
   texture.colorSpace = THREE.SRGBColorSpace;
 
   const ringRef = useRef<THREE.Group>(null);
@@ -110,7 +113,7 @@ export function SculptureDoor({ hovered }: SculptureDoorProps) {
   );
 }
 
-useTexture.preload('/sculpture-door.jpg');
+useTexture.preload(SCULPTURE_DOOR_TEXTURE);
 
 // Backwards compatibility alias
 export const SculptureDoorLeaf = SculptureDoor;

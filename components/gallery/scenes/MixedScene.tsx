@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import { Artwork } from '@/data/artworks';
 import { computeArtwork3DDimensions } from '@/lib/dimensions';
 import { InstituteEndWallLogo, GalleryWelcomeSign, GalleryWelcomeOverheadArch } from '@/components/gallery/GalleryBranding';
+import { withCacheBust } from '@/lib/cacheBust';
 
 // --- Constants ---
 const CORRIDOR_WIDTH = 6.4;
@@ -107,7 +108,7 @@ function MixedArtworkImage({ url, width, height }: { url: string; width: number;
     let alive = true;
     const loader = new THREE.TextureLoader();
     loader.setCrossOrigin('anonymous');
-    loader.load(url,
+    loader.load(withCacheBust(url),
       (t) => { if (alive) { t.colorSpace = THREE.SRGBColorSpace; t.needsUpdate = true; setTexture(t); } },
       undefined,
       () => { if (alive) setFailed(true); }
@@ -185,7 +186,7 @@ function MixedFrame({ artwork, index, locale }: { artwork: Artwork; index: numbe
           <Text
             position={[0, 0, 0.025]}
             fontSize={0.065}
-            font={locale === 'en' ? undefined : '/fonts/NotoSansArabic-Bold.ttf'}
+            font={locale === 'en' ? undefined : withCacheBust('/fonts/NotoSansArabic-Bold.ttf')}
             direction={locale === 'en' ? 'ltr' : 'rtl'}
             color="#0A0A0C"
             anchorX="center"

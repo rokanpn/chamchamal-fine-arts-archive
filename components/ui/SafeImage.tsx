@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useResolvedMediaUrl } from '@/hooks/useResolvedMediaUrl';
+import { withCacheBust } from '@/lib/cacheBust';
 
 export interface SafeImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src?: string;
@@ -34,9 +35,10 @@ export function SafeImage({
   const { resolvedUrl } = useResolvedMediaUrl(src);
 
   const isIdb = Boolean(src && src.startsWith('idb://'));
-  const effectiveSrc = isIdb
+  const rawTarget = isIdb
     ? (resolvedUrl || fallbackSrc)
     : (resolvedUrl || src || fallbackSrc);
+  const effectiveSrc = isIdb ? rawTarget : withCacheBust(rawTarget);
 
   const handleError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     if (fallbackSrc && e.currentTarget.src !== fallbackSrc) {

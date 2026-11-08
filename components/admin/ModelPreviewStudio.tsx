@@ -5,6 +5,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { useResolvedMediaUrl } from '@/hooks/useResolvedMediaUrl';
+import { withCacheBust } from '@/lib/cacheBust';
 
 // Configure Google Draco wasm decoder CDN for compressed 3D models in admin preview
 if (typeof window !== 'undefined') {
@@ -198,8 +199,9 @@ interface StudioGLBModelProps {
 }
 
 function StudioGLBModel({ url, modelScale, hasPedestal, onDimensionsMeasured }: StudioGLBModelProps) {
-  // Support standard, Draco-compressed, and Meshopt-compressed models
-  const { scene } = useGLTF(url, true, true);
+  // Support standard, Draco-compressed, and Meshopt-compressed models (with cache-busting)
+  const bustedUrl = withCacheBust(url);
+  const { scene } = useGLTF(bustedUrl, true, true);
 
   // Compute normalized baseline scale, center horizontally, and align bottom directly to local y = 0
   const { cloned, finalScale, dims } = useMemo(() => {

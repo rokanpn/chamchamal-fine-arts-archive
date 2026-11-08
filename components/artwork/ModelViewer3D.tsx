@@ -14,6 +14,7 @@ import {
   Sparkles, 
   RefreshCw 
 } from 'lucide-react';
+import { withCacheBust } from '@/lib/cacheBust';
 
 interface ModelViewer3DProps {
   modelUrl: string;
@@ -81,8 +82,8 @@ export function ModelViewer3D({
       {isModuleReady ? (
         <model-viewer
           ref={viewerRef}
-          src={modelUrl}
-          poster={posterUrl}
+          src={withCacheBust(modelUrl)}
+          poster={withCacheBust(posterUrl)}
           alt={title}
           auto-rotate={autoRotate ? true : undefined}
           auto-rotate-delay={1000}

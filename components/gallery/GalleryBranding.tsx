@@ -3,9 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import * as THREE from 'three';
 import { Text } from '@react-three/drei';
+import { withCacheBust } from '@/lib/cacheBust';
 
-const KURDISH_FONT_BOLD = '/fonts/NotoSansArabic-Bold.ttf';
-const KURDISH_FONT_REGULAR = '/fonts/NotoSansArabic-Regular.ttf';
+const KURDISH_FONT_BOLD = withCacheBust('/fonts/NotoSansArabic-Bold.ttf');
+const KURDISH_FONT_REGULAR = withCacheBust('/fonts/NotoSansArabic-Regular.ttf');
 
 /**
  * ─────────────────────────────────────────────────────────────
@@ -26,11 +27,11 @@ export function InstituteEndWallLogo() {
 
     // Priority candidates for logo image in public directory
     const candidates = [
-      '/logo.png',
-      '/logo-light.png',
-      '/logo-transparent.png',
-      '/logo-dark.png',
-      '/logo-light.jpg',
+      withCacheBust('/logo.png'),
+      withCacheBust('/logo-light.png'),
+      withCacheBust('/logo-transparent.png'),
+      withCacheBust('/logo-dark.png'),
+      withCacheBust('/logo-light.jpg'),
     ];
 
     const tryLoad = (idx: number) => {

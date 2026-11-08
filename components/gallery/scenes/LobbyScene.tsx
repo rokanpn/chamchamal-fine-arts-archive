@@ -6,6 +6,9 @@ import { Text } from '@react-three/drei';
 import * as THREE from 'three';
 import { SculptureDoor } from './SculptureDoor';
 import { PaintingDoor } from './PaintingDoor';
+import { withCacheBust } from '@/lib/cacheBust';
+
+const KURDISH_FONT = withCacheBust('/fonts/NotoSansArabic-Bold.ttf');
 
 // Shared Scene Type Declaration
 export type SceneType = 'lobby' | 'painting' | 'sculpture' | 'mixed';
@@ -121,7 +124,7 @@ function MixedDoor({ hovered, accentColor, label, subLabel }: MixedDoorProps) {
         <Text
           position={[0, 0.025, 0.012]}
           fontSize={0.065}
-          font="/fonts/NotoSansArabic-Bold.ttf"
+          font={KURDISH_FONT}
           direction="rtl"
           color="#0A0A0C"
           anchorX="center"
@@ -254,7 +257,7 @@ function DoorPortal({ angle, label, subLabel, accentColor, scene, onNavigate }: 
               color="#D4AF37"
               anchorX="center"
               anchorY="middle"
-              font="/fonts/NotoSansArabic-Bold.ttf"
+              font={KURDISH_FONT}
               direction="rtl"
               raycast={() => null}
             >
@@ -436,7 +439,7 @@ function MobileOptimizedWelcomeText() {
       <Text
         position={[0, 0.1, 0.01]}
         fontSize={0.11}
-        font="/fonts/NotoSansArabic-Bold.ttf"
+        font={KURDISH_FONT}
         color="#4A3B12"
         anchorX="center"
         anchorY="middle"
@@ -451,7 +454,7 @@ function MobileOptimizedWelcomeText() {
       <Text
         position={[0, -0.015, 0.01]}
         fontSize={0.075}
-        font="/fonts/NotoSansArabic-Bold.ttf"
+        font={KURDISH_FONT}
         color="#7A6832"
         anchorX="center"
         anchorY="middle"

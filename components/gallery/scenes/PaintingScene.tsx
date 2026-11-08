@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import { Artwork, getArtworkDepartmentLabel } from '@/data/artworks';
 import { computeArtwork3DDimensions } from '@/lib/dimensions';
 import { InstituteEndWallLogo, GalleryWelcomeSign, GalleryWelcomeOverheadArch } from '@/components/gallery/GalleryBranding';
+import { withCacheBust } from '@/lib/cacheBust';
 
 // --- Constants (mirrored from original VirtualTourClient) ---
 const CORRIDOR_WIDTH = 6.4;
@@ -55,7 +56,7 @@ function SafeArtworkImage({ url, width, height }: { url: string; width: number; 
     const loader = new THREE.TextureLoader();
     loader.setCrossOrigin('anonymous');
     loader.load(
-      url,
+      withCacheBust(url),
       (t) => {
         if (isCurrent) {
           t.colorSpace = THREE.SRGBColorSpace;
@@ -214,7 +215,7 @@ function ArtworkFrame3D({ artwork, index, total, isFocused, locale, onFocus, onO
           <Text
             position={[0, 0, 0.025]}
             fontSize={0.072}
-            font={locale === 'en' ? undefined : '/fonts/NotoSansArabic-Bold.ttf'}
+            font={locale === 'en' ? undefined : withCacheBust('/fonts/NotoSansArabic-Bold.ttf')}
             direction={locale === 'en' ? 'ltr' : 'rtl'}
             color="#0A0A0C"
             anchorX="center"
