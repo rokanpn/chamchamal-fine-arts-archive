@@ -2,24 +2,23 @@
 
 import React, { useRef } from 'react';
 import * as THREE from 'three';
-import { useTexture, Text } from '@react-three/drei';
+import { useTexture } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 
 interface PaintingDoorProps {
   hovered: boolean;
 }
 
-const KURDISH_FONT = '/fonts/NotoSansArabic-Bold.ttf';
-
 /**
  * ─────────────────────────────────────────────────────────────
  * PAINTING HALL ARTISTIC STUDIO DOOR
  * ─────────────────────────────────────────────────────────────
- * Optimized high-performance 3D textured door:
+ * High-performance 3D textured door:
  * - Direct texture mapping via useTexture('/painting-door.jpg')
+ * - Contrast-optimized meshStandardMaterial (toneMapped={false}, color="#ffffff", roughness=0.92)
+ *   so the natural text baked into the texture stands out dark and razor-sharp
  * - Scaled down for seamless mobile visibility (fits viewport without clipping)
  * - Proportional 3D antique bronze artist palette handle with interactive pull ring
- * - Crisp scaled Kurdish 3D calligraphy on top cartouche: "بەشی وێنەکێشان"
  */
 export function PaintingDoor({ hovered }: PaintingDoorProps) {
   const texture = useTexture('/painting-door.jpg');
@@ -67,45 +66,19 @@ export function PaintingDoor({ hovered }: PaintingDoorProps) {
         />
       </mesh>
 
-      {/* ── 2. Primary Textured Door Face (Exact Reference Texture) ── */}
+      {/* ── 2. Primary Textured Door Face (High Contrast, No Specular Glare) ── */}
       <mesh position={[0, 0, doorDepth / 2 + 0.002]} castShadow receiveShadow raycast={() => null}>
         <planeGeometry args={[doorWidth, doorHeight]} />
         <meshStandardMaterial
           map={texture}
-          roughness={0.72}
-          metalness={0.12}
-          emissive={hovered ? '#3a2310' : '#000000'}
-          emissiveIntensity={hovered ? 0.22 : 0}
+          color="#ffffff"
+          roughness={0.92}
+          metalness={0.0}
+          toneMapped={false}
         />
       </mesh>
 
-      {/* ── 3. High-Legibility Kurdish Calligraphy on Top Wooden Cartouche ── */}
-      <Text
-        position={[0, doorHeight * 0.42 + 0.02, doorDepth / 2 + 0.006]}
-        fontSize={0.075}
-        font={KURDISH_FONT}
-        color={hovered ? '#24150b' : '#301c0e'}
-        anchorX="center"
-        anchorY="middle"
-        direction="rtl"
-        outlineWidth={0.0035}
-        outlineColor={hovered ? '#c79d6b' : '#ab7e4c'}
-        raycast={() => null}
-      >
-        بەشی وێنەکێشان
-      </Text>
-      <Text
-        position={[0, doorHeight * 0.42 - 0.045, doorDepth / 2 + 0.006]}
-        fontSize={0.034}
-        color={hovered ? '#4a2c16' : '#57361c'}
-        anchorX="center"
-        anchorY="middle"
-        raycast={() => null}
-      >
-        Painting Hall
-      </Text>
-
-      {/* ── 4. Scaled 3D Antique Bronze Palette Handle with Pull Ring ── */}
+      {/* ── 3. Scaled 3D Antique Bronze Palette Handle with Pull Ring ── */}
       <group position={[handleX, handleY, doorDepth / 2 + 0.006]}>
         {/* Palette Knob Base */}
         <mesh position={[0, 0, 0.004]} rotation={[Math.PI / 2, 0, 0]} raycast={() => null}>
@@ -130,10 +103,10 @@ export function PaintingDoor({ hovered }: PaintingDoorProps) {
         </group>
       </group>
 
-      {/* ── 5. Warm Grazing Studio Spotlight ── */}
+      {/* ── 4. Warm Grazing Studio Spotlight ── */}
       <pointLight
-        position={[0, doorHeight * 0.35, 0.65]}
-        intensity={hovered ? 16 : 8}
+        position={[0, doorHeight * 0.3, 0.7]}
+        intensity={hovered ? 14 : 7}
         distance={3.8}
         decay={2}
         color={hovered ? '#fff3d6' : '#ffe8c2'}

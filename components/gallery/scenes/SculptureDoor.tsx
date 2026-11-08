@@ -2,24 +2,23 @@
 
 import React, { useRef } from 'react';
 import * as THREE from 'three';
-import { useTexture, Text } from '@react-three/drei';
+import { useTexture } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 
 interface SculptureDoorProps {
   hovered: boolean;
 }
 
-const KURDISH_FONT = '/fonts/NotoSansArabic-Bold.ttf';
-
 /**
  * ─────────────────────────────────────────────────────────────
  * SCULPTURE HALL CARVED STONE & MARBLE DOOR
  * ─────────────────────────────────────────────────────────────
- * Optimized high-performance 3D textured door:
+ * High-performance 3D textured door:
  * - Direct texture mapping via useTexture('/sculpture-door.jpg')
+ * - Contrast-optimized meshStandardMaterial (toneMapped={false}, color="#ffffff", roughness=0.92)
+ *   so the natural text baked into the texture stands out dark and razor-sharp
  * - Scaled down for seamless mobile visibility (fits viewport without clipping)
  * - Proportional 3D antique bronze ring knocker with hover physics
- * - Crisp scaled Kurdish 3D calligraphy on top cartouche: "بەشی پەیکەرسازی"
  */
 export function SculptureDoor({ hovered }: SculptureDoorProps) {
   const texture = useTexture('/sculpture-door.jpg');
@@ -61,45 +60,19 @@ export function SculptureDoor({ hovered }: SculptureDoorProps) {
         />
       </mesh>
 
-      {/* ── 2. Primary Textured Door Face (Exact Reference Texture) ── */}
+      {/* ── 2. Primary Textured Door Face (High Contrast, No Specular Glare) ── */}
       <mesh position={[0, 0, doorDepth / 2 + 0.002]} castShadow receiveShadow raycast={() => null}>
         <planeGeometry args={[doorWidth, doorHeight]} />
         <meshStandardMaterial
           map={texture}
-          roughness={0.65}
-          metalness={0.15}
-          emissive={hovered ? '#443520' : '#000000'}
-          emissiveIntensity={hovered ? 0.22 : 0}
+          color="#ffffff"
+          roughness={0.92}
+          metalness={0.0}
+          toneMapped={false}
         />
       </mesh>
 
-      {/* ── 3. High-Legibility Kurdish Calligraphy on Top Cartouche ── */}
-      <Text
-        position={[0, doorHeight * 0.38 + 0.02, doorDepth / 2 + 0.006]}
-        fontSize={0.065}
-        font={KURDISH_FONT}
-        color={hovered ? '#221c16' : '#2d251d'}
-        anchorX="center"
-        anchorY="middle"
-        direction="rtl"
-        outlineWidth={0.003}
-        outlineColor={hovered ? '#d1c0a8' : '#b8a68f'}
-        raycast={() => null}
-      >
-        بەشی پەیکەرسازی
-      </Text>
-      <Text
-        position={[0, doorHeight * 0.38 - 0.045, doorDepth / 2 + 0.006]}
-        fontSize={0.032}
-        color={hovered ? '#44362a' : '#574837'}
-        anchorX="center"
-        anchorY="middle"
-        raycast={() => null}
-      >
-        Sculpture Hall
-      </Text>
-
-      {/* ── 4. Scaled 3D Antique Bronze Knocker Ring on Rosette ── */}
+      {/* ── 3. Scaled 3D Antique Bronze Knocker Ring on Rosette ── */}
       {/* Center of rosette in texture: x = 0, y ≈ -0.06m from door center */}
       <group position={[0, -0.06, doorDepth / 2 + 0.006]}>
         {/* Rosette Rim */}
@@ -125,10 +98,10 @@ export function SculptureDoor({ hovered }: SculptureDoorProps) {
         </group>
       </group>
 
-      {/* ── 5. Subtle Warm Grazing Spotlight ── */}
+      {/* ── 4. Subtle Warm Ambient Spotlight ── */}
       <pointLight
-        position={[0, doorHeight * 0.3, 0.55]}
-        intensity={hovered ? 15 : 7}
+        position={[0, doorHeight * 0.25, 0.65]}
+        intensity={hovered ? 12 : 6}
         distance={3.5}
         decay={2}
         color={hovered ? '#fff3d6' : '#ffe9c2'}
