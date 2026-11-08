@@ -6,6 +6,7 @@ import { Text } from '@react-three/drei';
 import * as THREE from 'three';
 import { Artwork, getArtworkDepartmentLabel } from '@/data/artworks';
 import { computeArtwork3DDimensions } from '@/lib/dimensions';
+import { InstituteEndWallLogo, GalleryWelcomeSign, GalleryWelcomeOverheadArch } from '@/components/gallery/GalleryBranding';
 
 // --- Constants (mirrored from original VirtualTourClient) ---
 const CORRIDOR_WIDTH = 6.4;
@@ -213,6 +214,8 @@ function ArtworkFrame3D({ artwork, index, total, isFocused, locale, onFocus, onO
           <Text
             position={[0, 0, 0.025]}
             fontSize={0.072}
+            font={locale === 'en' ? undefined : '/fonts/NotoSansArabic-Bold.ttf'}
+            direction={locale === 'en' ? 'ltr' : 'rtl'}
             color="#0A0A0C"
             anchorX="center"
             anchorY="middle"
@@ -301,43 +304,25 @@ function CorridorEnvironment({ corridorLength }: { corridorLength: number }) {
           <pointLight position={[0, -0.3, 0]} intensity={4.5} distance={7} decay={2} color="#ffe8b8" />
         </group>
       ))}
-      {/* Entrance wall */}
+      {/* Overhead Entrance Archway (visible looking down corridor) */}
+      <GalleryWelcomeOverheadArch />
+
+      {/* Entrance Wall with Monumental Kurdish Welcome Sign */}
       <group position={[0, CORRIDOR_HEIGHT / 2, 2.5]} rotation={[0, Math.PI, 0]}>
-        <mesh>
+        <mesh raycast={() => null}>
           <planeGeometry args={[CORRIDOR_WIDTH, CORRIDOR_HEIGHT]} />
           <meshStandardMaterial color="#0f0f13" roughness={0.8} />
         </mesh>
-        <mesh position={[0, 0, 0.02]}>
-          <planeGeometry args={[2.8, 3.4]} />
-          <meshStandardMaterial color="#16141b" roughness={0.6} />
-        </mesh>
-        <Text position={[0, 0.9, 0.04]} fontSize={0.16} color="#D4AF37" anchorX="center" anchorY="middle">
-          CHAMCHAMAL FINE ARTS ARCHIVE
-        </Text>
-        <Text position={[0, 0.65, 0.04]} fontSize={0.11} color="#E6D3A3" anchorX="center" anchorY="middle">
-          VIRTUAL 3D GRAND GALLERY
-        </Text>
+        <GalleryWelcomeSign />
       </group>
-      {/* Rotunda back wall */}
+
+      {/* Rotunda Far End Wall (Official Institute Logo Emblem) */}
       <group position={[0, CORRIDOR_HEIGHT / 2, -corridorLength + 2]}>
-        <mesh>
+        <mesh raycast={() => null}>
           <planeGeometry args={[CORRIDOR_WIDTH, CORRIDOR_HEIGHT]} />
           <meshStandardMaterial color="#0f0f13" roughness={0.8} />
         </mesh>
-        <mesh position={[0, 0.4, 0.02]}>
-          <circleGeometry args={[1.2, 32]} />
-          <meshStandardMaterial color="#18171d" roughness={0.4} metalness={0.6} />
-        </mesh>
-        <mesh position={[0, 0.4, 0.03]}>
-          <ringGeometry args={[1.15, 1.2, 32]} />
-          <meshBasicMaterial color="#D4AF37" />
-        </mesh>
-        <Text position={[0, 0.5, 0.05]} fontSize={0.14} color="#D4AF37" anchorX="center" anchorY="middle">
-          END OF EXHIBITION HALL
-        </Text>
-        <Text position={[0, 0.25, 0.05]} fontSize={0.09} color="#AAAAAA" anchorX="center" anchorY="middle">
-          Use navigation controls or click any artwork to revisit
-        </Text>
+        <InstituteEndWallLogo />
       </group>
     </group>
   );

@@ -2,7 +2,7 @@
   "name": "chamchamal-fine-arts-archive",
   "version": "1.0.0",
   "private": true,
-  "description": "Progressive Web App for Chamchamal Fine Arts Institute Digital Archive (ئەرشیفی دیجیتاڵی پەیمانگای هونەرە جوانەکانی چەمچەماڵ)",
+  "description": "Progressive Web App for Chamchamal Fine Arts Institute Digital Archive (ئەرشیفی دیجیتاڵی پەیمانگەی هونەرە جوانەکانی چەمچەماڵ)",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

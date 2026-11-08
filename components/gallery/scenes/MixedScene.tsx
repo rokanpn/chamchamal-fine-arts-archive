@@ -6,6 +6,7 @@ import { Text } from '@react-three/drei';
 import * as THREE from 'three';
 import { Artwork } from '@/data/artworks';
 import { computeArtwork3DDimensions } from '@/lib/dimensions';
+import { InstituteEndWallLogo, GalleryWelcomeSign, GalleryWelcomeOverheadArch } from '@/components/gallery/GalleryBranding';
 
 // --- Constants ---
 const CORRIDOR_WIDTH = 6.4;
@@ -184,6 +185,8 @@ function MixedFrame({ artwork, index, locale }: { artwork: Artwork; index: numbe
           <Text
             position={[0, 0, 0.025]}
             fontSize={0.065}
+            font={locale === 'en' ? undefined : '/fonts/NotoSansArabic-Bold.ttf'}
+            direction={locale === 'en' ? 'ltr' : 'rtl'}
             color="#0A0A0C"
             anchorX="center"
             anchorY="middle"
@@ -258,28 +261,25 @@ function MixedCorridorEnvironment({ corridorLength }: { corridorLength: number }
           <pointLight position={[0, -0.3, 0]} intensity={4} distance={7} decay={2} color="#d8e8ff" />
         </group>
       ))}
-      {/* Entrance */}
+      {/* Overhead Entrance Archway */}
+      <GalleryWelcomeOverheadArch />
+
+      {/* Entrance Wall with Monumental Kurdish Welcome Sign */}
       <group position={[0, CORRIDOR_HEIGHT / 2, 2.5]} rotation={[0, Math.PI, 0]}>
         <mesh raycast={() => null}>
           <planeGeometry args={[CORRIDOR_WIDTH, CORRIDOR_HEIGHT]} />
           <meshStandardMaterial color="#0d0d18" roughness={0.8} />
         </mesh>
-        <Text position={[0, 0.9, 0.04]} fontSize={0.14} color="#7a9fcc" anchorX="center" anchorY="middle" raycast={() => null}>
-          بابەتی تێکەڵاو
-        </Text>
-        <Text position={[0, 0.65, 0.04]} fontSize={0.09} color="#E6D3A3" anchorX="center" anchorY="middle">
-          MIXED GALLERY HALL
-        </Text>
+        <GalleryWelcomeSign />
       </group>
-      {/* Back wall */}
+
+      {/* Back Wall (Official Institute Logo Emblem) */}
       <group position={[0, CORRIDOR_HEIGHT / 2, -corridorLength + 2]}>
-        <mesh>
+        <mesh raycast={() => null}>
           <planeGeometry args={[CORRIDOR_WIDTH, CORRIDOR_HEIGHT]} />
           <meshStandardMaterial color="#0d0d18" roughness={0.8} />
         </mesh>
-        <Text position={[0, 0.5, 0.05]} fontSize={0.11} color="#7a9fcc" anchorX="center" anchorY="middle">
-          کۆتایی هۆڵی تێکەڵاو
-        </Text>
+        <InstituteEndWallLogo />
       </group>
     </group>
   );

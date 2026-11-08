@@ -439,10 +439,12 @@ function MobileOptimizedWelcomeText() {
       <Text
         position={[0, 0.1, 0.01]}
         fontSize={0.11}
+        font="/fonts/NotoSansArabic-Bold.ttf"
         color="#4A3B12"
         anchorX="center"
         anchorY="middle"
         textAlign="center"
+        direction="rtl"
         maxWidth={1.55}
       >
         دەروازەی گەورەی پێشانگا
@@ -452,10 +454,12 @@ function MobileOptimizedWelcomeText() {
       <Text
         position={[0, -0.015, 0.01]}
         fontSize={0.075}
+        font="/fonts/NotoSansArabic-Bold.ttf"
         color="#7A6832"
         anchorX="center"
         anchorY="middle"
         textAlign="center"
+        direction="rtl"
         maxWidth={1.55}
       >
         پەیمانگەی هونەرە جوانەکانی چەمچەماڵ
