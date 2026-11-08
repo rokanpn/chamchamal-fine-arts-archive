@@ -4,8 +4,8 @@ import React, { useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Text } from '@react-three/drei';
 import * as THREE from 'three';
-import { SculptureDoorLeaf, SculptureDoorLunette } from './SculptureDoor';
-import { PaintingDoorLeaf, PaintingDoorLunette } from './PaintingDoor';
+import { SculptureDoor } from './SculptureDoor';
+import { PaintingDoor } from './PaintingDoor';
 
 // Shared Scene Type Declaration
 export type SceneType = 'lobby' | 'painting' | 'sculpture' | 'mixed';
@@ -56,7 +56,96 @@ function LobbyFreeLookRig({ targetYaw, targetPitch }: LobbyFreeLookRigProps) {
   return null;
 }
 
-// --- Classical Roman Arched Doorway Component ---
+// --- Scaled Classical Mixed Hall Portal Component ---
+interface MixedDoorProps {
+  hovered: boolean;
+  accentColor: string;
+  label: string;
+  subLabel: string;
+}
+
+function MixedDoor({ hovered, accentColor, label, subLabel }: MixedDoorProps) {
+  const doorWidth = 1.15;
+  const doorHeight = 2.0;
+  const doorDepth = 0.04;
+  const centerY = doorHeight / 2 + 0.12;
+
+  return (
+    <group position={[0, centerY, 0.02]}>
+      {/* Outer Door Frame */}
+      <mesh castShadow receiveShadow raycast={() => null}>
+        <boxGeometry args={[doorWidth + 0.06, doorHeight + 0.06, doorDepth]} />
+        <meshStandardMaterial
+          color={hovered ? '#fffdf7' : '#f4efe6'}
+          roughness={0.3}
+          metalness={0.08}
+        />
+      </mesh>
+
+      {/* Gold Inner Fillet */}
+      <mesh position={[0, 0, 0.008]} raycast={() => null}>
+        <boxGeometry args={[doorWidth, doorHeight, doorDepth]} />
+        <meshStandardMaterial
+          color={hovered ? '#f5d77f' : accentColor}
+          roughness={0.25}
+          metalness={0.88}
+        />
+      </mesh>
+
+      {/* Main Door Slab */}
+      <mesh position={[0, -0.09, 0.016]} raycast={() => null}>
+        <boxGeometry args={[doorWidth - 0.08, doorHeight - 0.26, 0.02]} />
+        <meshStandardMaterial
+          color={hovered ? '#1e1c24' : '#141217'}
+          roughness={0.8}
+          metalness={0.2}
+        />
+      </mesh>
+
+      {/* Classical Brass Pull Ring */}
+      <mesh position={[doorWidth * 0.24, -0.09, 0.035]} raycast={() => null}>
+        <torusGeometry args={[0.045, 0.01, 8, 16]} />
+        <meshStandardMaterial color={accentColor} roughness={0.2} metalness={0.95} />
+      </mesh>
+
+      {/* Top Inscription Tablet */}
+      <group position={[0, doorHeight * 0.38, 0.022]}>
+        <mesh raycast={() => null}>
+          <boxGeometry args={[doorWidth - 0.1, 0.22, 0.015]} />
+          <meshStandardMaterial
+            color={hovered ? '#fffdf7' : '#f5f0e8'}
+            roughness={0.25}
+            metalness={0.1}
+          />
+        </mesh>
+        <Text
+          position={[0, 0.025, 0.012]}
+          fontSize={0.065}
+          font="/fonts/NotoSansArabic-Bold.ttf"
+          direction="rtl"
+          color="#0A0A0C"
+          anchorX="center"
+          anchorY="middle"
+          raycast={() => null}
+        >
+          {label}
+        </Text>
+        <Text
+          position={[0, -0.045, 0.012]}
+          fontSize={0.035}
+          color="#332f25"
+          anchorX="center"
+          anchorY="middle"
+          raycast={() => null}
+        >
+          {subLabel}
+        </Text>
+      </group>
+    </group>
+  );
+}
+
+// --- Scaled Classical Museum Portal Component ---
 interface DoorPortalProps {
   angle: number;       // Angle in radians from forward (-Z) direction
   label: string;       // Kurdish main title
@@ -77,17 +166,18 @@ function DoorPortal({ angle, label, subLabel, accentColor, scene, onNavigate }: 
   const doorZ = -Math.cos(angle) * dist;
   const rotY = -angle;
 
-  const DOOR_WIDTH = 1.35;
-  const DOOR_HEIGHT = 2.75;
-  const ARCH_RADIUS = DOOR_WIDTH / 2;
+  // Scaled hitbox proportions per door type for frictionless mobile tapping
+  const hitboxWidth = scene === 'painting' ? 2.15 : 1.25;
+  const hitboxHeight = scene === 'painting' ? 1.75 : 2.1;
+  const hitboxY = scene === 'painting' ? 0.98 : 1.12;
 
   useFrame((_, delta) => {
     if (frameRef.current) {
-      const targetScale = hovered ? 1.03 : 1.0;
+      const targetScale = hovered ? 1.025 : 1.0;
       frameRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), delta * 8);
     }
     if (glowRef.current) {
-      const targetIntensity = hovered ? 22 : 8;
+      const targetIntensity = hovered ? 18 : 7;
       glowRef.current.intensity = THREE.MathUtils.lerp(glowRef.current.intensity, targetIntensity, delta * 6);
     }
   });
@@ -97,9 +187,9 @@ function DoorPortal({ angle, label, subLabel, accentColor, scene, onNavigate }: 
       {/* Warm Ambient Doorway Illumination */}
       <pointLight
         ref={glowRef}
-        position={[0, 1.8, 0.4]}
-        intensity={8}
-        distance={4.5}
+        position={[0, 1.4, 0.45]}
+        intensity={7}
+        distance={4.2}
         decay={2}
         color={accentColor}
       />
@@ -108,7 +198,7 @@ function DoorPortal({ angle, label, subLabel, accentColor, scene, onNavigate }: 
       <group ref={frameRef}>
         {/* Generous Invisible Touch/Click Hitbox for Mobile Frictionless Tapping (ONLY Raycast Recipient) */}
         <mesh
-          position={[0, 1.5, 0.1]}
+          position={[0, hitboxY, 0.08]}
           onPointerOver={(e) => {
             e.stopPropagation();
             setHovered(true);
@@ -123,181 +213,50 @@ function DoorPortal({ angle, label, subLabel, accentColor, scene, onNavigate }: 
             onNavigate(scene);
           }}
         >
-          <boxGeometry args={[DOOR_WIDTH + 0.3, DOOR_HEIGHT + 0.4, 0.5]} />
+          <boxGeometry args={[hitboxWidth, hitboxHeight, 0.45]} />
           <meshBasicMaterial transparent opacity={0} depthWrite={false} />
         </mesh>
 
-        {/* 1. Outer White/Cream Marble Architrave */}
-        <mesh position={[0, (DOOR_HEIGHT - ARCH_RADIUS) / 2, 0]} raycast={() => null}>
-          <boxGeometry args={[DOOR_WIDTH + 0.22, DOOR_HEIGHT - ARCH_RADIUS, 0.16]} />
+        {/* ── Floor Plinth / Threshold Grounding the Portal ── */}
+        <mesh position={[0, 0.04, 0.03]} raycast={() => null}>
+          <boxGeometry args={[hitboxWidth + 0.1, 0.08, 0.16]} />
           <meshStandardMaterial
-            color={hovered ? '#fffdf7' : '#f4efe6'}
-            roughness={0.3}
-            metalness={0.08}
+            color={hovered ? '#443628' : '#2e251d'}
+            roughness={0.65}
+            metalness={0.2}
           />
         </mesh>
 
-        {/* 2. Roman Semicircular Arch Top */}
-        <group position={[0, DOOR_HEIGHT - ARCH_RADIUS, 0]}>
-          <mesh rotation={[0, 0, 0]} raycast={() => null}>
-            <cylinderGeometry
-              args={[ARCH_RADIUS + 0.11, ARCH_RADIUS + 0.11, 0.16, 24, 1, false, 0, Math.PI]}
-            />
-            <meshStandardMaterial
-              color={hovered ? '#fffdf7' : '#f4efe6'}
-              roughness={0.3}
-              metalness={0.08}
-            />
-          </mesh>
-
-          {/* Golden Keystone Detail at the Arch Apex */}
-          <mesh position={[0, ARCH_RADIUS + 0.08, 0.04]} raycast={() => null}>
-            <boxGeometry args={[0.14, 0.2, 0.1]} />
-            <meshStandardMaterial
-              color="#D4AF37"
-              roughness={0.2}
-              metalness={0.85}
-              emissive="#8C7326"
-              emissiveIntensity={hovered ? 0.35 : 0.15}
-            />
-          </mesh>
-        </group>
-
-        {/* 3. Gold Beveled Inner Fillet Trim */}
-        <mesh position={[0, (DOOR_HEIGHT - ARCH_RADIUS) / 2, 0.085]} raycast={() => null}>
-          <boxGeometry args={[DOOR_WIDTH + 0.02, DOOR_HEIGHT - ARCH_RADIUS - 0.02, 0.02]} />
-          <meshStandardMaterial
-            color={hovered ? '#f5d77f' : accentColor}
-            roughness={0.2}
-            metalness={0.9}
-            emissive={hovered ? accentColor : '#6b540f'}
-            emissiveIntensity={hovered ? 0.45 : 0.18}
-          />
-        </mesh>
-
-        {/* 4. Deep Roman Portal Opening / Dedicated Custom Carved Sculpture Door / Studio Painting Door */}
+        {/* ── Dedicated High-Performance Texture-Mapped Doors ── */}
         {scene === 'sculpture' ? (
-          <>
-            {/* Weathered Carved Stone & Marble Sculpture Hall Door */}
-            <group position={[0, (DOOR_HEIGHT - ARCH_RADIUS) / 2, 0]}>
-              <SculptureDoorLeaf
-                width={DOOR_WIDTH - 0.04}
-                height={DOOR_HEIGHT - ARCH_RADIUS}
-                hovered={hovered}
-              />
-            </group>
-            {/* Roman Semicircular Stone Lunette Fanlight */}
-            <group position={[0, DOOR_HEIGHT - ARCH_RADIUS, 0]}>
-              <SculptureDoorLunette radius={ARCH_RADIUS - 0.03} />
-            </group>
-          </>
+          <SculptureDoor hovered={hovered} />
         ) : scene === 'painting' ? (
-          <>
-            {/* Artistic Weathered Studio Wood & Paint Splatters Painting Hall Door */}
-            <group position={[0, (DOOR_HEIGHT - ARCH_RADIUS) / 2, 0]}>
-              <PaintingDoorLeaf
-                width={DOOR_WIDTH - 0.04}
-                height={DOOR_HEIGHT - ARCH_RADIUS}
-                hovered={hovered}
-              />
-            </group>
-            {/* Weathered Studio Oak Archway Lunette Fanlight */}
-            <group position={[0, DOOR_HEIGHT - ARCH_RADIUS, 0]}>
-              <PaintingDoorLunette radius={ARCH_RADIUS - 0.03} />
-            </group>
-          </>
+          <PaintingDoor hovered={hovered} />
         ) : (
-          <>
-            <mesh position={[0, (DOOR_HEIGHT - ARCH_RADIUS) / 2, 0.095]} raycast={() => null}>
-              <boxGeometry args={[DOOR_WIDTH - 0.06, DOOR_HEIGHT - ARCH_RADIUS - 0.04, 0.02]} />
-              <meshStandardMaterial
-                color={hovered ? '#1c1822' : '#141217'}
-                roughness={0.8}
-                metalness={0.2}
-              />
-            </mesh>
-            <mesh position={[0, DOOR_HEIGHT - ARCH_RADIUS, 0.095]} raycast={() => null}>
-              <cylinderGeometry
-                args={[ARCH_RADIUS - 0.03, ARCH_RADIUS - 0.03, 0.02, 20, 1, false, 0, Math.PI]}
-              />
-              <meshStandardMaterial
-                color={hovered ? '#1c1822' : '#141217'}
-                roughness={0.8}
-                metalness={0.2}
-              />
-            </mesh>
-
-            {/* Classical Brass Pull Ring */}
-            <mesh position={[DOOR_WIDTH * 0.28, 1.25, 0.12]} raycast={() => null}>
-              <torusGeometry args={[0.055, 0.012, 8, 16]} />
-              <meshStandardMaterial color={accentColor} roughness={0.2} metalness={0.95} />
-            </mesh>
-          </>
+          <MixedDoor
+            hovered={hovered}
+            accentColor={accentColor}
+            label={label}
+            subLabel={subLabel}
+          />
         )}
 
-        {/* 5. Mobile-Legible Roman Inscription Tablet (Above Door) */}
-        <group position={[0, DOOR_HEIGHT + 0.16, 0.08]}>
-          {/* Marble Tablet Backing */}
-          <mesh position={[0, 0, -0.01]} raycast={() => null}>
-            <boxGeometry args={[DOOR_WIDTH + 0.1, 0.32, 0.03]} />
-            <meshStandardMaterial
-              color={hovered ? '#fffdf7' : '#f5f0e8'}
-              roughness={0.25}
-              metalness={0.1}
-            />
-          </mesh>
-          <mesh position={[0, 0, 0.008]} raycast={() => null}>
-            <boxGeometry args={[DOOR_WIDTH + 0.06, 0.28, 0.01]} />
-            <meshStandardMaterial
-              color="#D4AF37"
-              roughness={0.25}
-              metalness={0.85}
-              emissive="#8C7326"
-              emissiveIntensity={hovered ? 0.3 : 0.1}
-            />
-          </mesh>
-
-          {/* Kurdish Title */}
-          <Text
-            position={[0, 0.04, 0.02]}
-            fontSize={0.105}
-            font="/fonts/NotoSansArabic-Bold.ttf"
-            direction="rtl"
-            color="#0A0A0C"
-            anchorX="center"
-            anchorY="middle"
-            raycast={() => null}
-            maxWidth={DOOR_WIDTH}
-            textAlign="center"
-          >
-            {label}
-          </Text>
-
-          {/* English Sub-Label */}
-          <Text
-            position={[0, -0.065, 0.02]}
-            fontSize={0.062}
-            color="#221F17"
-            anchorX="center"
-            anchorY="middle"
-          >
-            {subLabel}
-          </Text>
-        </group>
-
-        {/* 6. Hover/Tap CTA Badge */}
+        {/* ── Mobile-Friendly Hover / Active CTA Badge ── */}
         {hovered && (
-          <group position={[0, 1.35, 0.14]}>
-            <mesh>
-              <planeGeometry args={[0.88, 0.26]} />
+          <group position={[0, 1.15, 0.15]}>
+            <mesh raycast={() => null}>
+              <planeGeometry args={[0.78, 0.22]} />
               <meshBasicMaterial color="#0A0A0C" transparent opacity={0.88} />
             </mesh>
             <Text
               position={[0, 0, 0.01]}
-              fontSize={0.095}
+              fontSize={0.082}
               color="#D4AF37"
               anchorX="center"
               anchorY="middle"
+              font="/fonts/NotoSansArabic-Bold.ttf"
+              direction="rtl"
+              raycast={() => null}
             >
               بچۆ ژوورەوە ←
             </Text>
