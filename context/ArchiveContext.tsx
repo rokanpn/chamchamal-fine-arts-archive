@@ -16,6 +16,22 @@ import {
   updateArtworkInSupabase, 
   deleteArtworkFromSupabase 
 } from '@/lib/supabase';
+import {
+  saveArtworkAction,
+  deleteArtworkAction,
+  toggle3DStatusAction,
+  saveToolAction,
+  deleteToolAction,
+  saveStudentAction,
+  deleteStudentAction,
+  saveFacultyAction,
+  deleteFacultyAction,
+  saveCollaboratorAction,
+  deleteCollaboratorAction,
+  saveDepartmentConfigAction,
+  saveGallerySettingsAction,
+  fetchLiveArchiveDataAction,
+} from '@/app/actions/archive';
 
 export interface AmbientTrack {
   id: string;
@@ -90,10 +106,8 @@ interface ArchiveContextType {
 
 const ArchiveContext = createContext<ArchiveContextType | undefined>(undefined);
 
-// ── Cache versioning: bump DATA_VERSION to wipe stale localStorage ──
-// Keep this in sync with CACHE_VERSION in public/sw.js so that
-// any SW update also invalidates the localStorage data cache.
-const DATA_VERSION = 'v3';
+// ── Cache versioning & storage keys ─────────────────────────────────
+const DATA_VERSION = 'v4';
 const ARTWORKS_STORAGE_KEY = `chamchamal_curated_artworks_${DATA_VERSION}`;
 const TOOLS_STORAGE_KEY = `chamchamal_curated_tools_${DATA_VERSION}`;
 const STUDENTS_STORAGE_KEY = `chamchamal_curated_students_${DATA_VERSION}`;
@@ -103,34 +117,41 @@ const GALLERY_SETTINGS_STORAGE_KEY = `chamchamal_curated_gallery_settings_${DATA
 const DEPARTMENTS_CONFIG_STORAGE_KEY = `chamchamal_curated_departments_config_${DATA_VERSION}`;
 const AUTH_STORAGE_KEY = 'chamchamal_curator_session_token';
 
-// ── Purge any localStorage keys from older DATA_VERSIONs ────────────
-// This runs once on the client so returning mobile users get fresh data
-// after a SW/app update rather than seeing the old version-keyed cache.
-function purgeStaleLocalStorage() {
-  if (typeof localStorage === 'undefined') return;
-  const stalePrefixes = [
-    'chamchamal_curated_artworks_',
-    'chamchamal_curated_tools_',
-    'chamchamal_curated_students_',
-    'chamchamal_curated_faculty_',
-    'chamchamal_curated_collaborators_',
-    'chamchamal_curated_gallery_settings_',
-    'chamchamal_curated_departments_config_',
-  ];
-  const keysToDelete: string[] = [];
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    if (!key) continue;
-    for (const prefix of stalePrefixes) {
-      if (key.startsWith(prefix) && !key.endsWith(`_${DATA_VERSION}`)) {
-        keysToDelete.push(key);
-        break;
-      }
-    }
+// Tracking deleted items so static seed data never resurrects deleted records on reload
+const DELETED_ARTWORKS_KEY = `chamchamal_deleted_artworks_${DATA_VERSION}`;
+const DELETED_TOOLS_KEY = `chamchamal_deleted_tools_${DATA_VERSION}`;
+const DELETED_STUDENTS_KEY = `chamchamal_deleted_students_${DATA_VERSION}`;
+const DELETED_FACULTY_KEY = `chamchamal_deleted_faculty_${DATA_VERSION}`;
+const DELETED_COLLABORATORS_KEY = `chamchamal_deleted_collaborators_${DATA_VERSION}`;
+
+function getDeletedIds(storageKey: string): Set<string> {
+  if (typeof localStorage === 'undefined') return new Set();
+  try {
+    const raw = localStorage.getItem(storageKey);
+    if (!raw) return new Set();
+    const arr = JSON.parse(raw);
+    return new Set(Array.isArray(arr) ? arr : []);
+  } catch {
+    return new Set();
   }
-  keysToDelete.forEach((k) => {
-    try { localStorage.removeItem(k); } catch (_) {}
-  });
+}
+
+function addDeletedId(storageKey: string, id: string) {
+  if (typeof localStorage === 'undefined') return;
+  try {
+    const set = getDeletedIds(storageKey);
+    set.add(id);
+    localStorage.setItem(storageKey, JSON.stringify(Array.from(set)));
+  } catch (_) {}
+}
+
+function removeDeletedId(storageKey: string, id: string) {
+  if (typeof localStorage === 'undefined') return;
+  try {
+    const set = getDeletedIds(storageKey);
+    set.delete(id);
+    localStorage.setItem(storageKey, JSON.stringify(Array.from(set)));
+  } catch (_) {}
 }
 
 export const DEFAULT_DEPARTMENTS_CONFIG: Record<DepartmentId, DepartmentConfig> = {
@@ -204,58 +225,65 @@ export function ArchiveProvider({ children }: { children: ReactNode }) {
   const [curator, setCurator] = useState<CuratorUser | null>(null);
   const [isHydrated, setIsHydrated] = useState<boolean>(false);
 
-  // Initialize and synchronize with localStorage on client mount
+  // Initialize and synchronize with localStorage & live Supabase
   useEffect(() => {
-    // Purge stale localStorage keys from previous app versions first
-    purgeStaleLocalStorage();
-
     try {
-      // Restore artworks
+      // 1. Restore local cache on client mount
+      const deletedArtIds = getDeletedIds(DELETED_ARTWORKS_KEY);
       const storedArtworks = localStorage.getItem(ARTWORKS_STORAGE_KEY);
       if (storedArtworks) {
         const parsed = JSON.parse(storedArtworks);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          setArtworks(parsed);
+          setArtworks(parsed.filter((a: any) => !deletedArtIds.has(a.id) && !deletedArtIds.has(a.slug)));
         }
+      } else {
+        setArtworks(ARTWORKS_DATA.filter((a) => !deletedArtIds.has(a.id) && !deletedArtIds.has(a.slug)));
       }
 
-      // Restore tools
+      const deletedToolIds = getDeletedIds(DELETED_TOOLS_KEY);
       const storedTools = localStorage.getItem(TOOLS_STORAGE_KEY);
       if (storedTools) {
         const parsedTools = JSON.parse(storedTools);
         if (Array.isArray(parsedTools) && parsedTools.length > 0) {
-          setTools(parsedTools);
+          setTools(parsedTools.filter((t: any) => !deletedToolIds.has(t.id) && !deletedToolIds.has(t.slug)));
         }
+      } else {
+        setTools(TOOLS_DATA.filter((t) => !deletedToolIds.has(t.id) && !deletedToolIds.has(t.slug)));
       }
 
-      // Restore students
+      const deletedStuIds = getDeletedIds(DELETED_STUDENTS_KEY);
       const storedStudents = localStorage.getItem(STUDENTS_STORAGE_KEY);
       if (storedStudents) {
         const parsedStudents = JSON.parse(storedStudents);
         if (Array.isArray(parsedStudents) && parsedStudents.length > 0) {
-          setStudents(parsedStudents);
+          setStudents(parsedStudents.filter((s: any) => !deletedStuIds.has(s.id) && !deletedStuIds.has(s.slug)));
         }
+      } else {
+        setStudents(STUDENTS_DATA.filter((s) => !deletedStuIds.has(s.id) && !deletedStuIds.has(s.slug)));
       }
 
-      // Restore faculty
+      const deletedFacIds = getDeletedIds(DELETED_FACULTY_KEY);
       const storedFaculty = localStorage.getItem(FACULTY_STORAGE_KEY);
       if (storedFaculty) {
         const parsedFaculty = JSON.parse(storedFaculty);
         if (Array.isArray(parsedFaculty) && parsedFaculty.length > 0) {
-          setFaculty(parsedFaculty);
+          setFaculty(parsedFaculty.filter((f: any) => !deletedFacIds.has(f.id) && !deletedFacIds.has(f.slug)));
         }
+      } else {
+        setFaculty(FACULTY_DATA.filter((f) => !deletedFacIds.has(f.id) && !deletedFacIds.has(f.slug)));
       }
 
-      // Restore collaborators
+      const deletedColIds = getDeletedIds(DELETED_COLLABORATORS_KEY);
       const storedCollaborators = localStorage.getItem(COLLABORATORS_STORAGE_KEY);
       if (storedCollaborators) {
         const parsedCollaborators = JSON.parse(storedCollaborators);
         if (Array.isArray(parsedCollaborators) && parsedCollaborators.length > 0) {
-          setCollaborators(parsedCollaborators);
+          setCollaborators(parsedCollaborators.filter((c: any) => !deletedColIds.has(c.id) && !deletedColIds.has(c.slug)));
         }
+      } else {
+        setCollaborators(COLLABORATORS_DATA.filter((c) => !deletedColIds.has(c.id) && !deletedColIds.has(c.slug)));
       }
 
-      // Restore gallery settings
       const storedSettings = localStorage.getItem(GALLERY_SETTINGS_STORAGE_KEY);
       if (storedSettings) {
         const parsedSettings = JSON.parse(storedSettings);
@@ -264,62 +292,158 @@ export function ArchiveProvider({ children }: { children: ReactNode }) {
         }
       }
 
-      // Restore departments config
       const storedDepts = localStorage.getItem(DEPARTMENTS_CONFIG_STORAGE_KEY);
       if (storedDepts) {
         const parsed = JSON.parse(storedDepts);
         if (parsed && typeof parsed === 'object') {
-          setDepartmentsConfig((prev) => ({
-            ...prev,
-            ...parsed,
-          }));
+          setDepartmentsConfig((prev) => ({ ...prev, ...parsed }));
         }
       }
 
-      // Restore session
       const session = localStorage.getItem(AUTH_STORAGE_KEY);
       if (session === 'authenticated_curator_token') {
         setIsAuthenticated(true);
         setCurator(DEMO_CURATOR);
       }
 
-      // Define real-time live synchronization function
-      const syncLiveArtworks = async () => {
+      // 2. Comprehensive Server & Supabase Live Synchronization
+      const syncLiveArchive = async () => {
         try {
-          const liveArtworks = await fetchArtworksFromSupabase();
-          if (liveArtworks && liveArtworks.length > 0) {
-            const liveIds = new Set(liveArtworks.map((a) => a.id));
-            const staticFallback = ARTWORKS_DATA.filter((a) => !liveIds.has(a.id));
-            const freshList = [...liveArtworks, ...staticFallback];
+          const liveData = await fetchLiveArchiveDataAction();
+
+          // Sync Artworks
+          const currentDeletedArts = getDeletedIds(DELETED_ARTWORKS_KEY);
+          if (liveData.artworks && liveData.artworks.length > 0) {
+            const liveIds = new Set(liveData.artworks.map((a) => a.id));
+            const staticFallback = ARTWORKS_DATA.filter(
+              (a) => !liveIds.has(a.id) && !currentDeletedArts.has(a.id) && !currentDeletedArts.has(a.slug)
+            );
+            const freshList = [
+              ...liveData.artworks.filter((a) => !currentDeletedArts.has(a.id) && !currentDeletedArts.has(a.slug)),
+              ...staticFallback,
+            ];
             setArtworks(freshList);
             try {
               localStorage.setItem(ARTWORKS_STORAGE_KEY, JSON.stringify(freshList));
             } catch (_) {}
+          } else {
+            // Check client-side direct Supabase fallback
+            const clientLiveArts = await fetchArtworksFromSupabase();
+            if (clientLiveArts && clientLiveArts.length > 0) {
+              const liveIds = new Set(clientLiveArts.map((a) => a.id));
+              const staticFallback = ARTWORKS_DATA.filter(
+                (a) => !liveIds.has(a.id) && !currentDeletedArts.has(a.id) && !currentDeletedArts.has(a.slug)
+              );
+              const freshList = [
+                ...clientLiveArts.filter((a) => !currentDeletedArts.has(a.id) && !currentDeletedArts.has(a.slug)),
+                ...staticFallback,
+              ];
+              setArtworks(freshList);
+              try {
+                localStorage.setItem(ARTWORKS_STORAGE_KEY, JSON.stringify(freshList));
+              } catch (_) {}
+            }
+          }
+
+          // Sync Tools
+          const currentDeletedTools = getDeletedIds(DELETED_TOOLS_KEY);
+          if (liveData.tools && liveData.tools.length > 0) {
+            const liveToolIds = new Set(liveData.tools.map((t) => t.id));
+            const staticFallback = TOOLS_DATA.filter(
+              (t) => !liveToolIds.has(t.id) && !currentDeletedTools.has(t.id) && !currentDeletedTools.has(t.slug)
+            );
+            const freshList = [
+              ...liveData.tools.filter((t) => !currentDeletedTools.has(t.id) && !currentDeletedTools.has(t.slug)),
+              ...staticFallback,
+            ];
+            setTools(freshList);
+            try {
+              localStorage.setItem(TOOLS_STORAGE_KEY, JSON.stringify(freshList));
+            } catch (_) {}
+          }
+
+          // Sync Students
+          const currentDeletedStudents = getDeletedIds(DELETED_STUDENTS_KEY);
+          if (liveData.students && liveData.students.length > 0) {
+            const liveStuIds = new Set(liveData.students.map((s) => s.id));
+            const staticFallback = STUDENTS_DATA.filter(
+              (s) => !liveStuIds.has(s.id) && !currentDeletedStudents.has(s.id) && !currentDeletedStudents.has(s.slug)
+            );
+            const freshList = [
+              ...liveData.students.filter((s) => !currentDeletedStudents.has(s.id) && !currentDeletedStudents.has(s.slug)),
+              ...staticFallback,
+            ];
+            setStudents(freshList);
+            try {
+              localStorage.setItem(STUDENTS_STORAGE_KEY, JSON.stringify(freshList));
+            } catch (_) {}
+          }
+
+          // Sync Faculty
+          const currentDeletedFaculty = getDeletedIds(DELETED_FACULTY_KEY);
+          if (liveData.faculty && liveData.faculty.length > 0) {
+            const liveFacIds = new Set(liveData.faculty.map((f) => f.id));
+            const staticFallback = FACULTY_DATA.filter(
+              (f) => !liveFacIds.has(f.id) && !currentDeletedFaculty.has(f.id) && !currentDeletedFaculty.has(f.slug)
+            );
+            const freshList = [
+              ...liveData.faculty.filter((f) => !currentDeletedFaculty.has(f.id) && !currentDeletedFaculty.has(f.slug)),
+              ...staticFallback,
+            ].sort((a, b) => a.order - b.order);
+            setFaculty(freshList);
+            try {
+              localStorage.setItem(FACULTY_STORAGE_KEY, JSON.stringify(freshList));
+            } catch (_) {}
+          }
+
+          // Sync Collaborators
+          const currentDeletedCollabs = getDeletedIds(DELETED_COLLABORATORS_KEY);
+          if (liveData.collaborators && liveData.collaborators.length > 0) {
+            const liveColIds = new Set(liveData.collaborators.map((c) => c.id));
+            const staticFallback = COLLABORATORS_DATA.filter(
+              (c) => !liveColIds.has(c.id) && !currentDeletedCollabs.has(c.id) && !currentDeletedCollabs.has(c.slug)
+            );
+            const freshList = [
+              ...liveData.collaborators.filter((c) => !currentDeletedCollabs.has(c.id) && !currentDeletedCollabs.has(c.slug)),
+              ...staticFallback,
+            ];
+            setCollaborators(freshList);
+            try {
+              localStorage.setItem(COLLABORATORS_STORAGE_KEY, JSON.stringify(freshList));
+            } catch (_) {}
+          }
+
+          // Sync Settings
+          if (liveData.departmentsConfig) {
+            setDepartmentsConfig((prev) => ({ ...prev, ...liveData.departmentsConfig }));
+          }
+          if (liveData.gallerySettings && liveData.gallerySettings.ambientTracks) {
+            setGallerySettings((prev) => ({ ...prev, ...liveData.gallerySettings }));
           }
         } catch (err) {
-          console.warn('[ArchiveContext] Live Supabase fetch fallback to local', err);
+          console.warn('[ArchiveContext] Live archive sync notice:', err);
         }
       };
 
-      // 1. Initial live synchronization on mount
-      syncLiveArtworks();
+      // Initial live fetch
+      syncLiveArchive();
 
-      // 2. Real-time Supabase channel: instantly updates when admin adds/edits on desktop
+      // Real-time listener for postgres changes on artworks table
       const channel = supabase
-        .channel('realtime_artworks_sync')
+        .channel('realtime_archive_sync')
         .on(
           'postgres_changes',
           { event: '*', schema: 'public', table: 'artworks' },
           () => {
-            syncLiveArtworks();
+            syncLiveArchive();
           }
         )
         .subscribe();
 
-      // 3. Mobile screen wake / app switch / tab focus listener for instant cache-free refresh
+      // Revalidate on visibility change (switching tabs, waking screen)
       const handleRevalidate = () => {
         if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
-          syncLiveArtworks();
+          syncLiveArchive();
         }
       };
 
@@ -334,31 +458,44 @@ export function ArchiveProvider({ children }: { children: ReactNode }) {
         window.removeEventListener('focus', handleRevalidate);
       };
     } catch (err) {
-      console.warn('Storage sync warning', err);
+      console.warn('[ArchiveContext] Storage initialization notice', err);
       setIsHydrated(true);
     }
   }, []);
 
-  // Artworks Handlers
+  // ── Artworks Handlers ──────────────────────────────────────────────
   const addArtwork = (newArt: Artwork) => {
     setArtworks((prev) => {
-      const updated = [newArt, ...prev];
+      const updated = [newArt, ...prev.filter((a) => a.id !== newArt.id && a.slug !== newArt.slug)];
       try {
         localStorage.setItem(ARTWORKS_STORAGE_KEY, JSON.stringify(updated));
       } catch (e) {}
       return updated;
     });
-    // Persist permanently to live Supabase PostgreSQL table
-    insertArtworkToSupabase(newArt);
+
+    removeDeletedId(DELETED_ARTWORKS_KEY, newArt.id);
+    if (newArt.slug) removeDeletedId(DELETED_ARTWORKS_KEY, newArt.slug);
+
+    // Persist via Server Action (bypasses RLS with service role key & revalidates paths)
+    saveArtworkAction(newArt).then((res) => {
+      if (!res.success) {
+        console.warn('[ArchiveContext] saveArtworkAction warning:', res.error);
+        insertArtworkToSupabase(newArt);
+      }
+    }).catch(() => {
+      insertArtworkToSupabase(newArt);
+    });
   };
 
   const updateArtwork = (slug: string, updatedData: Partial<Artwork>) => {
     let resolvedId = slug;
+    let fullArtwork: Artwork | null = null;
+
     setArtworks((prev) => {
       const updated = prev.map((a) => {
         if (a.slug === slug || a.id === slug) {
           resolvedId = a.id;
-          return {
+          const merged: Artwork = {
             ...a,
             ...updatedData,
             title: updatedData.title ? { ...a.title, ...updatedData.title } : a.title,
@@ -371,6 +508,8 @@ export function ArchiveProvider({ children }: { children: ReactNode }) {
               ? { ...a.locationInInstitute, ...updatedData.locationInInstitute }
               : a.locationInInstitute,
           };
+          fullArtwork = merged;
+          return merged;
         }
         return a;
       });
@@ -379,8 +518,17 @@ export function ArchiveProvider({ children }: { children: ReactNode }) {
       } catch (e) {}
       return updated;
     });
-    // Persist permanently to live Supabase PostgreSQL table
-    updateArtworkInSupabase(resolvedId, updatedData);
+
+    if (fullArtwork) {
+      saveArtworkAction(fullArtwork).then((res) => {
+        if (!res.success) {
+          console.warn('[ArchiveContext] saveArtworkAction warning:', res.error);
+          updateArtworkInSupabase(resolvedId, updatedData);
+        }
+      }).catch(() => {
+        updateArtworkInSupabase(resolvedId, updatedData);
+      });
+    }
   };
 
   const deleteArtwork = (id: string) => {
@@ -391,15 +539,26 @@ export function ArchiveProvider({ children }: { children: ReactNode }) {
       } catch (e) {}
       return updated;
     });
-    // Persist permanently to live Supabase PostgreSQL table
-    deleteArtworkFromSupabase(id);
+
+    // Record permanently so static defaults cannot restore it on reload
+    addDeletedId(DELETED_ARTWORKS_KEY, id);
+
+    deleteArtworkAction(id).then((res) => {
+      if (!res.success) {
+        deleteArtworkFromSupabase(id);
+      }
+    }).catch(() => {
+      deleteArtworkFromSupabase(id);
+    });
   };
 
   const toggle3DStatus = (id: string) => {
+    let nextStatus = false;
     setArtworks((prev) => {
       const updated = prev.map((a) => {
         if (a.id === id) {
-          return { ...a, has3DModel: !a.has3DModel };
+          nextStatus = !a.has3DModel;
+          return { ...a, has3DModel: nextStatus };
         }
         return a;
       });
@@ -408,24 +567,36 @@ export function ArchiveProvider({ children }: { children: ReactNode }) {
       } catch (e) {}
       return updated;
     });
+
+    toggle3DStatusAction(id, nextStatus).catch((err) => {
+      console.warn('[ArchiveContext] toggle3DStatusAction notice:', err);
+    });
   };
 
-  // Tools Handlers
+  // ── Tools Handlers ─────────────────────────────────────────────────
   const addTool = (newTool: AtelierTool) => {
     setTools((prev) => {
-      const updated = [newTool, ...prev];
+      const updated = [newTool, ...prev.filter((t) => t.id !== newTool.id && t.slug !== newTool.slug)];
       try {
         localStorage.setItem(TOOLS_STORAGE_KEY, JSON.stringify(updated));
       } catch (e) {}
       return updated;
     });
+
+    removeDeletedId(DELETED_TOOLS_KEY, newTool.id);
+    if (newTool.slug) removeDeletedId(DELETED_TOOLS_KEY, newTool.slug);
+
+    saveToolAction(newTool).catch((err) => {
+      console.warn('[ArchiveContext] saveToolAction notice:', err);
+    });
   };
 
   const updateTool = (slugOrId: string, updatedData: Partial<AtelierTool>) => {
+    let fullTool: AtelierTool | null = null;
     setTools((prev) => {
       const updated = prev.map((t) => {
         if (t.id === slugOrId || t.slug === slugOrId) {
-          return {
+          const merged: AtelierTool = {
             ...t,
             ...updatedData,
             name: updatedData.name ? { ...t.name, ...updatedData.name } : t.name,
@@ -439,6 +610,8 @@ export function ArchiveProvider({ children }: { children: ReactNode }) {
             videoTitle: updatedData.videoTitle ? { ...t.videoTitle, ...updatedData.videoTitle } : t.videoTitle,
             proTips: updatedData.proTips ? { ...t.proTips, ...updatedData.proTips } : t.proTips,
           };
+          fullTool = merged;
+          return merged;
         }
         return t;
       });
@@ -447,34 +620,53 @@ export function ArchiveProvider({ children }: { children: ReactNode }) {
       } catch (e) {}
       return updated;
     });
+
+    if (fullTool) {
+      saveToolAction(fullTool).catch((err) => {
+        console.warn('[ArchiveContext] saveToolAction notice:', err);
+      });
+    }
   };
 
   const deleteTool = (id: string) => {
     setTools((prev) => {
-      const updated = prev.filter((t) => t.id !== id);
+      const updated = prev.filter((t) => t.id !== id && t.slug !== id);
       try {
         localStorage.setItem(TOOLS_STORAGE_KEY, JSON.stringify(updated));
       } catch (e) {}
       return updated;
     });
+
+    addDeletedId(DELETED_TOOLS_KEY, id);
+    deleteToolAction(id).catch((err) => {
+      console.warn('[ArchiveContext] deleteToolAction notice:', err);
+    });
   };
 
-  // Students Handlers
+  // ── Students Handlers ──────────────────────────────────────────────
   const addStudent = (newStudent: StudentArtist) => {
     setStudents((prev) => {
-      const updated = [newStudent, ...prev];
+      const updated = [newStudent, ...prev.filter((s) => s.id !== newStudent.id && s.slug !== newStudent.slug)];
       try {
         localStorage.setItem(STUDENTS_STORAGE_KEY, JSON.stringify(updated));
       } catch (e) {}
       return updated;
     });
+
+    removeDeletedId(DELETED_STUDENTS_KEY, newStudent.id);
+    if (newStudent.slug) removeDeletedId(DELETED_STUDENTS_KEY, newStudent.slug);
+
+    saveStudentAction(newStudent).catch((err) => {
+      console.warn('[ArchiveContext] saveStudentAction notice:', err);
+    });
   };
 
   const updateStudent = (idOrSlug: string, updatedData: Partial<StudentArtist>) => {
+    let fullStudent: StudentArtist | null = null;
     setStudents((prev) => {
       const updated = prev.map((s) => {
         if (s.id === idOrSlug || s.slug === idOrSlug) {
-          return {
+          const merged: StudentArtist = {
             ...s,
             ...updatedData,
             fullName: updatedData.fullName ? { ...s.fullName, ...updatedData.fullName } : s.fullName,
@@ -485,6 +677,8 @@ export function ArchiveProvider({ children }: { children: ReactNode }) {
             awards: updatedData.awards !== undefined ? updatedData.awards : s.awards,
             contactLinks: updatedData.contactLinks !== undefined ? updatedData.contactLinks : s.contactLinks,
           };
+          fullStudent = merged;
+          return merged;
         }
         return s;
       });
@@ -493,34 +687,53 @@ export function ArchiveProvider({ children }: { children: ReactNode }) {
       } catch (e) {}
       return updated;
     });
+
+    if (fullStudent) {
+      saveStudentAction(fullStudent).catch((err) => {
+        console.warn('[ArchiveContext] saveStudentAction notice:', err);
+      });
+    }
   };
 
   const deleteStudent = (id: string) => {
     setStudents((prev) => {
-      const updated = prev.filter((s) => s.id !== id);
+      const updated = prev.filter((s) => s.id !== id && s.slug !== id);
       try {
         localStorage.setItem(STUDENTS_STORAGE_KEY, JSON.stringify(updated));
       } catch (e) {}
       return updated;
     });
+
+    addDeletedId(DELETED_STUDENTS_KEY, id);
+    deleteStudentAction(id).catch((err) => {
+      console.warn('[ArchiveContext] deleteStudentAction notice:', err);
+    });
   };
 
-  // Faculty Handlers
+  // ── Faculty Handlers ───────────────────────────────────────────────
   const addFaculty = (newMember: FacultyMember) => {
     setFaculty((prev) => {
-      const updated = [...prev, newMember].sort((a, b) => a.order - b.order);
+      const updated = [...prev.filter((f) => f.id !== newMember.id && f.slug !== newMember.slug), newMember].sort((a, b) => a.order - b.order);
       try {
         localStorage.setItem(FACULTY_STORAGE_KEY, JSON.stringify(updated));
       } catch (e) {}
       return updated;
     });
+
+    removeDeletedId(DELETED_FACULTY_KEY, newMember.id);
+    if (newMember.slug) removeDeletedId(DELETED_FACULTY_KEY, newMember.slug);
+
+    saveFacultyAction(newMember).catch((err) => {
+      console.warn('[ArchiveContext] saveFacultyAction notice:', err);
+    });
   };
 
   const updateFaculty = (idOrSlug: string, updatedData: Partial<FacultyMember>) => {
+    let fullMember: FacultyMember | null = null;
     setFaculty((prev) => {
       const updated = prev.map((f) => {
         if (f.id === idOrSlug || f.slug === idOrSlug) {
-          return {
+          const merged: FacultyMember = {
             ...f,
             ...updatedData,
             name: updatedData.name ? { ...f.name, ...updatedData.name } : f.name,
@@ -529,6 +742,8 @@ export function ArchiveProvider({ children }: { children: ReactNode }) {
             bio: updatedData.bio ? { ...f.bio, ...updatedData.bio } : f.bio,
             officeLocation: updatedData.officeLocation ? { ...f.officeLocation, ...updatedData.officeLocation } : f.officeLocation,
           };
+          fullMember = merged;
+          return merged;
         }
         return f;
       }).sort((a, b) => a.order - b.order);
@@ -537,34 +752,53 @@ export function ArchiveProvider({ children }: { children: ReactNode }) {
       } catch (e) {}
       return updated;
     });
+
+    if (fullMember) {
+      saveFacultyAction(fullMember).catch((err) => {
+        console.warn('[ArchiveContext] saveFacultyAction notice:', err);
+      });
+    }
   };
 
   const deleteFaculty = (id: string) => {
     setFaculty((prev) => {
-      const updated = prev.filter((f) => f.id !== id);
+      const updated = prev.filter((f) => f.id !== id && f.slug !== id);
       try {
         localStorage.setItem(FACULTY_STORAGE_KEY, JSON.stringify(updated));
       } catch (e) {}
       return updated;
     });
+
+    addDeletedId(DELETED_FACULTY_KEY, id);
+    deleteFacultyAction(id).catch((err) => {
+      console.warn('[ArchiveContext] deleteFacultyAction notice:', err);
+    });
   };
 
-  // Collaborators Handlers
+  // ── Collaborators Handlers ─────────────────────────────────────────
   const addCollaborator = (newCollaborator: Collaborator) => {
     setCollaborators((prev) => {
-      const updated = [newCollaborator, ...prev];
+      const updated = [newCollaborator, ...prev.filter((c) => c.id !== newCollaborator.id && c.slug !== newCollaborator.slug)];
       try {
         localStorage.setItem(COLLABORATORS_STORAGE_KEY, JSON.stringify(updated));
       } catch (e) {}
       return updated;
     });
+
+    removeDeletedId(DELETED_COLLABORATORS_KEY, newCollaborator.id);
+    if (newCollaborator.slug) removeDeletedId(DELETED_COLLABORATORS_KEY, newCollaborator.slug);
+
+    saveCollaboratorAction(newCollaborator).catch((err) => {
+      console.warn('[ArchiveContext] saveCollaboratorAction notice:', err);
+    });
   };
 
   const updateCollaborator = (idOrSlug: string, updatedData: Partial<Collaborator>) => {
+    let fullCollab: Collaborator | null = null;
     setCollaborators((prev) => {
       const updated = prev.map((c) => {
         if (c.id === idOrSlug || c.slug === idOrSlug) {
-          return {
+          const merged: Collaborator = {
             ...c,
             ...updatedData,
             name: updatedData.name ? { ...c.name, ...updatedData.name } : c.name,
@@ -573,6 +807,8 @@ export function ArchiveProvider({ children }: { children: ReactNode }) {
             bio: updatedData.bio ? { ...c.bio, ...updatedData.bio } : c.bio,
             curatorialSummary: updatedData.curatorialSummary ? { ...c.curatorialSummary, ...updatedData.curatorialSummary } : c.curatorialSummary,
           };
+          fullCollab = merged;
+          return merged;
         }
         return c;
       });
@@ -581,19 +817,30 @@ export function ArchiveProvider({ children }: { children: ReactNode }) {
       } catch (e) {}
       return updated;
     });
+
+    if (fullCollab) {
+      saveCollaboratorAction(fullCollab).catch((err) => {
+        console.warn('[ArchiveContext] saveCollaboratorAction notice:', err);
+      });
+    }
   };
 
   const deleteCollaborator = (id: string) => {
     setCollaborators((prev) => {
-      const updated = prev.filter((c) => c.id !== id);
+      const updated = prev.filter((c) => c.id !== id && c.slug !== id);
       try {
         localStorage.setItem(COLLABORATORS_STORAGE_KEY, JSON.stringify(updated));
       } catch (e) {}
       return updated;
     });
+
+    addDeletedId(DELETED_COLLABORATORS_KEY, id);
+    deleteCollaboratorAction(id).catch((err) => {
+      console.warn('[ArchiveContext] deleteCollaboratorAction notice:', err);
+    });
   };
 
-  // Auth Handlers
+  // ── Auth Handlers ──────────────────────────────────────────────────
   const login = (passcode: string): boolean => {
     const validKeys = ['chamchamal2026', 'admin', 'curator', 'demo'];
     if (validKeys.includes(passcode.toLowerCase().trim())) {
@@ -615,6 +862,7 @@ export function ArchiveProvider({ children }: { children: ReactNode }) {
     } catch (e) {}
   };
 
+  // ── Settings Handlers ──────────────────────────────────────────────
   const updateGallerySettings = (newSettings: Partial<GallerySettings>) => {
     setGallerySettings((prev) => {
       const updated: GallerySettings = {
@@ -625,11 +873,13 @@ export function ArchiveProvider({ children }: { children: ReactNode }) {
       try {
         localStorage.setItem(GALLERY_SETTINGS_STORAGE_KEY, JSON.stringify(updated));
       } catch (e) {}
+      saveGallerySettingsAction(updated).catch((err) => {
+        console.warn('[ArchiveContext] saveGallerySettingsAction notice:', err);
+      });
       return updated;
     });
   };
 
-  // Departments Config Handlers
   const updateDepartmentConfig = (id: DepartmentId, newConfig: Partial<DepartmentConfig>) => {
     setDepartmentsConfig((prev) => {
       const updated = {
@@ -641,9 +891,10 @@ export function ArchiveProvider({ children }: { children: ReactNode }) {
       };
       try {
         localStorage.setItem(DEPARTMENTS_CONFIG_STORAGE_KEY, JSON.stringify(updated));
-      } catch (e) {
-        console.warn('Failed to persist departments config', e);
-      }
+      } catch (e) {}
+      saveDepartmentConfigAction(updated).catch((err) => {
+        console.warn('[ArchiveContext] saveDepartmentConfigAction notice:', err);
+      });
       return updated;
     });
   };
@@ -662,6 +913,9 @@ export function ArchiveProvider({ children }: { children: ReactNode }) {
       try {
         localStorage.setItem(DEPARTMENTS_CONFIG_STORAGE_KEY, JSON.stringify(updated));
       } catch (e) {}
+      saveDepartmentConfigAction(updated).catch((err) => {
+        console.warn('[ArchiveContext] saveDepartmentConfigAction notice:', err);
+      });
       return updated;
     });
   };
