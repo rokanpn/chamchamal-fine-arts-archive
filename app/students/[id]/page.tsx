@@ -9,11 +9,10 @@ interface PageProps {
   };
 }
 
-export async function generateStaticParams() {
-  return STUDENTS_DATA.map((student) => ({
-    id: student.id,
-  }));
-}
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+export const fetchCache = 'force-no-store';
+export const dynamicParams = true;
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const student = STUDENTS_DATA.find((item) => item.id === params.id);

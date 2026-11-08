@@ -1,85 +1,124 @@
-const CACHE_NAME = 'chamchamal-fine-arts-cache-v1';
+// ============================================================
+// Chamchamal Fine Arts Archive — Service Worker v3
+// Strategy: NetworkFirst for all pages/data, CacheFirst only
+// for truly immutable static assets (_next/static/).
+// Bump CACHE_VERSION on every deploy to bust old caches.
+// ============================================================
 
-const STATIC_PRECACHE_URLS = [
-  '/',
-  '/tools',
-  '/students',
+const CACHE_VERSION = 'v3';
+const CACHE_NAME = `chamchamal-fine-arts-cache-${CACHE_VERSION}`;
+
+// Only pre-cache the app shell manifest — NOT data pages.
+// Pages with dynamic data must always go to network first.
+const PRECACHE_URLS = [
   '/manifest.webmanifest',
 ];
 
-// Install Event: Pre-cache core shell
+// ── Install: pre-cache minimal shell ────────────────────────
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(STATIC_PRECACHE_URLS);
+      return cache.addAll(PRECACHE_URLS);
     }).then(() => self.skipWaiting())
   );
 });
 
-// Activate Event: Cleanup stale caches
+// ── Activate: delete ALL stale caches immediately ───────────
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames
           .filter((name) => name !== CACHE_NAME)
-          .map((name) => caches.delete(name))
+          .map((name) => {
+            console.log('[SW] Deleting stale cache:', name);
+            return caches.delete(name);
+          })
       );
-    }).then(() => self.clients.claim())
+    }).then(() => {
+      console.log('[SW] Activated cache:', CACHE_NAME);
+      // Take control of all open clients immediately
+      return self.clients.claim();
+    })
   );
 });
 
-// Fetch Event: Cache First for assets, Stale-While-Revalidate for pages
+// ── Fetch: route-based caching strategy ─────────────────────
 self.addEventListener('fetch', (event) => {
   const request = event.request;
   const url = new URL(request.url);
 
-  // Ignore non-GET requests
+  // Ignore non-GET requests (POST, PUT, DELETE — Supabase writes)
   if (request.method !== 'GET') return;
 
-  // Static Next.js chunks & images: Cache First with network fallback
+  // Ignore chrome-extension and non-http requests
+  if (!url.protocol.startsWith('http')) return;
+
+  // ── STRATEGY 1: CacheFirst — Immutable static assets ──
+  // Next.js hashes these filenames; they never change once deployed.
   if (
     url.pathname.startsWith('/_next/static/') ||
-    url.hostname.includes('images.unsplash.com') ||
-    url.pathname.endsWith('.glb')
+    url.pathname.endsWith('.woff2') ||
+    url.pathname.endsWith('.woff') ||
+    url.pathname.endsWith('.ttf')
   ) {
-    event.respondWith(
-      caches.match(request).then((cachedResponse) => {
-        if (cachedResponse) return cachedResponse;
-        return fetch(request).then((networkResponse) => {
-          if (!networkResponse || networkResponse.status !== 200) {
-            return networkResponse;
-          }
-          const responseToCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(request, responseToCache);
-          });
-          return networkResponse;
-        });
-      })
-    );
+    event.respondWith(cacheFirst(request));
     return;
   }
 
-  // HTML and API Navigation: Stale While Revalidate
-  event.respondWith(
-    caches.match(request).then((cachedResponse) => {
-      const fetchPromise = fetch(request)
-        .then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            const responseToCache = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(request, responseToCache);
-            });
-          }
-          return networkResponse;
-        })
-        .catch(() => {
-          // If offline and not in cache, fallback to cached root '/'
-          return cachedResponse || caches.match('/');
-        });
-
-      return cachedResponse || fetchPromise;
-    })
-  );
+  // ── STRATEGY 2: NetworkFirst — Everything else ──────────
+  // This covers: HTML pages, API routes, Supabase fetches,
+  // images, .glb models, and all dynamic content.
+  // The user ALWAYS sees the freshest data when online.
+  // Falls back to cache only when completely offline.
+  event.respondWith(networkFirst(request));
 });
+
+// ── CacheFirst helper ────────────────────────────────────────
+async function cacheFirst(request) {
+  const cached = await caches.match(request);
+  if (cached) return cached;
+  try {
+    const networkResponse = await fetch(request);
+    if (networkResponse && networkResponse.status === 200) {
+      const cache = await caches.open(CACHE_NAME);
+      cache.put(request, networkResponse.clone());
+    }
+    return networkResponse;
+  } catch (_) {
+    // Offline and not cached — return empty response
+    return new Response('', { status: 408, statusText: 'Offline' });
+  }
+}
+
+// ── NetworkFirst helper ──────────────────────────────────────
+async function networkFirst(request) {
+  try {
+    // Always try the network first
+    const networkResponse = await fetch(request);
+    if (networkResponse && networkResponse.status === 200) {
+      // Update the cache with the fresh response
+      const cache = await caches.open(CACHE_NAME);
+      // Only cache same-origin responses (not Supabase API responses
+      // which may have CORS-opaque status). We use 'no-cors' check.
+      if (networkResponse.type !== 'opaque') {
+        cache.put(request, networkResponse.clone());
+      }
+    }
+    return networkResponse;
+  } catch (_) {
+    // Network failed (offline) — try the cache as fallback
+    const cached = await caches.match(request);
+    if (cached) return cached;
+    // Last resort: return the cached root page for navigation requests
+    if (request.mode === 'navigate') {
+      const rootCache = await caches.match('/');
+      if (rootCache) return rootCache;
+    }
+    return new Response('You are offline and this page has not been cached yet.', {
+      status: 503,
+      statusText: 'Service Unavailable',
+      headers: { 'Content-Type': 'text/plain' },
+    });
+  }
+}

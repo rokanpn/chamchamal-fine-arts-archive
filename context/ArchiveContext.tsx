@@ -90,14 +90,48 @@ interface ArchiveContextType {
 
 const ArchiveContext = createContext<ArchiveContextType | undefined>(undefined);
 
-const ARTWORKS_STORAGE_KEY = 'chamchamal_curated_artworks_v1';
-const TOOLS_STORAGE_KEY = 'chamchamal_curated_tools_v1';
-const STUDENTS_STORAGE_KEY = 'chamchamal_curated_students_v1';
-const FACULTY_STORAGE_KEY = 'chamchamal_curated_faculty_v1';
-const COLLABORATORS_STORAGE_KEY = 'chamchamal_curated_collaborators_v1';
-const GALLERY_SETTINGS_STORAGE_KEY = 'chamchamal_curated_gallery_settings_v1';
-const DEPARTMENTS_CONFIG_STORAGE_KEY = 'chamchamal_curated_departments_config_v1';
+// ── Cache versioning: bump DATA_VERSION to wipe stale localStorage ──
+// Keep this in sync with CACHE_VERSION in public/sw.js so that
+// any SW update also invalidates the localStorage data cache.
+const DATA_VERSION = 'v3';
+const ARTWORKS_STORAGE_KEY = `chamchamal_curated_artworks_${DATA_VERSION}`;
+const TOOLS_STORAGE_KEY = `chamchamal_curated_tools_${DATA_VERSION}`;
+const STUDENTS_STORAGE_KEY = `chamchamal_curated_students_${DATA_VERSION}`;
+const FACULTY_STORAGE_KEY = `chamchamal_curated_faculty_${DATA_VERSION}`;
+const COLLABORATORS_STORAGE_KEY = `chamchamal_curated_collaborators_${DATA_VERSION}`;
+const GALLERY_SETTINGS_STORAGE_KEY = `chamchamal_curated_gallery_settings_${DATA_VERSION}`;
+const DEPARTMENTS_CONFIG_STORAGE_KEY = `chamchamal_curated_departments_config_${DATA_VERSION}`;
 const AUTH_STORAGE_KEY = 'chamchamal_curator_session_token';
+
+// ── Purge any localStorage keys from older DATA_VERSIONs ────────────
+// This runs once on the client so returning mobile users get fresh data
+// after a SW/app update rather than seeing the old version-keyed cache.
+function purgeStaleLocalStorage() {
+  if (typeof localStorage === 'undefined') return;
+  const stalePrefixes = [
+    'chamchamal_curated_artworks_',
+    'chamchamal_curated_tools_',
+    'chamchamal_curated_students_',
+    'chamchamal_curated_faculty_',
+    'chamchamal_curated_collaborators_',
+    'chamchamal_curated_gallery_settings_',
+    'chamchamal_curated_departments_config_',
+  ];
+  const keysToDelete: string[] = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (!key) continue;
+    for (const prefix of stalePrefixes) {
+      if (key.startsWith(prefix) && !key.endsWith(`_${DATA_VERSION}`)) {
+        keysToDelete.push(key);
+        break;
+      }
+    }
+  }
+  keysToDelete.forEach((k) => {
+    try { localStorage.removeItem(k); } catch (_) {}
+  });
+}
 
 export const DEFAULT_DEPARTMENTS_CONFIG: Record<DepartmentId, DepartmentConfig> = {
   painting: {
@@ -172,6 +206,9 @@ export function ArchiveProvider({ children }: { children: ReactNode }) {
 
   // Initialize and synchronize with localStorage on client mount
   useEffect(() => {
+    // Purge stale localStorage keys from previous app versions first
+    purgeStaleLocalStorage();
+
     try {
       // Restore artworks
       const storedArtworks = localStorage.getItem(ARTWORKS_STORAGE_KEY);

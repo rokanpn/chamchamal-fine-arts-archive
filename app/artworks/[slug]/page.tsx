@@ -14,12 +14,6 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 export const fetchCache = 'force-no-store';
 
-export async function generateStaticParams() {
-  return ARTWORKS_DATA.map((artwork) => ({
-    slug: artwork.slug,
-  }));
-}
-
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const artwork = ARTWORKS_DATA.find((item) => item.slug === params.slug);
 
