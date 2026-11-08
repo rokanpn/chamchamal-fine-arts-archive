@@ -2,7 +2,7 @@
 
 import React, { useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Text } from '@react-three/drei';
+import { Text, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 import { SculptureDoor } from './SculptureDoor';
 import { PaintingDoor } from './PaintingDoor';
@@ -59,94 +59,98 @@ function LobbyFreeLookRig({ targetYaw, targetPitch }: LobbyFreeLookRigProps) {
   return null;
 }
 
-// --- Scaled Classical Mixed Hall Portal Component ---
+// --- Scaled Classical Mixed Hall Portal Component (Texture-Mapped) ---
+const MIXED_DOOR_TEXTURE = withCacheBust('/mixed-door.jpg');
+
 interface MixedDoorProps {
   hovered: boolean;
-  accentColor: string;
-  label: string;
-  subLabel: string;
 }
 
-function MixedDoor({ hovered, accentColor, label, subLabel }: MixedDoorProps) {
-  const doorWidth = 1.15;
+function MixedDoor({ hovered }: MixedDoorProps) {
+  const texture = useTexture(MIXED_DOOR_TEXTURE);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.wrapS = THREE.ClampToEdgeWrapping;
+  texture.wrapT = THREE.ClampToEdgeWrapping;
+
+  const ringRef = useRef<THREE.Group>(null);
+
+  // Proportions matching the classical stone portal (297w x 535h = 0.555)
   const doorHeight = 2.0;
+  const doorWidth = Number((doorHeight * (297 / 535)).toFixed(3)); // ~1.11m
   const doorDepth = 0.04;
   const centerY = doorHeight / 2 + 0.12;
 
+  useFrame((state, delta) => {
+    if (ringRef.current) {
+      if (hovered) {
+        const t = state.clock.getElapsedTime() * 7;
+        const targetRot = Math.sin(t) * 0.14 + 0.06;
+        ringRef.current.rotation.x = THREE.MathUtils.lerp(ringRef.current.rotation.x, targetRot, delta * 10);
+      } else {
+        ringRef.current.rotation.x = THREE.MathUtils.damp(ringRef.current.rotation.x, 0, 8, delta);
+      }
+    }
+  });
+
   return (
     <group position={[0, centerY, 0.02]}>
-      {/* Outer Door Frame */}
-      <mesh castShadow receiveShadow raycast={() => null}>
-        <boxGeometry args={[doorWidth + 0.06, doorHeight + 0.06, doorDepth]} />
+      {/* 1. Door Physical Backing Slab */}
+      <mesh position={[0, 0, 0]} castShadow receiveShadow raycast={() => null}>
+        <boxGeometry args={[doorWidth + 0.02, doorHeight + 0.02, doorDepth]} />
         <meshStandardMaterial
-          color={hovered ? '#fffdf7' : '#f4efe6'}
-          roughness={0.3}
-          metalness={0.08}
+          color={hovered ? '#3b434d' : '#2b333d'}
+          roughness={0.75}
+          metalness={0.15}
         />
       </mesh>
 
-      {/* Gold Inner Fillet */}
-      <mesh position={[0, 0, 0.008]} raycast={() => null}>
-        <boxGeometry args={[doorWidth, doorHeight, doorDepth]} />
+      {/* 2. Primary Textured Door Face */}
+      <mesh position={[0, 0, doorDepth / 2 + 0.002]} castShadow receiveShadow raycast={() => null}>
+        <planeGeometry args={[doorWidth, doorHeight]} />
         <meshStandardMaterial
-          color={hovered ? '#f5d77f' : accentColor}
-          roughness={0.25}
-          metalness={0.88}
+          map={texture}
+          color="#ffffff"
+          roughness={0.92}
+          metalness={0.0}
+          toneMapped={false}
         />
       </mesh>
 
-      {/* Main Door Slab */}
-      <mesh position={[0, -0.09, 0.016]} raycast={() => null}>
-        <boxGeometry args={[doorWidth - 0.08, doorHeight - 0.26, 0.02]} />
-        <meshStandardMaterial
-          color={hovered ? '#1e1c24' : '#141217'}
-          roughness={0.8}
-          metalness={0.2}
-        />
-      </mesh>
-
-      {/* Classical Brass Pull Ring */}
-      <mesh position={[doorWidth * 0.24, -0.09, 0.035]} raycast={() => null}>
-        <torusGeometry args={[0.045, 0.01, 8, 16]} />
-        <meshStandardMaterial color={accentColor} roughness={0.2} metalness={0.95} />
-      </mesh>
-
-      {/* Top Inscription Tablet */}
-      <group position={[0, doorHeight * 0.38, 0.022]}>
-        <mesh raycast={() => null}>
-          <boxGeometry args={[doorWidth - 0.1, 0.22, 0.015]} />
+      {/* 3. Scaled 3D Bronze Pull Ring */}
+      <group position={[0, -0.06, doorDepth / 2 + 0.006]}>
+        <mesh position={[0, 0, 0.004]} rotation={[Math.PI / 2, 0, 0]} raycast={() => null}>
+          <cylinderGeometry args={[0.075, 0.08, 0.012, 24]} />
           <meshStandardMaterial
-            color={hovered ? '#fffdf7' : '#f5f0e8'}
-            roughness={0.25}
-            metalness={0.1}
+            color={hovered ? '#94b3cf' : '#6f8fae'}
+            roughness={0.35}
+            metalness={0.88}
           />
         </mesh>
-        <Text
-          position={[0, 0.025, 0.012]}
-          fontSize={0.065}
-          font={KURDISH_FONT}
-          direction="rtl"
-          color="#0A0A0C"
-          anchorX="center"
-          anchorY="middle"
-          raycast={() => null}
-        >
-          {label}
-        </Text>
-        <Text
-          position={[0, -0.045, 0.012]}
-          fontSize={0.035}
-          color="#332f25"
-          anchorX="center"
-          anchorY="middle"
-          raycast={() => null}
-        >
-          {subLabel}
-        </Text>
+        <group ref={ringRef} position={[0, 0.01, 0.014]}>
+          <mesh position={[0, -0.045, 0]} raycast={() => null}>
+            <torusGeometry args={[0.05, 0.011, 12, 24]} />
+            <meshStandardMaterial
+              color={hovered ? '#b6d3eb' : '#88a9c7'}
+              roughness={0.3}
+              metalness={0.92}
+            />
+          </mesh>
+        </group>
       </group>
+
+      {/* 4. Subtle Warm Ambient Spotlight */}
+      <pointLight
+        position={[0, doorHeight * 0.25, 0.65]}
+        intensity={hovered ? 12 : 6}
+        distance={3.5}
+        decay={2}
+        color={hovered ? '#e6f2ff' : '#d2e4f7'}
+      />
     </group>
   );
 }
+
+useTexture.preload(MIXED_DOOR_TEXTURE);
 
 // --- Scaled Classical Museum Portal Component ---
 interface DoorPortalProps {
@@ -236,12 +240,7 @@ function DoorPortal({ angle, label, subLabel, accentColor, scene, onNavigate }: 
         ) : scene === 'painting' ? (
           <PaintingDoor hovered={hovered} />
         ) : (
-          <MixedDoor
-            hovered={hovered}
-            accentColor={accentColor}
-            label={label}
-            subLabel={subLabel}
-          />
+          <MixedDoor hovered={hovered} />
         )}
 
         {/* ── Mobile-Friendly Hover / Active CTA Badge ── */}

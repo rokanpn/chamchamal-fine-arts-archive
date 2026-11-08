@@ -1,11 +1,11 @@
 // ============================================================
-// Chamchamal Fine Arts Archive — Service Worker v5
-// Strategy: NetworkFirst for all pages/data, CacheFirst only
-// for truly immutable static assets (_next/static/).
-// Bump CACHE_VERSION on every deploy to bust old caches.
+// Chamchamal Fine Arts Archive — Service Worker v6
+// Strategy: NetworkFirst for all application code, chunks & data.
+// CacheFirst only for font binaries.
+// Automatically evicts all stale caches on activation.
 // ============================================================
 
-const CACHE_VERSION = 'v5';
+const CACHE_VERSION = 'v6';
 const CACHE_NAME = `chamchamal-fine-arts-cache-${CACHE_VERSION}`;
 
 // Only pre-cache the app shell manifest — NOT data pages.
@@ -54,22 +54,17 @@ self.addEventListener('fetch', (event) => {
   // Ignore chrome-extension and non-http requests
   if (!url.protocol.startsWith('http')) return;
 
-  // ── STRATEGY 1: CacheFirst — Immutable static assets ──
-  // Next.js hashes these filenames; they never change once deployed.
+  // ── STRATEGY 1: CacheFirst — Fonts Only ──
   if (
-    url.pathname.startsWith('/_next/static/') ||
     url.pathname.endsWith('.woff2') ||
-    url.pathname.endsWith('.woff') ||
-    url.pathname.endsWith('.ttf')
+    url.pathname.endsWith('.woff')
   ) {
     event.respondWith(cacheFirst(request));
     return;
   }
 
-  // ── STRATEGY 2: NetworkFirst — Everything else ──────────
-  // This covers: HTML pages, API routes, Supabase fetches,
-  // images, .glb models, and all dynamic content.
-  // The user ALWAYS sees the freshest data when online.
+  // ── STRATEGY 2: NetworkFirst — Everything else (chunks, HTML, textures, GLB, API) ──
+  // The user ALWAYS sees the freshest code and 3D assets when online.
   // Falls back to cache only when completely offline.
   event.respondWith(networkFirst(request));
 });

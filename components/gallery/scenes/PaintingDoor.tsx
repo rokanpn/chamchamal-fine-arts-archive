@@ -26,6 +26,8 @@ interface PaintingDoorProps {
 export function PaintingDoor({ hovered }: PaintingDoorProps) {
   const texture = useTexture(PAINTING_DOOR_TEXTURE);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.wrapS = THREE.ClampToEdgeWrapping;
+  texture.wrapT = THREE.ClampToEdgeWrapping;
 
   const pullRingRef = useRef<THREE.Group>(null);
 

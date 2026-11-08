@@ -26,6 +26,8 @@ interface SculptureDoorProps {
 export function SculptureDoor({ hovered }: SculptureDoorProps) {
   const texture = useTexture(SCULPTURE_DOOR_TEXTURE);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.wrapS = THREE.ClampToEdgeWrapping;
+  texture.wrapT = THREE.ClampToEdgeWrapping;
 
   const ringRef = useRef<THREE.Group>(null);
 
