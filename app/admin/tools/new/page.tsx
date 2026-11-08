@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useArchive } from '@/context/ArchiveContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { AdminAuthGuard } from '@/components/admin/AdminAuthGuard';
+import { FileUploadDropzone } from '@/components/admin/FileUploadDropzone';
 import { ModelViewer3D } from '@/components/artwork/ModelViewer3D';
 import { AtelierTool } from '@/data/tools';
 import { ToolIngestionFormData } from '@/types/admin';
@@ -636,57 +637,39 @@ export default function NewToolIngestionPage() {
             </div>
 
             <div className="flex flex-col gap-3">
-              <label className="block text-xs font-medium text-parchment">
-                {locale === 'ckb' ? 'لینکی فایلی 3D GLB *' : 'GLB Model Asset URL *'}
-              </label>
-              <input
-                type="url"
-                required
+              <FileUploadDropzone
+                mediaType="model3d"
                 value={formData.glbUrl}
-                onChange={(e) => setFormData({ ...formData, glbUrl: e.target.value })}
-                className="w-full px-4 py-2.5 rounded-xl bg-black/50 border border-museum-border text-xs text-gold font-mono outline-none focus:border-gold"
+                label={locale === 'ckb' ? 'مۆدێلی سێ ڕەهەندی کەرەستە (فۆتۆگرامێتری GLB)' : '3D Photogrammetry Stage (.GLB)'}
+                presets={PRESET_MODELS}
+                posterUrl={formData.imageUrl}
+                onChange={(url) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    glbUrl: url,
+                  }));
+                }}
               />
-
-              {/* Preset Models Pill Selector */}
-              <div className="flex flex-col gap-1.5 mt-2">
-                <span className="text-[10px] text-museum-caption uppercase">
-                  {locale === 'ckb' ? 'یان مۆدێلێکی ئامادەکراو هەڵبژێرە:' : 'Or Select Tested 3D Sample Mesh:'}
-                </span>
-                <div className="flex flex-wrap gap-2">
-                  {PRESET_MODELS.map((preset, idx) => (
-                    <button
-                      type="button"
-                      key={idx}
-                      onClick={() => setFormData({ ...formData, glbUrl: preset.url })}
-                      className={`px-3 py-1 rounded-full text-[10px] font-mono border transition-all ${
-                        formData.glbUrl === preset.url
-                          ? 'bg-gold/20 text-gold-light border-gold shadow-sm'
-                          : 'bg-white/5 text-museum-secondary hover:text-parchment border-white/10'
-                      }`}
-                    >
-                      {preset.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
             </div>
 
             {/* Live 3D Preview Stage */}
-            <div className="flex flex-col gap-2 mt-4">
-              <span className="text-xs font-semibold text-gold font-serif flex items-center gap-2">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>{locale === 'ckb' ? 'تاقیکردنەوەی ڕاستەوخۆی سووڕانەوە و AR' : 'Live Interactive 3D Rotation Stage'}</span>
-              </span>
-              <div className="w-full rounded-2xl overflow-hidden border border-museum-border">
-                <ModelViewer3D
-                  modelUrl={formData.glbUrl}
-                  posterUrl={formData.imageUrl}
-                  title={formData.nameEn || 'Test Stage'}
-                  vertices="120,000 Vertices"
-                  polygons="240,000 Triangles"
-                />
+            {formData.glbUrl && (
+              <div className="flex flex-col gap-2 mt-2">
+                <span className="text-xs font-semibold text-gold font-serif flex items-center gap-2">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>{locale === 'ckb' ? 'تاقیکردنەوەی ڕاستەوخۆی سووڕانەوە و AR' : 'Live Interactive 3D Rotation Stage'}</span>
+                </span>
+                <div className="w-full rounded-2xl overflow-hidden border border-museum-border">
+                  <ModelViewer3D
+                    modelUrl={formData.glbUrl}
+                    posterUrl={formData.imageUrl}
+                    title={formData.nameEn || 'Test Stage'}
+                    vertices="120,000 Vertices"
+                    polygons="240,000 Triangles"
+                  />
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Section 4: Imagery, Studio Gallery & Video */}
@@ -696,34 +679,20 @@ export default function NewToolIngestionPage() {
               <span>{locale === 'ckb' ? 'وێنەی سەرەکی، گەلەری ستۆدیۆ و ڤیدیۆ' : 'Media Suite: Cover, Gallery & Video Workshop'}</span>
             </h2>
 
-            {/* Cover Image */}
+            {/* Cover Image Upload Dropzone */}
             <div className="flex flex-col gap-3">
-              <label className="block text-xs font-medium text-parchment">
-                {locale === 'ckb' ? 'وێنەی سەرەکی (Cover Image URL) *' : 'Cover Image URL *'}
-              </label>
-              <input
-                type="url"
-                required
+              <FileUploadDropzone
+                mediaType="image"
                 value={formData.imageUrl}
-                onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                className="w-full px-4 py-2.5 rounded-xl bg-black/50 border border-museum-border text-xs text-parchment outline-none focus:border-gold"
+                label={locale === 'ckb' ? 'وێنەی سەرەکی کەرەستە (فۆتۆی ئاتلیێ)' : 'Primary Tool Photography'}
+                presets={PRESET_IMAGES.map((url, i) => ({ label: `Tool Preset ${i + 1}`, url }))}
+                onChange={(url) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    imageUrl: url,
+                  }));
+                }}
               />
-
-              {/* Preset Image Thumbnails */}
-              <div className="flex items-center gap-3 overflow-x-auto pb-1 mt-1">
-                {PRESET_IMAGES.map((url, i) => (
-                  <button
-                    type="button"
-                    key={i}
-                    onClick={() => setFormData({ ...formData, imageUrl: url })}
-                    className={`relative w-16 h-12 rounded-xl overflow-hidden shrink-0 border-2 transition-all ${
-                      formData.imageUrl === url ? 'border-gold scale-105 shadow-gold-glow' : 'border-transparent opacity-60 hover:opacity-100'
-                    }`}
-                  >
-                    <Image src={url} alt={`Preset ${i}`} fill className="object-cover" />
-                  </button>
-                ))}
-              </div>
             </div>
 
             {/* Gallery Images Textarea */}

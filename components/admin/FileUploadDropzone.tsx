@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { SafeImage } from '@/components/ui/SafeImage';
 import { useLanguage } from '@/context/LanguageContext';
-import { storeLocalFile, resolveMediaUrl, formatFileSize } from '@/lib/mediaStorage';
+import { resolveMediaUrl, formatFileSize } from '@/lib/mediaStorage';
 import { uploadMediaToSupabase } from '@/lib/supabase';
 import { ModelViewer3D } from '@/components/artwork/ModelViewer3D';
 import { 
@@ -56,6 +56,7 @@ export function FileUploadDropzone({
   const [fileSize, setFileSize] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const [inputMode, setInputMode] = useState<'upload' | 'url'>('upload');
   const [manualUrl, setManualUrl] = useState('');
 
@@ -67,6 +68,7 @@ export function FileUploadDropzone({
         if (active) setResolvedUrl(resolved);
       });
       setManualUrl(value);
+      setUploadError(null);
     } else {
       setResolvedUrl('');
       setFileName('');
@@ -117,6 +119,7 @@ export function FileUploadDropzone({
     if (!files || files.length === 0) return;
     const file = files[0];
     setIsProcessing(true);
+    setUploadError(null);
 
     try {
       const folder = mediaType === 'model3d' ? 'models' : mediaType === 'image' ? 'thumbnails' : 'media';
@@ -125,17 +128,12 @@ export function FileUploadDropzone({
       setFileName(uploaded.name);
       setFileSize(uploaded.size);
       setResolvedUrl(uploaded.url);
+      setUploadError(null);
       onChange(uploaded.url, uploaded.name, uploaded.size);
-    } catch (err) {
-      console.warn('[FileUploadDropzone] Supabase upload error, attempting local storage fallback', err);
-      try {
-        const stored = await storeLocalFile(file);
-        setFileName(stored.name);
-        setFileSize(stored.size);
-        onChange(stored.url, stored.name, stored.size);
-      } catch (localErr) {
-        console.error('Failed to process uploaded file', localErr);
-      }
+    } catch (err: any) {
+      console.error('[FileUploadDropzone] Supabase upload error:', err);
+      const errMsg = err?.message || 'Failed to upload asset to Supabase Storage';
+      setUploadError(errMsg);
     } finally {
       setIsProcessing(false);
     }
@@ -312,6 +310,17 @@ export function FileUploadDropzone({
               ))}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Cloud Upload Error Alert */}
+      {uploadError && !value && (
+        <div className="p-3 rounded-xl bg-rose-950/60 border border-rose-500/40 text-[11px] text-rose-300 flex flex-col gap-1">
+          <div className="font-bold flex items-center gap-1.5">
+            <span>⚠️</span>
+            <span>{locale === 'ckb' ? 'هەڵە لە بارکردنی فایل بۆ Supabase' : 'Supabase Storage Upload Notice'}</span>
+          </div>
+          <p className="opacity-90">{uploadError}</p>
         </div>
       )}
 

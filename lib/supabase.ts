@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { Artwork, ArtworkDepartment, DEPARTMENT_LABELS, LocalizedString } from '@/data/artworks';
+import { AtelierTool } from '@/data/tools';
 import { parseArtworkDimensions } from '@/lib/dimensions';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
@@ -73,6 +74,12 @@ export async function uploadMediaToSupabase(
   fileName?: string,
   folder: string = 'media'
 ): Promise<{ url: string; path: string; name: string; size: number }> {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error(
+      'Missing Supabase credentials. Please add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to your environment or Vercel dashboard.'
+    );
+  }
+
   const originalName = fileName || (file instanceof File ? file.name : `file_${Date.now()}`);
   const ext = originalName.includes('.') ? originalName.split('.').pop() : 'bin';
   const cleanBase = originalName
@@ -92,7 +99,9 @@ export async function uploadMediaToSupabase(
 
   if (error) {
     console.error('[Supabase Storage] Upload error:', error);
-    throw error;
+    throw new Error(
+      `Failed to upload to Supabase bucket 'archive-media': ${error.message}. Please verify the bucket exists and public upload is permitted.`
+    );
   }
 
   const { data: publicUrlData } = supabase.storage
@@ -239,6 +248,7 @@ export async function insertArtworkToSupabase(artwork: Artwork): Promise<boolean
   try {
     const row = {
       id: artwork.id,
+      slug: artwork.slug,
       title: artwork.title,
       artist: artwork.artist,
       year: artwork.year,
@@ -254,7 +264,7 @@ export async function insertArtworkToSupabase(artwork: Artwork): Promise<boolean
       height_cm: artwork.height_cm != null ? Number(artwork.height_cm) : null,
     };
 
-    const { error } = await supabase.from('artworks').insert(row);
+    const { error } = await supabase.from('artworks').upsert(row, { onConflict: 'id' });
     if (error) {
       console.error('[Supabase] Insert artwork error:', error);
       return false;
@@ -291,7 +301,6 @@ export async function updateArtworkInSupabase(
     if (updatedData.width_cm !== undefined) row.width_cm = updatedData.width_cm != null ? Number(updatedData.width_cm) : null;
     if (updatedData.height_cm !== undefined) row.height_cm = updatedData.height_cm != null ? Number(updatedData.height_cm) : null;
 
-    // Try updating existing row
     const { data, error } = await supabase
       .from('artworks')
       .update(row)
@@ -303,10 +312,10 @@ export async function updateArtworkInSupabase(
       return false;
     }
 
-    // If row was not yet present in Supabase, insert it so it persists permanently
     if (!data || data.length === 0) {
       const fullRow = {
         id: idOrSlug,
+        slug: updatedData.slug || idOrSlug,
         title: updatedData.title || { ckb: 'شاکاری پەیمانگە', ar: 'عمل فني', en: 'Masterwork' },
         artist: updatedData.artist || { ckb: 'هونەرمەند', ar: 'فنان', en: 'Artist' },
         year: updatedData.year || new Date().getFullYear(),
@@ -321,7 +330,7 @@ export async function updateArtworkInSupabase(
         width_cm: updatedData.width_cm != null ? Number(updatedData.width_cm) : null,
         height_cm: updatedData.height_cm != null ? Number(updatedData.height_cm) : null,
       };
-      await supabase.from('artworks').insert(fullRow);
+      await supabase.from('artworks').upsert(fullRow, { onConflict: 'id' });
     }
     return true;
   } catch (err) {
@@ -335,7 +344,7 @@ export async function updateArtworkInSupabase(
  */
 export async function deleteArtworkFromSupabase(id: string): Promise<boolean> {
   try {
-    const { error } = await supabase.from('artworks').delete().eq('id', id);
+    const { error } = await supabase.from('artworks').delete().or(`id.eq.${id},slug.eq.${id}`);
     if (error) {
       console.error('[Supabase] Delete artwork error:', error);
       return false;
@@ -343,6 +352,221 @@ export async function deleteArtworkFromSupabase(id: string): Promise<boolean> {
     return true;
   } catch (err) {
     console.error('[Supabase] Delete artwork exception:', err);
+    return false;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// TOOLS & PRODUCTS SUPABASE HELPERS
+// ─────────────────────────────────────────────────────────────
+
+/**
+ * Maps a Supabase tools table row into the full client-side AtelierTool schema.
+ */
+export function mapSupabaseRowToTool(row: any): AtelierTool {
+  const parseLocal = (field: any, defaultText: string = ''): LocalizedString => {
+    if (!field) return { ckb: defaultText, ar: defaultText, en: defaultText };
+    if (typeof field === 'string') {
+      try {
+        const parsed = JSON.parse(field);
+        if (parsed && typeof parsed === 'object') {
+          return {
+            ckb: parsed.ckb || parsed.en || defaultText,
+            ar: parsed.ar || parsed.en || defaultText,
+            en: parsed.en || parsed.ckb || defaultText,
+          };
+        }
+      } catch (_) {}
+      return { ckb: field, ar: field, en: field };
+    }
+    return {
+      ckb: field.ckb || field.en || defaultText,
+      ar: field.ar || field.en || defaultText,
+      en: field.en || field.ckb || defaultText,
+    };
+  };
+
+  const id = String(row.id || `tool-${Date.now()}`);
+  const slug = row.slug || id;
+  const category = (row.category || 'painting') as 'painting' | 'sculpture' | 'ceramics' | 'calligraphy';
+
+  const defaultCategoryLabels: Record<string, LocalizedString> = {
+    painting: { ckb: 'شێوەکاری و ڕەنگ', ar: 'الرسم والتلوين', en: 'Painting & Pigments' },
+    sculpture: { ckb: 'پەیکەرسازی و بەرد', ar: 'النحت وتشكيل الحجر', en: 'Sculpture & Stone' },
+    ceramics: { ckb: 'سیرامیک و ئاگر', ar: 'الخزف والفنون النارية', en: 'Ceramics & Kiln' },
+    calligraphy: { ckb: 'خۆشنووسی و مەرەکەب', ar: 'الخط والمداد', en: 'Calligraphy & Inks' },
+  };
+
+  const parseProTips = (tips: any) => {
+    if (!tips || typeof tips !== 'object') {
+      return { ckb: ['کەرەستەکە بە پاکی ڕابگرە.'], ar: ['حافظ على نظافة الأداة.'], en: ['Maintain tool in clean condition.'] };
+    }
+    return {
+      ckb: Array.isArray(tips.ckb) ? tips.ckb : [],
+      ar: Array.isArray(tips.ar) ? tips.ar : [],
+      en: Array.isArray(tips.en) ? tips.en : [],
+    };
+  };
+
+  return {
+    id,
+    slug,
+    name: parseLocal(row.name, 'Atelier Tool'),
+    category,
+    categoryLabel: row.categoryLabel
+      ? parseLocal(row.categoryLabel, category)
+      : defaultCategoryLabels[category] || defaultCategoryLabels.painting,
+    description: parseLocal(row.description, ''),
+    historicalSignificance: parseLocal(row.historicalSignificance, ''),
+    bestPractices: parseLocal(row.bestPractices, ''),
+    materials: parseLocal(row.materials, ''),
+    origin: parseLocal(row.origin, ''),
+    glbUrl: row.glbUrl || row.glb_url || '',
+    imageUrl:
+      row.imageUrl ||
+      row.image_url ||
+      'https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=1200&q=80',
+    galleryImages: Array.isArray(row.galleryImages)
+      ? row.galleryImages
+      : [row.imageUrl || 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=1200&q=80'],
+    videoUrl: row.videoUrl || '',
+    videoTitle: parseLocal(row.videoTitle, ''),
+    audioDuration: row.audioDuration || '2:00 Min',
+    usageInstructions: parseLocal(row.usageInstructions, ''),
+    proTips: parseProTips(row.proTips),
+    usedInArtworkSlugs: Array.isArray(row.usedInArtworkSlugs) ? row.usedInArtworkSlugs : [],
+  };
+}
+
+/**
+ * Fetches all tools/products from the live Supabase 'tools' table.
+ */
+export async function fetchToolsFromSupabase(): Promise<AtelierTool[]> {
+  try {
+    const { data, error } = await supabase
+      .from('tools')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.warn('[Supabase] Failed to fetch tools:', error.message);
+      return [];
+    }
+
+    if (!data || !Array.isArray(data)) return [];
+
+    return data.map(mapSupabaseRowToTool);
+  } catch (err) {
+    console.warn('[Supabase] Network error during tools fetch:', err);
+    return [];
+  }
+}
+
+/**
+ * Inserts or upserts a tool into the live Supabase 'tools' table.
+ */
+export async function insertToolToSupabase(tool: AtelierTool): Promise<boolean> {
+  try {
+    const row = {
+      id: tool.id,
+      slug: tool.slug,
+      name: tool.name,
+      category: tool.category,
+      categoryLabel: tool.categoryLabel,
+      imageUrl: tool.imageUrl,
+      galleryImages: tool.galleryImages,
+      description: tool.description,
+      historicalSignificance: tool.historicalSignificance,
+      bestPractices: tool.bestPractices,
+      materials: tool.materials,
+      origin: tool.origin,
+      usageInstructions: tool.usageInstructions,
+      videoUrl: tool.videoUrl,
+      videoTitle: tool.videoTitle,
+      proTips: tool.proTips,
+      usedInArtworkSlugs: tool.usedInArtworkSlugs,
+      glbUrl: tool.glbUrl,
+      audioDuration: tool.audioDuration,
+    };
+
+    const { error } = await supabase.from('tools').upsert(row, { onConflict: 'id' });
+    if (error) {
+      console.error('[Supabase] Insert tool error:', error);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error('[Supabase] Insert tool exception:', err);
+    return false;
+  }
+}
+
+/**
+ * Updates a tool in the live Supabase 'tools' table.
+ */
+export async function updateToolInSupabase(
+  idOrSlug: string,
+  updatedData: Partial<AtelierTool>
+): Promise<boolean> {
+  try {
+    const row: Record<string, any> = {};
+    if (updatedData.name !== undefined) row.name = updatedData.name;
+    if (updatedData.category !== undefined) row.category = updatedData.category;
+    if (updatedData.categoryLabel !== undefined) row.categoryLabel = updatedData.categoryLabel;
+    if (updatedData.description !== undefined) row.description = updatedData.description;
+    if (updatedData.imageUrl !== undefined) row.imageUrl = updatedData.imageUrl;
+    if (updatedData.galleryImages !== undefined) row.galleryImages = updatedData.galleryImages;
+    if (updatedData.historicalSignificance !== undefined) row.historicalSignificance = updatedData.historicalSignificance;
+    if (updatedData.bestPractices !== undefined) row.bestPractices = updatedData.bestPractices;
+    if (updatedData.materials !== undefined) row.materials = updatedData.materials;
+    if (updatedData.origin !== undefined) row.origin = updatedData.origin;
+    if (updatedData.usageInstructions !== undefined) row.usageInstructions = updatedData.usageInstructions;
+    if (updatedData.videoUrl !== undefined) row.videoUrl = updatedData.videoUrl;
+    if (updatedData.videoTitle !== undefined) row.videoTitle = updatedData.videoTitle;
+    if (updatedData.proTips !== undefined) row.proTips = updatedData.proTips;
+    if (updatedData.usedInArtworkSlugs !== undefined) row.usedInArtworkSlugs = updatedData.usedInArtworkSlugs;
+    if (updatedData.glbUrl !== undefined) row.glbUrl = updatedData.glbUrl;
+    if (updatedData.audioDuration !== undefined) row.audioDuration = updatedData.audioDuration;
+
+    const { data, error } = await supabase
+      .from('tools')
+      .update(row)
+      .eq('id', idOrSlug)
+      .select();
+
+    if (error) {
+      console.error('[Supabase] Update tool error:', error);
+      return false;
+    }
+
+    if (!data || data.length === 0) {
+      const fullRow = {
+        id: idOrSlug,
+        slug: updatedData.slug || idOrSlug,
+        ...row,
+      };
+      await supabase.from('tools').upsert(fullRow, { onConflict: 'id' });
+    }
+    return true;
+  } catch (err) {
+    console.error('[Supabase] Update tool exception:', err);
+    return false;
+  }
+}
+
+/**
+ * Deletes a tool from the live Supabase 'tools' table.
+ */
+export async function deleteToolFromSupabase(id: string): Promise<boolean> {
+  try {
+    const { error } = await supabase.from('tools').delete().or(`id.eq.${id},slug.eq.${id}`);
+    if (error) {
+      console.error('[Supabase] Delete tool error:', error);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error('[Supabase] Delete tool exception:', err);
     return false;
   }
 }

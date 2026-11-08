@@ -242,3 +242,41 @@ CREATE POLICY "Admin Update Archive Media" ON storage.objects FOR UPDATE USING (
 
 DROP POLICY IF EXISTS "Admin Delete Archive Media" ON storage.objects;
 CREATE POLICY "Admin Delete Archive Media" ON storage.objects FOR DELETE USING (bucket_id = 'archive-media');
+
+-- ──────────────────────────────────────────────────────────────────────────────
+-- SUPABASE REALTIME REPLICATION
+-- Broadcasts INSERT, UPDATE, DELETE to all connected client devices in real-time
+-- ──────────────────────────────────────────────────────────────────────────────
+DO $$
+BEGIN
+  BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.artworks;
+  EXCEPTION WHEN duplicate_object THEN NULL;
+  END;
+
+  BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.tools;
+  EXCEPTION WHEN duplicate_object THEN NULL;
+  END;
+
+  BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.students;
+  EXCEPTION WHEN duplicate_object THEN NULL;
+  END;
+
+  BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.faculty;
+  EXCEPTION WHEN duplicate_object THEN NULL;
+  END;
+
+  BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.collaborators;
+  EXCEPTION WHEN duplicate_object THEN NULL;
+  END;
+
+  BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.archive_settings;
+  EXCEPTION WHEN duplicate_object THEN NULL;
+  END;
+END $$;
+
