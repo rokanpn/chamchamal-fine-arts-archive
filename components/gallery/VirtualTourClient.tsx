@@ -603,59 +603,14 @@ export function VirtualTourClient() {
         </div>
       )}
 
-      {/* ── Top Navigation & Curatorial Header ── */}
-      <header className="absolute top-0 inset-x-0 p-4 sm:p-6 flex items-center justify-between pointer-events-none z-20 bg-gradient-to-b from-black/85 via-black/40 to-transparent">
-        {/* Back Link to Archive site with Instant 0ms Micro-Feedback & Concurrent Routing */}
-        <button
-          type="button"
-          onClick={() => navigateTo('/')}
-          onMouseEnter={() => prefetch('/')}
-          onPointerDown={() => prefetch('/')}
-          className={`pointer-events-auto inline-flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-200 shadow-glass-pill backdrop-blur-md cursor-pointer active:scale-95 group ${
-            isExitingToHome
-              ? 'bg-gold/30 border border-gold text-gold shadow-gold-glow animate-pulse'
-              : 'bg-black/60 hover:bg-gold/15 border border-white/10 hover:border-gold/50 text-xs font-medium text-parchment hover:text-gold'
-          }`}
-        >
-          {isExitingToHome ? (
-            <Loader2 className="w-4 h-4 text-gold animate-spin" />
-          ) : isRTL ? (
-            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-          ) : (
-            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-          )}
-          <span>
-            {isExitingToHome
-              ? (locale === 'ckb' ? 'دەگەڕێتەوە...' : 'Exiting...')
-              : (locale === 'ckb' ? 'گەڕانەوە بۆ ئەرشیف' : locale === 'ar' ? 'العودة للأرشيف' : 'Return to Archive')}
-          </span>
-        </button>
-
-        {/* Center Scene Identifier */}
-        <div className="hidden md:flex flex-col items-center pointer-events-auto">
-          <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/70 border border-gold/30 text-gold text-xs font-mono shadow-gold-glow-sm backdrop-blur-md">
-            <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-            <span>
-              {currentScene === 'lobby'
-                ? (locale === 'ckb' ? 'دەروازەی گەورە • GRAND LOBBY' : locale === 'ar' ? 'الردهة الكبرى' : 'GRAND LOBBY')
-                : currentScene === 'painting'
-                ? (locale === 'ckb' ? 'بەشی وێنەکێشان • PAINTING HALL' : 'PAINTING HALL')
-                : currentScene === 'sculpture'
-                ? (locale === 'ckb' ? 'بەشی پەیکەرسازی • SCULPTURE HALL' : 'SCULPTURE HALL')
-                : (locale === 'ckb' ? 'بابەتی تێکەڵاو • MIXED GALLERY' : 'MIXED GALLERY')}
-            </span>
-          </div>
-          <span className="text-[11px] text-white/50 mt-1 font-serif">
-            {locale === 'ckb' ? 'پەیمانگەی هونەرە جوانەکانی چەمچەماڵ' : 'Chamchamal Fine Arts Archive'}
-          </span>
-        </div>
-
-        {/* Action Controls */}
-        <div className="flex items-center gap-2.5 pointer-events-auto">
+      {/* ── Top Minimal HUD Controls ── */}
+      <header className="absolute top-0 inset-x-0 p-3 sm:p-5 flex items-center justify-end pointer-events-none z-20">
+        {/* Top Right Action Controls: Audio, Fullscreen, Back to Lobby, and Minimal Exit */}
+        <div className="flex items-center gap-2 pointer-events-auto">
           {/* Audio toggle */}
           <button
             onClick={handleTogglePlay}
-            className={`w-10 h-10 rounded-full border flex items-center justify-center transition-all active:scale-95 shadow-glass-pill backdrop-blur-md cursor-pointer ${
+            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full border flex items-center justify-center transition-all active:scale-95 shadow-glass-pill backdrop-blur-md cursor-pointer ${
               isPlaying
                 ? 'bg-gold/20 text-gold border-gold/60 shadow-gold-glow-sm'
                 : 'bg-black/60 text-white/70 hover:text-white border-white/10 hover:border-gold/50'
@@ -668,33 +623,44 @@ export function VirtualTourClient() {
           {/* Fullscreen toggle */}
           <button
             onClick={toggleFullscreen}
-            className="w-10 h-10 rounded-full bg-black/60 hover:bg-gold/20 active:bg-gold/30 active:scale-95 border border-gold/40 hover:border-gold flex items-center justify-center text-white hover:text-gold transition-all shadow-glass-pill backdrop-blur-md cursor-pointer"
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/60 hover:bg-gold/20 active:bg-gold/30 active:scale-95 border border-gold/40 hover:border-gold flex items-center justify-center text-white hover:text-gold transition-all shadow-glass-pill backdrop-blur-md cursor-pointer"
             title={isFullscreen ? 'دەرچوون لە پڕاوپڕکردن' : 'پڕاوپڕکردنی پەردە'}
           >
             {isFullscreen ? <Minimize className="w-4 h-4 text-gold" /> : <Maximize className="w-4 h-4" />}
           </button>
+
+          {/* Minimal Back to Lobby Button (icon only, when inside a hall) */}
+          {isInHall && (
+            <button
+              onClick={handleBackToLobby}
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/60 hover:bg-gold/20 active:bg-gold/30 active:scale-95 border border-gold/40 hover:border-gold flex items-center justify-center text-gold transition-all shadow-glass-pill backdrop-blur-md cursor-pointer"
+              title={locale === 'ckb' ? 'گەڕانەوە بۆ دەروازەی سەرەکی' : 'Back to Grand Lobby'}
+            >
+              {isPending ? (
+                <Loader2 className="w-4 h-4 text-gold animate-spin" />
+              ) : (
+                <DoorOpen className="w-4 h-4" />
+              )}
+            </button>
+          )}
+
+          {/* Minimal Exit / Return to Archive Icon Button */}
+          <button
+            type="button"
+            onClick={() => navigateTo('/')}
+            onMouseEnter={() => prefetch('/')}
+            onPointerDown={() => prefetch('/')}
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/60 hover:bg-red-500/20 active:bg-red-500/30 active:scale-95 border border-white/15 hover:border-red-400/50 flex items-center justify-center text-white/80 hover:text-red-400 transition-all shadow-glass-pill backdrop-blur-md cursor-pointer"
+            title={locale === 'ckb' ? 'دەرچوون لە گەشتی سێ ڕەهەندی' : locale === 'ar' ? 'الخروج للجولة' : 'Exit Virtual Tour'}
+          >
+            {isExitingToHome ? (
+              <Loader2 className="w-4 h-4 text-gold animate-spin" />
+            ) : (
+              <X className="w-4 h-4" />
+            )}
+          </button>
         </div>
       </header>
-
-      {/* ── Back to Lobby Button (shown when inside a hall) ── */}
-      {isInHall && (
-        <button
-          onClick={handleBackToLobby}
-          className="absolute top-20 left-1/2 -translate-x-1/2 z-30 pointer-events-auto inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-black/80 hover:bg-gold/20 active:bg-gold/30 active:scale-95 border border-gold/40 hover:border-gold text-gold text-xs font-bold shadow-gold-glow-sm backdrop-blur-xl transition-all cursor-pointer"
-          title={locale === 'ckb' ? 'گەڕانەوە بۆ دەروازەی گەورە' : 'Back to Grand Lobby'}
-        >
-          {isPending ? (
-            <Loader2 className="w-4 h-4 text-gold animate-spin" />
-          ) : (
-            <DoorOpen className="w-4 h-4" />
-          )}
-          <span>
-            {isPending
-              ? (locale === 'ckb' ? 'پەڕینەوە...' : 'Opening Lobby...')
-              : (locale === 'ckb' ? 'گەڕانەوە بۆ دەروازە' : locale === 'ar' ? 'العودة للردهة' : 'Back to Lobby')}
-          </span>
-        </button>
-      )}
 
       {/* ── Collapsible Ambient Multi-Track Media Player ── */}
       {!isAudioPlayerExpanded ? (
@@ -833,50 +799,47 @@ export function VirtualTourClient() {
       {/* ── Bottom Center HUD: Nav Pad + Artwork Card (shown only in halls) ── */}
       {isInHall && (
         <footer className="fixed bottom-3 sm:bottom-4 inset-x-2 sm:inset-x-4 pointer-events-none z-30 flex flex-col items-center gap-2 max-w-sm sm:max-w-md mx-auto w-full">
-          {/* Active / Focused Artwork Pill Card (Painting and Sculpture halls) */}
-          {(isPaintingHall || currentScene === 'sculpture') && (focusedArtwork || currentArtwork) && (
-            <div className="pointer-events-auto px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl bg-black/85 border border-gold/40 hover:border-gold/70 shadow-[0_10px_35px_rgba(0,0,0,0.85)] backdrop-blur-xl flex items-center gap-2.5 sm:gap-3 transition-all max-w-sm sm:max-w-md w-full justify-between">
+          {/* Active / Focused Artwork Pill Card (Strictly conditional: ONLY visible when an artwork is clicked/focused) */}
+          {(isPaintingHall || currentScene === 'sculpture') && Boolean(focusedArtwork) && focusedArtwork && (
+            <div className="pointer-events-auto px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl bg-black/85 border border-gold/40 hover:border-gold/70 shadow-[0_10px_35px_rgba(0,0,0,0.85)] backdrop-blur-xl flex items-center gap-2.5 sm:gap-3 transition-all max-w-sm sm:max-w-md w-full justify-between animate-fade-in">
               <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
                 <div className="relative w-9 h-9 sm:w-11 sm:h-11 rounded-lg overflow-hidden border border-gold/50 shrink-0 bg-black">
                   <SafeImage
-                    src={(focusedArtwork || currentArtwork).imageUrl}
-                    alt={(focusedArtwork || currentArtwork).title[locale] || (focusedArtwork || currentArtwork).title.en}
+                    src={focusedArtwork.imageUrl}
+                    alt={focusedArtwork.title[locale] || focusedArtwork.title.en}
                     fill
-                    className="object-cover"
+                    className="object-contain"
                   />
                 </div>
                 <div className="flex flex-col min-w-0">
                   <div className="flex items-center gap-1.5">
-                    {focusedArtwork && (
-                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[8px] sm:text-[9px] font-bold bg-gold/20 text-gold border border-gold/40">
-                        <Crosshair className="w-2.5 h-2.5" />
-                        <span>{locale === 'ckb' ? 'سەرنجدراو' : 'Focused'}</span>
-                      </span>
-                    )}
+                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[8px] sm:text-[9px] font-bold bg-gold/20 text-gold border border-gold/40">
+                      <Crosshair className="w-2.5 h-2.5" />
+                      <span>{locale === 'ckb' ? 'سەرنجدراو' : 'Focused'}</span>
+                    </span>
                     <span className="text-[9px] sm:text-[10px] text-gold font-mono uppercase tracking-wider truncate">
-                      {getArtworkDepartmentLabel((focusedArtwork || currentArtwork).departmentLabel || (focusedArtwork || currentArtwork).department, locale)} • {(focusedArtwork || currentArtwork).year}
+                      {getArtworkDepartmentLabel(focusedArtwork.departmentLabel || focusedArtwork.department, locale)} • {focusedArtwork.year}
                     </span>
                   </div>
                   <h3 className="text-xs sm:text-sm font-bold text-parchment-pure truncate font-serif mt-0.5">
-                    {(focusedArtwork || currentArtwork).title[locale] || (focusedArtwork || currentArtwork).title.ckb}
+                    {focusedArtwork.title[locale] || focusedArtwork.title.ckb}
                   </h3>
                 </div>
               </div>
 
               <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                {focusedArtwork && (
-                  <button
-                    onClick={handleResetFocus}
-                    className="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full bg-white/10 hover:bg-gold/20 text-white hover:text-gold border border-white/15 hover:border-gold/50 text-[10px] sm:text-xs font-mono transition-all cursor-pointer flex items-center gap-1 shadow-sm"
-                  >
-                    <X className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                    <span className="font-sans font-medium">
-                      {locale === 'ckb' ? 'داخستن' : locale === 'ar' ? 'إلغاء' : 'Exit Focus'}
-                    </span>
-                  </button>
-                )}
                 <button
-                  onClick={() => setSelectedModalArtwork(focusedArtwork || currentArtwork)}
+                  onClick={handleResetFocus}
+                  className="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full bg-white/10 hover:bg-gold/20 text-white hover:text-gold border border-white/15 hover:border-gold/50 text-[10px] sm:text-xs font-mono transition-all cursor-pointer flex items-center gap-1 shadow-sm"
+                  title="Close panel"
+                >
+                  <X className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                  <span className="font-sans font-medium">
+                    {locale === 'ckb' ? 'داخستن' : locale === 'ar' ? 'إلغاء' : 'Close'}
+                  </span>
+                </button>
+                <button
+                  onClick={() => setSelectedModalArtwork(focusedArtwork)}
                   className="px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-gradient-to-r from-gold via-amber-400 to-amber-500 text-obsidian text-[11px] sm:text-xs font-bold flex items-center gap-1 shadow-gold-glow-sm hover:shadow-gold-glow transition-all cursor-pointer"
                 >
                   <Eye className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-obsidian" />
