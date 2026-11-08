@@ -1,5 +1,5 @@
 -- ==============================================================================
--- Chamchamal Fine Arts Archive (ئەرشیفی دیجیتاڵی پەیمانگای هونەرە جوانەکانی چەمچەماڵ)
+-- Chamchamal Fine Arts Archive (ئەرشیفی دیجیتاڵی پەیمانگەی هونەرە جوانەکانی چەمچەماڵ)
 -- Complete Supabase Schema, Tables, Extensions & RLS Security Policies
 -- ==============================================================================
 
@@ -24,6 +24,8 @@ CREATE TABLE IF NOT EXISTS public.artworks (
   "departmentLabel" JSONB,
   medium JSONB,
   dimensions TEXT DEFAULT '120 × 90 cm',
+  width_cm NUMERIC,
+  height_cm NUMERIC,
   "imageUrl" TEXT,
   "thumbnailUrl" TEXT,
   "aspectRatio" TEXT DEFAULT 'portrait',
@@ -59,6 +61,8 @@ ALTER TABLE public.artworks ADD COLUMN IF NOT EXISTS "categoryLabel" JSONB;
 ALTER TABLE public.artworks ADD COLUMN IF NOT EXISTS "departmentLabel" JSONB;
 ALTER TABLE public.artworks ADD COLUMN IF NOT EXISTS medium JSONB;
 ALTER TABLE public.artworks ADD COLUMN IF NOT EXISTS dimensions TEXT DEFAULT '120 × 90 cm';
+ALTER TABLE public.artworks ADD COLUMN IF NOT EXISTS width_cm NUMERIC;
+ALTER TABLE public.artworks ADD COLUMN IF NOT EXISTS height_cm NUMERIC;
 ALTER TABLE public.artworks ADD COLUMN IF NOT EXISTS "imageUrl" TEXT;
 ALTER TABLE public.artworks ADD COLUMN IF NOT EXISTS "thumbnailUrl" TEXT;
 ALTER TABLE public.artworks ADD COLUMN IF NOT EXISTS "aspectRatio" TEXT DEFAULT 'portrait';

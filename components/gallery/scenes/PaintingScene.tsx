@@ -5,6 +5,7 @@ import { useFrame } from '@react-three/fiber';
 import { Text } from '@react-three/drei';
 import * as THREE from 'three';
 import { Artwork, getArtworkDepartmentLabel } from '@/data/artworks';
+import { computeArtwork3DDimensions } from '@/lib/dimensions';
 
 // --- Constants (mirrored from original VirtualTourClient) ---
 const CORRIDOR_WIDTH = 6.4;
@@ -100,12 +101,8 @@ function ArtworkFrame3D({ artwork, index, total, isFocused, locale, onFocus, onO
   const rotationY = isLeft ? Math.PI / 2 : -Math.PI / 2;
 
   const { frameW, frameH, canvasW, canvasH } = useMemo(() => {
-    let w = 2.4; let h = 1.7;
-    if (artwork.aspectRatio === 'portrait') { w = 1.7; h = 2.3; }
-    else if (artwork.aspectRatio === 'square') { w = 2.0; h = 2.0; }
-    else if (artwork.aspectRatio === 'tall') { w = 1.5; h = 2.5; }
-    return { frameW: w, frameH: h, canvasW: w - 0.16, canvasH: h - 0.16 };
-  }, [artwork.aspectRatio]);
+    return computeArtwork3DDimensions(artwork);
+  }, [artwork]);
 
   const plaqueText = useMemo(() => {
     const artistName = artwork.artist[locale] || artwork.artist.ckb || artwork.artist.en;

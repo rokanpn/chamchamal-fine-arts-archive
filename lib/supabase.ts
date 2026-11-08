@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { Artwork, ArtworkDepartment, DEPARTMENT_LABELS, LocalizedString } from '@/data/artworks';
+import { parseArtworkDimensions } from '@/lib/dimensions';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
@@ -57,6 +58,9 @@ export interface ArtworkRecord {
   modelUrl?: string | null;
   hasPedestal: boolean;
   modelScale: number;
+  dimensions?: string;
+  width_cm?: number | null;
+  height_cm?: number | null;
   created_at?: string;
 }
 
@@ -157,6 +161,12 @@ export function mapSupabaseRowToArtwork(row: any): Artwork {
   const category =
     row.category || (deptCode === 'sculpture' ? 'sculpture' : deptCode === 'mixed' ? 'design' : 'painting');
 
+  const rawW = row.width_cm != null ? Number(row.width_cm) : undefined;
+  const rawH = row.height_cm != null ? Number(row.height_cm) : undefined;
+  const parsedDims = parseArtworkDimensions(row.dimensions, rawW, rawH, row.aspectRatio);
+  const width_cm = rawW ?? parsedDims.widthCm;
+  const height_cm = rawH ?? parsedDims.heightCm;
+
   return {
     id,
     slug,
@@ -171,7 +181,9 @@ export function mapSupabaseRowToArtwork(row: any): Artwork {
     departmentLabel: DEPARTMENT_LABELS[deptCode],
     medium: parseLocal(row.medium, deptCode === 'sculpture' ? 'Carved Limestone & Bronze' : 'Mixed Atelier Media'),
     year: Number(row.year) || new Date().getFullYear(),
-    dimensions: row.dimensions || '120 × 90 cm',
+    dimensions: row.dimensions || `${width_cm} × ${height_cm} cm`,
+    width_cm,
+    height_cm,
     imageUrl,
     thumbnailUrl: imageUrl,
     aspectRatio: row.aspectRatio || 'portrait',
@@ -237,6 +249,9 @@ export async function insertArtworkToSupabase(artwork: Artwork): Promise<boolean
       modelUrl: artwork.modelUrl || null,
       hasPedestal: artwork.hasPedestal !== false,
       modelScale: artwork.modelScale || 1.0,
+      dimensions: artwork.dimensions || `${artwork.width_cm || 120} × ${artwork.height_cm || 90} cm`,
+      width_cm: artwork.width_cm != null ? Number(artwork.width_cm) : null,
+      height_cm: artwork.height_cm != null ? Number(artwork.height_cm) : null,
     };
 
     const { error } = await supabase.from('artworks').insert(row);
@@ -272,6 +287,9 @@ export async function updateArtworkInSupabase(
     if (updatedData.modelUrl !== undefined) row.modelUrl = updatedData.modelUrl || null;
     if (updatedData.hasPedestal !== undefined) row.hasPedestal = updatedData.hasPedestal;
     if (updatedData.modelScale !== undefined) row.modelScale = updatedData.modelScale;
+    if (updatedData.dimensions !== undefined) row.dimensions = updatedData.dimensions;
+    if (updatedData.width_cm !== undefined) row.width_cm = updatedData.width_cm != null ? Number(updatedData.width_cm) : null;
+    if (updatedData.height_cm !== undefined) row.height_cm = updatedData.height_cm != null ? Number(updatedData.height_cm) : null;
 
     // Try updating existing row
     const { data, error } = await supabase
@@ -299,6 +317,9 @@ export async function updateArtworkInSupabase(
         modelUrl: updatedData.modelUrl || null,
         hasPedestal: updatedData.hasPedestal !== false,
         modelScale: updatedData.modelScale || 1.0,
+        dimensions: updatedData.dimensions || `${updatedData.width_cm || 120} × ${updatedData.height_cm || 90} cm`,
+        width_cm: updatedData.width_cm != null ? Number(updatedData.width_cm) : null,
+        height_cm: updatedData.height_cm != null ? Number(updatedData.height_cm) : null,
       };
       await supabase.from('artworks').insert(fullRow);
     }

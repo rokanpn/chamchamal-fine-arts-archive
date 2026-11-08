@@ -32,6 +32,8 @@ export interface IngestionFormData {
   mediumEn?: string;
   year?: number;
   dimensions?: string;
+  width_cm?: number;
+  height_cm?: number;
 
   // Short Inscription
   descriptionCkb?: string;

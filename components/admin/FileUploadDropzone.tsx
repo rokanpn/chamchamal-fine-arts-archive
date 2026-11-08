@@ -367,15 +367,15 @@ export function FileUploadDropzone({
           </div>
 
           {/* Dynamic Live Media Preview Stage */}
-          <div className="w-full rounded-xl overflow-hidden bg-black/60 border border-museum-border/60">
-            {/* 1. Image Preview */}
+          <div className="w-full rounded-xl overflow-hidden bg-black/80 border border-museum-border/60">
+            {/* 1. Image Preview (unconstrained aspect ratio, full uncropped display) */}
             {mediaType === 'image' && (resolvedUrl || value) && (
-              <div className="relative aspect-video sm:aspect-[21/9] w-full overflow-hidden">
+              <div className="relative w-full h-[320px] sm:h-[440px] flex items-center justify-center p-3 bg-black/90 overflow-hidden">
                 <SafeImage
                   src={resolvedUrl || value}
                   alt={fileName || 'Preview'}
                   fill
-                  className="object-contain"
+                  className="object-contain p-2"
                 />
               </div>
             )}

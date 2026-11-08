@@ -100,6 +100,8 @@ export interface Artwork {
   medium: LocalizedString;
   year: number;
   dimensions: string;
+  width_cm?: number;
+  height_cm?: number;
   imageUrl: string;
   thumbnailUrl?: string;
   aspectRatio: 'portrait' | 'landscape' | 'square' | 'tall';
@@ -237,6 +239,8 @@ export const ARTWORKS_DATA: Artwork[] = [
     },
     year: 2023,
     dimensions: '140 × 110 cm',
+    width_cm: 140,
+    height_cm: 110,
     imageUrl: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1200&q=80',
     aspectRatio: 'portrait',
     has3DModel: false,

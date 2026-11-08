@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { getSupabaseServerClient } from '@/lib/supabaseServer';
 import { Artwork } from '@/data/artworks';
+import { parseArtworkDimensions } from '@/lib/dimensions';
 import { AtelierTool } from '@/data/tools';
 import { StudentArtist } from '@/data/students';
 import { FacultyMember } from '@/types/faculty';
@@ -56,6 +57,13 @@ export async function saveArtworkAction(artwork: Artwork): Promise<{ success: bo
   try {
     const supabase = getSupabaseServerClient();
 
+    const rawW = artwork.width_cm != null ? Number(artwork.width_cm) : undefined;
+    const rawH = artwork.height_cm != null ? Number(artwork.height_cm) : undefined;
+    const parsedDims = parseArtworkDimensions(artwork.dimensions, rawW, rawH, artwork.aspectRatio);
+    const finalWidthCm = rawW ?? parsedDims.widthCm;
+    const finalHeightCm = rawH ?? parsedDims.heightCm;
+    const finalDimensions = artwork.dimensions || `${finalWidthCm} × ${finalHeightCm} cm`;
+
     const baselineRow = {
       id: artwork.id,
       title: artwork.title,
@@ -68,6 +76,9 @@ export async function saveArtworkAction(artwork: Artwork): Promise<{ success: bo
       modelUrl: artwork.modelUrl || null,
       hasPedestal: artwork.hasPedestal !== false,
       modelScale: Number(artwork.modelScale) || 1.0,
+      dimensions: finalDimensions,
+      width_cm: finalWidthCm,
+      height_cm: finalHeightCm,
     };
 
     const fullRow = {
@@ -80,7 +91,9 @@ export async function saveArtworkAction(artwork: Artwork): Promise<{ success: bo
       categoryLabel: artwork.categoryLabel,
       departmentLabel: artwork.departmentLabel,
       medium: artwork.medium,
-      dimensions: artwork.dimensions,
+      dimensions: finalDimensions,
+      width_cm: finalWidthCm,
+      height_cm: finalHeightCm,
       aspectRatio: artwork.aspectRatio,
       has3DModel: artwork.has3DModel,
       modelVertices: artwork.modelVertices,
@@ -497,45 +510,55 @@ export async function fetchLiveArchiveDataAction(): Promise<LiveArchiveData> {
       .order('created_at', { ascending: false });
 
     if (!artErr && Array.isArray(artData) && artData.length > 0) {
-      result.artworks = artData.map((row: any) => ({
-        id: String(row.id),
-        slug: row.slug || String(row.id),
-        title: typeof row.title === 'object' ? row.title : { ckb: row.title, ar: row.title, en: row.title },
-        artist: typeof row.artist === 'object' ? row.artist : { ckb: row.artist, ar: row.artist, en: row.artist },
-        artistId: row.artistId || row.artist_id || 'faculty-collection',
-        artistBio: typeof row.artistBio === 'object' ? row.artistBio : (typeof row.artist_bio === 'object' ? row.artist_bio : { ckb: '', ar: '', en: '' }),
-        artistGraduationYear: Number(row.artistGraduationYear || row.artist_graduation_year) || 2022,
-        category: row.category || 'painting',
-        categoryLabel: typeof row.categoryLabel === 'object' ? row.categoryLabel : { ckb: 'شێوەکاری', ar: 'رسم تشكيلي', en: 'Painting' },
-        department: row.department || 'painting',
-        departmentLabel: typeof row.departmentLabel === 'object' ? row.departmentLabel : { ckb: 'شێوەکاری', ar: 'فنون تشكيلية', en: 'Fine Arts' },
-        medium: typeof row.medium === 'object' ? row.medium : { ckb: row.medium || '', ar: row.medium || '', en: row.medium || '' },
-        year: Number(row.year) || 2026,
-        dimensions: row.dimensions || '120 × 90 cm',
-        imageUrl: row.imageUrl || row.image_url || row.thumbnailUrl || row.thumbnail_url || 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1200&q=80',
-        thumbnailUrl: row.thumbnailUrl || row.thumbnail_url || row.imageUrl || 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1200&q=80',
-        aspectRatio: row.aspectRatio || 'portrait',
-        has3DModel: Boolean(row.has3DModel || row.has_3d_model || row.modelUrl || row.model_url),
-        hasPedestal: row.hasPedestal !== false && row.has_pedestal !== false,
-        modelScale: Number(row.modelScale || row.model_scale) || 1.0,
-        modelUrl: row.modelUrl || row.model_url || undefined,
-        modelVertices: row.modelVertices || undefined,
-        modelPolygons: row.modelPolygons || undefined,
-        featured: Boolean(row.featured),
-        description: typeof row.description === 'object' ? row.description : { ckb: row.description || '', ar: row.description || '', en: row.description || '' },
-        curatorialEssay: typeof row.curatorialEssay === 'object' ? row.curatorialEssay : undefined,
-        audioUrl: row.audioUrl || undefined,
-        audioDurationSeconds: Number(row.audioDurationSeconds) || undefined,
-        videoUrl: row.videoUrl || undefined,
-        videoTitle: typeof row.videoTitle === 'object' ? row.videoTitle : undefined,
-        curatorialPdfUrl: row.curatorialPdfUrl || undefined,
-        curatorialPdfFileName: row.curatorialPdfFileName || undefined,
-        locationInInstitute: typeof row.locationInInstitute === 'object' ? row.locationInInstitute : { ckb: 'هۆڵی سەرەکی', ar: 'القاعة الرئيسية', en: 'Main Gallery Hall' },
-        provenancePedestal: row.provenancePedestal || 'GALLERY-PEDESTAL-1',
-        physicalPlaqueCode: row.physicalPlaqueCode || `CFA-${row.year || 2026}-01`,
-        atelierTools: [],
-        toolSlugs: Array.isArray(row.toolSlugs) ? row.toolSlugs : [],
-      }));
+      result.artworks = artData.map((row: any) => {
+        const rawW = row.width_cm != null ? Number(row.width_cm) : undefined;
+        const rawH = row.height_cm != null ? Number(row.height_cm) : undefined;
+        const parsedDims = parseArtworkDimensions(row.dimensions, rawW, rawH, row.aspectRatio);
+        const finalWidthCm = rawW ?? parsedDims.widthCm;
+        const finalHeightCm = rawH ?? parsedDims.heightCm;
+
+        return {
+          id: String(row.id),
+          slug: row.slug || String(row.id),
+          title: typeof row.title === 'object' ? row.title : { ckb: row.title, ar: row.title, en: row.title },
+          artist: typeof row.artist === 'object' ? row.artist : { ckb: row.artist, ar: row.artist, en: row.artist },
+          artistId: row.artistId || row.artist_id || 'faculty-collection',
+          artistBio: typeof row.artistBio === 'object' ? row.artistBio : (typeof row.artist_bio === 'object' ? row.artist_bio : { ckb: '', ar: '', en: '' }),
+          artistGraduationYear: Number(row.artistGraduationYear || row.artist_graduation_year) || 2022,
+          category: row.category || 'painting',
+          categoryLabel: typeof row.categoryLabel === 'object' ? row.categoryLabel : { ckb: 'شێوەکاری', ar: 'رسم تشكيلي', en: 'Painting' },
+          department: row.department || 'painting',
+          departmentLabel: typeof row.departmentLabel === 'object' ? row.departmentLabel : { ckb: 'شێوەکاری', ar: 'فنون تشكيلية', en: 'Fine Arts' },
+          medium: typeof row.medium === 'object' ? row.medium : { ckb: row.medium || '', ar: row.medium || '', en: row.medium || '' },
+          year: Number(row.year) || 2026,
+          dimensions: row.dimensions || `${finalWidthCm} × ${finalHeightCm} cm`,
+          width_cm: finalWidthCm,
+          height_cm: finalHeightCm,
+          imageUrl: row.imageUrl || row.image_url || row.thumbnailUrl || row.thumbnail_url || 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1200&q=80',
+          thumbnailUrl: row.thumbnailUrl || row.thumbnail_url || row.imageUrl || 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1200&q=80',
+          aspectRatio: row.aspectRatio || 'portrait',
+          has3DModel: Boolean(row.has3DModel || row.has_3d_model || row.modelUrl || row.model_url),
+          hasPedestal: row.hasPedestal !== false && row.has_pedestal !== false,
+          modelScale: Number(row.modelScale || row.model_scale) || 1.0,
+          modelUrl: row.modelUrl || row.model_url || undefined,
+          modelVertices: row.modelVertices || undefined,
+          modelPolygons: row.modelPolygons || undefined,
+          featured: Boolean(row.featured),
+          description: typeof row.description === 'object' ? row.description : { ckb: row.description || '', ar: row.description || '', en: row.description || '' },
+          curatorialEssay: typeof row.curatorialEssay === 'object' ? row.curatorialEssay : undefined,
+          audioUrl: row.audioUrl || undefined,
+          audioDurationSeconds: Number(row.audioDurationSeconds) || undefined,
+          videoUrl: row.videoUrl || undefined,
+          videoTitle: typeof row.videoTitle === 'object' ? row.videoTitle : undefined,
+          curatorialPdfUrl: row.curatorialPdfUrl || undefined,
+          curatorialPdfFileName: row.curatorialPdfFileName || undefined,
+          locationInInstitute: typeof row.locationInInstitute === 'object' ? row.locationInInstitute : { ckb: 'هۆڵی سەرەکی', ar: 'القاعة الرئيسية', en: 'Main Gallery Hall' },
+          provenancePedestal: row.provenancePedestal || 'GALLERY-PEDESTAL-1',
+          physicalPlaqueCode: row.physicalPlaqueCode || `CFA-${row.year || 2026}-01`,
+          atelierTools: [],
+          toolSlugs: Array.isArray(row.toolSlugs) ? row.toolSlugs : [],
+        };
+      });
     }
 
     // 2. Fetch Tools

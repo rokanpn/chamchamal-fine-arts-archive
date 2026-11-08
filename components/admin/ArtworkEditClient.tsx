@@ -11,6 +11,7 @@ import { FileUploadDropzone } from '@/components/admin/FileUploadDropzone';
 import { ModelPreviewStudio } from '@/components/admin/ModelPreviewStudio';
 import { QuickToolAddModal } from '@/components/admin/QuickToolAddModal';
 import { Artwork, ArtworkDepartment, DEPARTMENT_LABELS, DEPARTMENT_OPTIONS, getArtworkDepartment, ARTWORKS_DATA } from '@/data/artworks';
+import { parseArtworkDimensions } from '@/lib/dimensions';
 import { AtelierTool } from '@/data/tools';
 import { IngestionFormData } from '@/types/admin';
 import { 
@@ -86,6 +87,8 @@ export function ArtworkEditClient({ slug }: ArtworkEditClientProps) {
     mediumEn: '',
     year: new Date().getFullYear(),
     dimensions: '',
+    width_cm: undefined,
+    height_cm: undefined,
     descriptionCkb: '',
     descriptionAr: '',
     descriptionEn: '',
@@ -121,6 +124,15 @@ export function ArtworkEditClient({ slug }: ArtworkEditClientProps) {
   // Populate data when artwork is found or hydrated
   useEffect(() => {
     if (targetArtwork) {
+      const parsed = parseArtworkDimensions(
+        targetArtwork.dimensions,
+        targetArtwork.width_cm,
+        targetArtwork.height_cm,
+        targetArtwork.aspectRatio
+      );
+      const w = targetArtwork.width_cm ?? parsed.widthCm;
+      const h = targetArtwork.height_cm ?? parsed.heightCm;
+
       setFormData({
         titleCkb: targetArtwork.title.ckb || '',
         titleAr: targetArtwork.title.ar || '',
@@ -132,7 +144,9 @@ export function ArtworkEditClient({ slug }: ArtworkEditClientProps) {
         mediumAr: targetArtwork.medium.ar || '',
         mediumEn: targetArtwork.medium.en || '',
         year: targetArtwork.year || new Date().getFullYear(),
-        dimensions: targetArtwork.dimensions || '',
+        dimensions: targetArtwork.dimensions || `${w} × ${h} cm`,
+        width_cm: w,
+        height_cm: h,
         descriptionCkb: targetArtwork.description.ckb || '',
         descriptionAr: targetArtwork.description.ar || '',
         descriptionEn: targetArtwork.description.en || '',
@@ -258,7 +272,9 @@ export function ArtworkEditClient({ slug }: ArtworkEditClientProps) {
         en: formData.mediumEn || targetArtwork.medium.en,
       },
       year: Number(formData.year) || targetArtwork.year,
-      dimensions: formData.dimensions || targetArtwork.dimensions,
+      dimensions: formData.dimensions || `${formData.width_cm || 120} × ${formData.height_cm || 90} cm`,
+      width_cm: formData.width_cm ? Number(formData.width_cm) : targetArtwork.width_cm,
+      height_cm: formData.height_cm ? Number(formData.height_cm) : targetArtwork.height_cm,
       imageUrl: formData.imageUrl || targetArtwork.imageUrl,
       has3DModel: has3D,
       hasPedestal: formData.hasPedestal,
@@ -621,21 +637,57 @@ export function ArtworkEditClient({ slug }: ArtworkEditClientProps) {
 
               <div>
                 <label className="block text-xs font-medium text-parchment mb-1">
-                  {locale === 'ckb' ? 'ساڵ و قەبارە' : 'Year & Dimensions'}
+                  {locale === 'ckb' ? 'ساڵی بەرهەمهێنان' : 'Creation Year'}
+                </label>
+                <input
+                  type="number"
+                  value={formData.year}
+                  onChange={(e) => setFormData({ ...formData, year: Number(e.target.value) })}
+                  className="w-full px-2.5 py-2 rounded-xl bg-black/50 border border-museum-border text-xs text-parchment font-mono outline-none focus:border-gold text-center"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-parchment mb-1">
+                  {locale === 'ckb' ? 'پانی و بەرزایی (سم)' : 'Width & Height (cm)'}
                 </label>
                 <div className="grid grid-cols-2 gap-2">
-                  <input
-                    type="number"
-                    value={formData.year}
-                    onChange={(e) => setFormData({ ...formData, year: Number(e.target.value) })}
-                    className="w-full px-2.5 py-2 rounded-xl bg-black/50 border border-museum-border text-xs text-parchment font-mono outline-none focus:border-gold text-center"
-                  />
-                  <input
-                    type="text"
-                    value={formData.dimensions}
-                    onChange={(e) => setFormData({ ...formData, dimensions: e.target.value })}
-                    className="w-full px-2 py-2 rounded-xl bg-black/50 border border-museum-border text-xs text-parchment font-mono outline-none focus:border-gold text-center"
-                  />
+                  <div className="relative">
+                    <input
+                      type="number"
+                      placeholder={locale === 'ckb' ? 'پانی (سم)' : 'Width (cm)'}
+                      value={formData.width_cm ?? ''}
+                      onChange={(e) => {
+                        const val = e.target.value ? Number(e.target.value) : undefined;
+                        const h = formData.height_cm ?? 90;
+                        setFormData({
+                          ...formData,
+                          width_cm: val,
+                          dimensions: val ? `${val} × ${h} cm` : formData.dimensions,
+                        });
+                      }}
+                      className="w-full px-2.5 py-2 rounded-xl bg-black/50 border border-museum-border text-xs text-parchment font-mono outline-none focus:border-gold text-center"
+                    />
+                    <span className="absolute end-2 top-2 text-[10px] text-parchment-muted pointer-events-none">W</span>
+                  </div>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      placeholder={locale === 'ckb' ? 'بەرزایی (سم)' : 'Height (cm)'}
+                      value={formData.height_cm ?? ''}
+                      onChange={(e) => {
+                        const val = e.target.value ? Number(e.target.value) : undefined;
+                        const w = formData.width_cm ?? 120;
+                        setFormData({
+                          ...formData,
+                          height_cm: val,
+                          dimensions: val ? `${w} × ${val} cm` : formData.dimensions,
+                        });
+                      }}
+                      className="w-full px-2.5 py-2 rounded-xl bg-black/50 border border-museum-border text-xs text-parchment font-mono outline-none focus:border-gold text-center"
+                    />
+                    <span className="absolute end-2 top-2 text-[10px] text-parchment-muted pointer-events-none">H</span>
+                  </div>
                 </div>
               </div>
             </div>

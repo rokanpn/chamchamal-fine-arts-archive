@@ -92,13 +92,13 @@ export function ArtCard({ artwork, index }: ArtCardProps) {
           <div className="absolute inset-x-8 top-0 h-[1px] bg-gradient-to-r from-transparent via-stone-400/20 dark:via-white/15 to-transparent pointer-events-none z-20" />
 
           {/* Image Container with Dynamic Aspect Ratio */}
-          <div className="relative w-full aspect-[4/3] overflow-hidden bg-stone-100 dark:bg-obsidian-elevated">
+          <div className="relative w-full aspect-[4/3] overflow-hidden bg-stone-100 dark:bg-obsidian-elevated flex items-center justify-center p-2">
             <SafeImage
               src={artwork.imageUrl}
               alt={title}
               fill
               priority={index < 3}
-              className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-108"
+              className="object-contain object-center p-1 transition-transform duration-700 ease-out group-hover:scale-105"
             />
 
             {/* Liquid Vignette Gradient over image */}

@@ -74,7 +74,9 @@ export default function NewArtworkIngestionPage() {
     mediumAr: '',
     mediumEn: '',
     year: new Date().getFullYear(),
-    dimensions: '',
+    dimensions: '120 × 90 cm',
+    width_cm: 120,
+    height_cm: 90,
     descriptionCkb: '',
     descriptionAr: '',
     descriptionEn: '',
@@ -176,7 +178,9 @@ export default function NewArtworkIngestionPage() {
         en: formData.mediumEn || 'Mixed Atelier Media',
       },
       year: Number(formData.year) || new Date().getFullYear(),
-      dimensions: formData.dimensions || '120 × 90 cm',
+      dimensions: formData.dimensions || `${formData.width_cm || 120} × ${formData.height_cm || 90} cm`,
+      width_cm: formData.width_cm ? Number(formData.width_cm) : 120,
+      height_cm: formData.height_cm ? Number(formData.height_cm) : 90,
       imageUrl: formData.imageUrl || PRESET_ART_IMAGES[0],
       aspectRatio: 'portrait',
       has3DModel: has3D,
@@ -540,22 +544,57 @@ export default function NewArtworkIngestionPage() {
 
               <div>
                 <label className="block text-xs font-medium text-parchment mb-1">
-                  {locale === 'ckb' ? 'ساڵ و قەبارە' : 'Year & Dimensions'}
+                  {locale === 'ckb' ? 'ساڵی بەرهەمهێنان' : 'Creation Year'}
+                </label>
+                <input
+                  type="number"
+                  value={formData.year}
+                  onChange={(e) => setFormData({ ...formData, year: Number(e.target.value) })}
+                  className="w-full px-2.5 py-2 rounded-xl bg-black/50 border border-museum-border text-xs text-parchment font-mono outline-none focus:border-gold text-center"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-parchment mb-1">
+                  {locale === 'ckb' ? 'پانی و بەرزایی (سم)' : 'Width & Height (cm)'}
                 </label>
                 <div className="grid grid-cols-2 gap-2">
-                  <input
-                    type="number"
-                    value={formData.year}
-                    onChange={(e) => setFormData({ ...formData, year: Number(e.target.value) })}
-                    className="w-full px-2.5 py-2 rounded-xl bg-black/50 border border-museum-border text-xs text-parchment font-mono outline-none focus:border-gold text-center"
-                  />
-                  <input
-                    type="text"
-                    value={formData.dimensions}
-                    onChange={(e) => setFormData({ ...formData, dimensions: e.target.value })}
-                    placeholder="120 × 90 cm"
-                    className="w-full px-2 py-2 rounded-xl bg-black/50 border border-museum-border text-xs text-parchment font-mono outline-none focus:border-gold text-center"
-                  />
+                  <div className="relative">
+                    <input
+                      type="number"
+                      placeholder={locale === 'ckb' ? 'پانی (سم)' : 'Width (cm)'}
+                      value={formData.width_cm ?? ''}
+                      onChange={(e) => {
+                        const val = e.target.value ? Number(e.target.value) : undefined;
+                        const h = formData.height_cm ?? 90;
+                        setFormData({
+                          ...formData,
+                          width_cm: val,
+                          dimensions: val ? `${val} × ${h} cm` : formData.dimensions,
+                        });
+                      }}
+                      className="w-full px-2.5 py-2 rounded-xl bg-black/50 border border-museum-border text-xs text-parchment font-mono outline-none focus:border-gold text-center"
+                    />
+                    <span className="absolute end-2 top-2 text-[10px] text-parchment-muted pointer-events-none">W</span>
+                  </div>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      placeholder={locale === 'ckb' ? 'بەرزایی (سم)' : 'Height (cm)'}
+                      value={formData.height_cm ?? ''}
+                      onChange={(e) => {
+                        const val = e.target.value ? Number(e.target.value) : undefined;
+                        const w = formData.width_cm ?? 120;
+                        setFormData({
+                          ...formData,
+                          height_cm: val,
+                          dimensions: val ? `${w} × ${val} cm` : formData.dimensions,
+                        });
+                      }}
+                      className="w-full px-2.5 py-2 rounded-xl bg-black/50 border border-museum-border text-xs text-parchment font-mono outline-none focus:border-gold text-center"
+                    />
+                    <span className="absolute end-2 top-2 text-[10px] text-parchment-muted pointer-events-none">H</span>
+                  </div>
                 </div>
               </div>
             </div>

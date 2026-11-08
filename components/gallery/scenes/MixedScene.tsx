@@ -5,6 +5,7 @@ import { useFrame } from '@react-three/fiber';
 import { Text } from '@react-three/drei';
 import * as THREE from 'three';
 import { Artwork } from '@/data/artworks';
+import { computeArtwork3DDimensions } from '@/lib/dimensions';
 
 // --- Constants ---
 const CORRIDOR_WIDTH = 6.4;
@@ -133,12 +134,8 @@ function MixedFrame({ artwork, index, locale }: { artwork: Artwork; index: numbe
   const [hovered, setHovered] = useState(false);
 
   const { frameW, frameH, canvasW, canvasH } = useMemo(() => {
-    let w = 2.4; let h = 1.7;
-    if (artwork.aspectRatio === 'portrait') { w = 1.7; h = 2.3; }
-    else if (artwork.aspectRatio === 'square') { w = 2.0; h = 2.0; }
-    else if (artwork.aspectRatio === 'tall') { w = 1.5; h = 2.5; }
-    return { frameW: w, frameH: h, canvasW: w - 0.16, canvasH: h - 0.16 };
-  }, [artwork.aspectRatio]);
+    return computeArtwork3DDimensions(artwork);
+  }, [artwork]);
 
   const plaqueText = useMemo(() => {
     const title = artwork.title[locale] || artwork.title.ckb;

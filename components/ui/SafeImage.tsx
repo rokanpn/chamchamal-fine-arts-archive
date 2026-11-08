@@ -48,11 +48,12 @@ export function SafeImage({
   };
 
   if (fill) {
+    const defaultFit = className.includes('object-') ? '' : 'object-cover';
     return (
       <img
         src={effectiveSrc}
         alt={alt}
-        className={`absolute inset-0 w-full h-full object-cover ${className}`}
+        className={`absolute inset-0 w-full h-full ${defaultFit} ${className}`.trim()}
         style={style}
         loading={priority ? 'eager' : 'lazy'}
         decoding="async"
