@@ -21,29 +21,15 @@ if (!isSupabaseConfigured) {
   }
 }
 
-// Initialize and export the Supabase client singleton with zero-caching fetch
+// Initialize and export the Supabase client singleton
 export const supabase = createClient(
-  supabaseUrl || 'https://placeholder-project.supabase.co',
-  supabaseAnonKey || 'placeholder-anon-key',
+  supabaseUrl,
+  supabaseAnonKey,
   {
     auth: {
       persistSession: true,
       autoRefreshToken: true,
-    },
-    global: {
-      fetch: (url, options = {}) => {
-        return fetch(url, {
-          ...options,
-          cache: 'no-store',
-          headers: {
-            ...options.headers,
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
-            Pragma: 'no-cache',
-            Expires: '0',
-          },
-        });
-      },
-    },
+    }
   }
 );
 
