@@ -3,8 +3,8 @@ import { Artwork, ArtworkDepartment, DEPARTMENT_LABELS, LocalizedString } from '
 import { AtelierTool } from '@/data/tools';
 import { parseArtworkDimensions } from '@/lib/dimensions';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://vpdpbimwkhftaoddbhkd.supabase.co';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_YI5XbDEb3kYuv4muXEyNRA_UCK4UF1M';
 
 export const isSupabaseConfigured = Boolean(
   supabaseUrl &&
@@ -140,7 +140,7 @@ export function mapSupabaseRowToArtwork(row: any): Artwork {
             en: String(parsed.en || parsed.ckb || parsed.ar || defaultText),
           };
         }
-      } catch (_) {}
+      } catch (_) { }
       return { ckb: field, ar: field, en: field };
     }
     if (typeof field === 'object' && field !== null) {
@@ -212,8 +212,8 @@ export function mapSupabaseRowToArtwork(row: any): Artwork {
       typeof row.modelScale === 'number' && row.modelScale > 0
         ? row.modelScale
         : typeof row.model_scale === 'number' && row.model_scale > 0
-        ? row.model_scale
-        : 1.0,
+          ? row.model_scale
+          : 1.0,
     modelUrl: hasModel ? rawModelUrl : undefined,
     modelVertices: row.modelVertices || (hasModel ? '320,000 Vertices' : undefined),
     modelPolygons: row.modelPolygons || (hasModel ? '640,000 Triangles' : undefined),
@@ -389,7 +389,7 @@ export function mapSupabaseRowToTool(row: any): AtelierTool {
             en: String(parsed.en || parsed.ckb || parsed.ar || defaultText),
           };
         }
-      } catch (_) {}
+      } catch (_) { }
       return { ckb: field, ar: field, en: field };
     }
     if (typeof field === 'object' && field !== null) {
