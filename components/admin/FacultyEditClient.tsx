@@ -101,7 +101,7 @@ export function FacultyEditClient({ id }: FacultyEditClientProps) {
       setOfficeLocationEn(targetMember.officeLocation?.en || '');
 
       const degrees = (targetMember.academicDegrees || [])
-        .map((d) => d.ckb || d.en || '')
+        .map((d) => d?.ckb || d?.en || '')
         .filter(Boolean)
         .join('\n');
       setDegreesText(degrees);
@@ -156,19 +156,19 @@ export function FacultyEditClient({ id }: FacultyEditClientProps) {
 
     const updatedData: Partial<FacultyMember> = {
       name: {
-        ckb: nameCkb || targetMember.name.ckb,
-        ar: nameAr || nameCkb || targetMember.name.ar,
-        en: nameEn || targetMember.name.en,
+        ckb: nameCkb || targetMember?.name?.ckb || targetMember?.name?.en || '',
+        ar: nameAr || nameCkb || targetMember?.name?.ar || '',
+        en: nameEn || targetMember?.name?.en || '',
       },
       role: {
-        ckb: roleCkb || targetMember.role.ckb,
-        ar: roleAr || roleCkb || targetMember.role.ar,
-        en: roleEn || targetMember.role.en,
+        ckb: roleCkb || targetMember?.role?.ckb || targetMember?.role?.en || '',
+        ar: roleAr || roleCkb || targetMember?.role?.ar || '',
+        en: roleEn || targetMember?.role?.en || '',
       },
       department: {
-        ckb: deptCkb || targetMember.department.ckb,
-        ar: deptAr || deptCkb || targetMember.department.ar,
-        en: deptEn || targetMember.department.en,
+        ckb: deptCkb || targetMember?.department?.ckb || targetMember?.department?.en || '',
+        ar: deptAr || deptCkb || targetMember?.department?.ar || '',
+        en: deptEn || targetMember?.department?.en || '',
       },
       bio: {
         ckb: bioCkb,
@@ -179,9 +179,9 @@ export function FacultyEditClient({ id }: FacultyEditClientProps) {
       academicDegrees: parsedDegrees.length > 0 ? parsedDegrees : targetMember.academicDegrees,
       contactEmail: email || targetMember.contactEmail,
       officeLocation: {
-        ckb: officeLocationCkb || targetMember.officeLocation.ckb,
-        ar: officeLocationAr || officeLocationCkb || targetMember.officeLocation.ar,
-        en: officeLocationEn || officeLocationCkb || targetMember.officeLocation.en,
+        ckb: officeLocationCkb || targetMember?.officeLocation?.ckb || targetMember?.officeLocation?.en || '',
+        ar: officeLocationAr || officeLocationCkb || targetMember?.officeLocation?.ar || '',
+        en: officeLocationEn || officeLocationCkb || targetMember?.officeLocation?.en || '',
       },
       order: Number(order) || 1,
     };
@@ -209,7 +209,7 @@ export function FacultyEditClient({ id }: FacultyEditClientProps) {
                 <span>{locale === 'ckb' ? 'دەستکاریکردنی زانیاری مامۆستا' : 'Edit Faculty Member'}</span>
               </div>
               <h1 className="text-xl md:text-2xl font-serif font-bold text-parchment-pure">
-                {targetMember?.name[locale] || targetMember?.name.ckb || 'Modify Faculty Record'}
+                {targetMember?.name?.[locale] || targetMember?.name?.ckb || targetMember?.name?.en || 'Modify Faculty Record'}
               </h1>
             </div>
           </div>

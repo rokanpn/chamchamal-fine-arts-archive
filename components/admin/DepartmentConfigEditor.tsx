@@ -198,25 +198,25 @@ export function DepartmentConfigEditor() {
   const paintingStudentsCount = students.filter(
     (s) =>
       /شێوەکاری|پەیکەرسازی|سیرامیک|دیزاین|painting|sculpture|ceramics|design/i.test(
-        s.department.ckb || ''
-      ) || !/مۆسیقا|شانۆ/i.test(s.department.ckb || '')
+        s?.department?.ckb || s?.department?.en || ''
+      ) || !/مۆسیقا|شانۆ/i.test(s?.department?.ckb || s?.department?.en || '')
   ).length;
 
   const musicWorksCount = artworks.filter(
     (a) =>
-      a.category === 'music' ||
-      /مۆسیقا|دەنگ|تار|music/i.test(getArtworkDepartmentLabel(a.departmentLabel || a.department, 'ckb')) ||
-      Boolean(a.audioUrl)
+      a?.category === 'music' ||
+      /مۆسیقا|دەنگ|تار|music/i.test(getArtworkDepartmentLabel(a?.departmentLabel || a?.department, 'ckb')) ||
+      Boolean(a?.audioUrl)
   ).length;
-  const musicStudentsCount = students.filter((s) => /مۆسیقا|music/i.test(s.department.ckb || '')).length;
+  const musicStudentsCount = students.filter((s) => /مۆسیقا|music/i.test(s?.department?.ckb || s?.department?.en || '')).length;
 
   const theaterWorksCount = artworks.filter(
     (a) =>
-      a.category === 'theater' ||
-      /شانۆ|دراما|theater|theatre/i.test(getArtworkDepartmentLabel(a.departmentLabel || a.department, 'ckb'))
+      a?.category === 'theater' ||
+      /شانۆ|دراما|theater|theatre/i.test(getArtworkDepartmentLabel(a?.departmentLabel || a?.department, 'ckb'))
   ).length;
   const theaterStudentsCount = students.filter((s) =>
-    /شانۆ|theater|theatre/i.test(s.department.ckb || '')
+    /شانۆ|theater|theatre/i.test(s?.department?.ckb || s?.department?.en || '')
   ).length;
 
   const currentWorksCount =

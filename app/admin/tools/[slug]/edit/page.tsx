@@ -19,7 +19,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const tool = TOOLS_DATA.find((item) => item.slug === params.slug);
   const title = tool
-    ? `Edit: ${tool.name.ckb} (${tool.name.en}) | Atelier Admin`
+    ? `Edit: ${tool?.name?.ckb || tool?.name?.en || 'Tool'} (${tool?.name?.en || ''}) | Atelier Admin`
     : `Edit Atelier Tool | Curatorial Portal`;
 
   return {

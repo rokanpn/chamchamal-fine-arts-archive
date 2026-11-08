@@ -23,8 +23,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  const title = `${student.fullName.ckb} (${student.fullName.en}) | Artist Profile`;
-  const description = student.bio.ckb;
+  const ckbName = student?.fullName?.ckb || student?.fullName?.en || 'Artist';
+  const enName = student?.fullName?.en || student?.fullName?.ckb || 'Artist';
+  const title = `${ckbName} (${enName}) | Artist Profile`;
+  const description = student?.bio?.ckb || student?.bio?.en || '';
 
   return {
     title,
@@ -37,7 +39,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
           url: student.avatarUrl,
           width: 600,
           height: 600,
-          alt: student.fullName.en,
+          alt: enName,
         },
       ],
     },

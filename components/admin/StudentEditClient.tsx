@@ -135,7 +135,7 @@ export function StudentEditClient({ id }: StudentEditClientProps) {
           const loc = a as any;
           return {
             id: `award-${i}`,
-            title: loc[locale] || loc.ckb || loc.en || String(a),
+            title: loc?.[locale] || loc?.ckb || loc?.en || String(a || ''),
             year: `${targetStudent.graduationYear}`,
             issuer: 'پەیمانگەی هونەرە جوانەکانی چەمچەماڵ',
             description: '',
@@ -265,9 +265,9 @@ export function StudentEditClient({ id }: StudentEditClientProps) {
 
     const updatedData: Partial<StudentArtist> = {
       fullName: {
-        ckb: fullNameCkb || targetStudent.fullName.ckb,
-        ar: fullNameAr || fullNameCkb || targetStudent.fullName.ar,
-        en: fullNameEn || targetStudent.fullName.en,
+        ckb: fullNameCkb || targetStudent?.fullName?.ckb || targetStudent?.fullName?.en || '',
+        ar: fullNameAr || fullNameCkb || targetStudent?.fullName?.ar || '',
+        en: fullNameEn || targetStudent?.fullName?.en || '',
       },
       department: deptLabels[departmentKey] || deptLabels.painting,
       graduationYear: Number(graduationYear),
@@ -322,7 +322,7 @@ export function StudentEditClient({ id }: StudentEditClientProps) {
                 <span>{locale === 'ckb' ? 'دەستکاریکردنی پڕۆفایلی خوێندکار' : 'Edit Student / Alumnus'}</span>
               </div>
               <h1 className="text-xl md:text-2xl font-serif font-bold text-parchment-pure">
-                {targetStudent?.fullName[locale] || targetStudent?.fullName.ckb || 'Modify Student Record'}
+                {targetStudent?.fullName?.[locale] || targetStudent?.fullName?.ckb || targetStudent?.fullName?.en || 'Modify Student Record'}
               </h1>
             </div>
           </div>
@@ -821,10 +821,10 @@ export function StudentEditClient({ id }: StudentEditClientProps) {
                     </div>
                     <div className="flex flex-col min-w-0">
                       <span className={`text-xs font-bold truncate ${isSelected ? 'text-gold-light' : 'text-parchment'}`}>
-                        {art.title[locale] || art.title.ckb}
+                        {art?.title?.[locale] || art?.title?.ckb || art?.title?.en || ''}
                       </span>
                       <span className="text-[10px] text-museum-caption truncate">
-                        {art.categoryLabel[locale] || art.categoryLabel.ckb} • {art.year}
+                        {art?.categoryLabel?.[locale] || art?.categoryLabel?.ckb || art?.categoryLabel?.en || ''} • {art.year}
                       </span>
                     </div>
                   </button>

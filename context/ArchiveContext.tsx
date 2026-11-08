@@ -11,6 +11,7 @@ import { COLLABORATORS_DATA } from '@/data/collaborators';
 import { CuratorUser } from '@/types/admin';
 import { 
   supabase,
+  isSupabaseConfigured,
   fetchArtworksFromSupabase, 
   insertArtworkToSupabase, 
   updateArtworkInSupabase, 
@@ -274,45 +275,48 @@ export function ArchiveProvider({ children }: { children: ReactNode }) {
       // Initial live fetch
       syncLiveArchive();
 
-      // Real-time listener for postgres changes on archive tables
-      const channel = supabase
-        .channel('realtime_archive_sync')
-        .on(
-          'postgres_changes',
-          { event: '*', schema: 'public', table: 'artworks' },
-          () => {
-            syncLiveArchive();
-          }
-        )
-        .on(
-          'postgres_changes',
-          { event: '*', schema: 'public', table: 'tools' },
-          () => {
-            syncLiveArchive();
-          }
-        )
-        .on(
-          'postgres_changes',
-          { event: '*', schema: 'public', table: 'students' },
-          () => {
-            syncLiveArchive();
-          }
-        )
-        .on(
-          'postgres_changes',
-          { event: '*', schema: 'public', table: 'faculty' },
-          () => {
-            syncLiveArchive();
-          }
-        )
-        .on(
-          'postgres_changes',
-          { event: '*', schema: 'public', table: 'collaborators' },
-          () => {
-            syncLiveArchive();
-          }
-        )
-        .subscribe();
+      // Real-time listener for postgres changes on archive tables (only when configured)
+      let channel: any = null;
+      if (isSupabaseConfigured) {
+        channel = supabase
+          .channel('realtime_archive_sync')
+          .on(
+            'postgres_changes',
+            { event: '*', schema: 'public', table: 'artworks' },
+            () => {
+              syncLiveArchive();
+            }
+          )
+          .on(
+            'postgres_changes',
+            { event: '*', schema: 'public', table: 'tools' },
+            () => {
+              syncLiveArchive();
+            }
+          )
+          .on(
+            'postgres_changes',
+            { event: '*', schema: 'public', table: 'students' },
+            () => {
+              syncLiveArchive();
+            }
+          )
+          .on(
+            'postgres_changes',
+            { event: '*', schema: 'public', table: 'faculty' },
+            () => {
+              syncLiveArchive();
+            }
+          )
+          .on(
+            'postgres_changes',
+            { event: '*', schema: 'public', table: 'collaborators' },
+            () => {
+              syncLiveArchive();
+            }
+          )
+          .subscribe();
+      }
 
       // Revalidate on visibility change (switching tabs, waking screen)
       const handleRevalidate = () => {
@@ -327,7 +331,9 @@ export function ArchiveProvider({ children }: { children: ReactNode }) {
       setIsHydrated(true);
 
       return () => {
-        supabase.removeChannel(channel);
+        if (channel) {
+          supabase.removeChannel(channel);
+        }
         window.removeEventListener('visibilitychange', handleRevalidate);
         window.removeEventListener('focus', handleRevalidate);
       };

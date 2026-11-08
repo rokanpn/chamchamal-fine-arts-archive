@@ -88,7 +88,7 @@ export function ToolsIndexClient() {
         >
           {TOOL_CATEGORIES.map((cat) => {
             const isSelected = selectedCategory === cat.key;
-            const label = cat.label[locale] || cat.label.ckb;
+            const label = cat.label?.[locale] || cat.label?.ckb || cat.label?.en || '';
 
             return (
               <button
@@ -132,10 +132,10 @@ export function ToolsIndexClient() {
       >
         <AnimatePresence mode="popLayout">
           {filteredTools.map((tool, idx) => {
-            const toolName = tool.name[locale] || tool.name.ckb;
-            const categoryLabel = tool.categoryLabel[locale] || tool.categoryLabel.ckb;
-            const description = tool.description[locale] || tool.description.ckb;
-            const origin = tool.origin[locale] || tool.origin.ckb;
+            const toolName = tool?.name?.[locale] || tool?.name?.ckb || tool?.name?.en || '';
+            const categoryLabel = tool?.categoryLabel?.[locale] || tool?.categoryLabel?.ckb || tool?.categoryLabel?.en || '';
+            const description = tool?.description?.[locale] || tool?.description?.ckb || tool?.description?.en || '';
+            const origin = tool?.origin?.[locale] || tool?.origin?.ckb || tool?.origin?.en || '';
 
             // Connected artworks
             const connectedArtworks = allArtworks.filter((a) =>
@@ -243,7 +243,7 @@ export function ToolsIndexClient() {
                             >
                               <span className="w-1.5 h-1.5 rounded-full bg-gold shrink-0" />
                               <span className="truncate max-w-[120px]">
-                                {art.title[locale] || art.title.ckb}
+                                {art?.title?.[locale] || art?.title?.ckb || art?.title?.en || ''}
                               </span>
                               <ArrowUpRight className="w-3 h-3" />
                             </Link>
@@ -301,7 +301,7 @@ export function ToolsIndexClient() {
                     MULTIMEDIA ATELIER TOOL INSPECTOR
                   </span>
                   <h3 className="text-lg sm:text-xl font-bold text-parchment-pure truncate max-w-md sm:max-w-xl">
-                    {previewTool.name[locale] || previewTool.name.ckb}
+                    {previewTool?.name?.[locale] || previewTool?.name?.ckb || previewTool?.name?.en || ''}
                   </h3>
                 </div>
 
@@ -385,7 +385,7 @@ export function ToolsIndexClient() {
                       <ModelViewer3D
                         modelUrl={previewTool.glbUrl}
                         posterUrl={previewTool.imageUrl}
-                        title={previewTool.name[locale] || previewTool.name.ckb}
+                        title={previewTool?.name?.[locale] || previewTool?.name?.ckb || previewTool?.name?.en || ''}
                         vertices="140,000 Vertices"
                         polygons="280,000 Triangles"
                       />
@@ -397,7 +397,7 @@ export function ToolsIndexClient() {
                           {locale === 'ckb' ? 'پێکهاتە' : 'Materials'}
                         </span>
                         <span className="text-parchment font-medium mt-0.5 block">
-                          {previewTool.materials[locale] || previewTool.materials.ckb}
+                          {previewTool?.materials?.[locale] || previewTool?.materials?.ckb || previewTool?.materials?.en || ''}
                         </span>
                       </div>
                       <div>
@@ -406,7 +406,7 @@ export function ToolsIndexClient() {
                         </span>
                         <span className="text-parchment font-medium mt-0.5 flex items-center gap-1">
                           <MapPin className="w-3.5 h-3.5 text-gold" />
-                          <span>{previewTool.origin[locale] || previewTool.origin.ckb}</span>
+                          <span>{previewTool?.origin?.[locale] || previewTool?.origin?.ckb || previewTool?.origin?.en || ''}</span>
                         </span>
                       </div>
                     </div>
@@ -417,13 +417,13 @@ export function ToolsIndexClient() {
                 {modalTab === 'audio' && (
                   <div className="flex flex-col gap-4">
                     <AudioGuidePlayer
-                      artistName={previewTool.name[locale] || previewTool.name.ckb}
-                      artworkTitle={previewTool.categoryLabel[locale] || previewTool.categoryLabel.ckb}
+                      artistName={previewTool?.name?.[locale] || previewTool?.name?.ckb || previewTool?.name?.en || ''}
+                      artworkTitle={previewTool?.categoryLabel?.[locale] || previewTool?.categoryLabel?.ckb || previewTool?.categoryLabel?.en || ''}
                       audioDurationSeconds={135}
                     />
 
                     <div className="p-5 rounded-2xl bg-obsidian-elevated/60 border border-museum-border text-xs leading-relaxed text-parchment-muted">
-                      <p>{previewTool.historicalSignificance[locale] || previewTool.historicalSignificance.ckb}</p>
+                      <p>{previewTool?.historicalSignificance?.[locale] || previewTool?.historicalSignificance?.ckb || previewTool?.historicalSignificance?.en || ''}</p>
                     </div>
                   </div>
                 )}
@@ -457,7 +457,7 @@ export function ToolsIndexClient() {
                   <div className="flex flex-col gap-3">
                     <span className="text-xs font-semibold text-gold flex items-center gap-2">
                       <Video className="w-4 h-4" />
-                      <span>{previewTool.videoTitle[locale] || previewTool.videoTitle.ckb}</span>
+                      <span>{previewTool?.videoTitle?.[locale] || previewTool?.videoTitle?.ckb || previewTool?.videoTitle?.en || ''}</span>
                     </span>
 
                     <div className="relative aspect-video w-full rounded-2xl overflow-hidden border border-museum-border bg-black shadow-art-card">
@@ -481,7 +481,7 @@ export function ToolsIndexClient() {
                         <span>{locale === 'ckb' ? 'شێوازی بەکارهێنانی تەکنیکی' : 'Technical Application Instructions'}</span>
                       </h4>
                       <p className="text-xs text-parchment leading-relaxed">
-                        {previewTool.usageInstructions[locale] || previewTool.usageInstructions.ckb}
+                        {previewTool?.usageInstructions?.[locale] || previewTool?.usageInstructions?.ckb || previewTool?.usageInstructions?.en || ''}
                       </p>
                     </div>
 
@@ -491,7 +491,7 @@ export function ToolsIndexClient() {
                         <span>{locale === 'ckb' ? 'ئامۆژگارییە زێڕینەکانی مامۆستایانی پەیمانگە (Pro-Tips)' : 'Master Artisan Pro-Tips'}</span>
                       </h4>
                       <div className="flex flex-col gap-2 text-xs text-parchment-muted">
-                        {(previewTool.proTips[locale] || previewTool.proTips.ckb).map((tip, idx) => (
+                        {(previewTool?.proTips?.[locale] || previewTool?.proTips?.ckb || previewTool?.proTips?.en || []).map((tip: string, idx: number) => (
                           <div key={idx} className="flex items-start gap-2">
                             <span className="w-1.5 h-1.5 rounded-full bg-gold shrink-0 mt-1.5" />
                             <span>{tip}</span>
@@ -506,7 +506,7 @@ export function ToolsIndexClient() {
               {/* Modal Footer */}
               <div className="px-6 py-4 border-t border-museum-divider bg-black/40 flex items-center justify-between">
                 <span className="text-xs text-museum-secondary">
-                  {previewTool.materials[locale] || previewTool.materials.ckb}
+                  {previewTool?.materials?.[locale] || previewTool?.materials?.ckb || previewTool?.materials?.en || ''}
                 </span>
 
                 <Link

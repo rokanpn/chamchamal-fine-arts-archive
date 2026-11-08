@@ -19,7 +19,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const collab = COLLABORATORS_DATA.find((item) => item.id === params.id || item.slug === params.id);
   const title = collab
-    ? `Edit: ${collab.name.ckb} (${collab.name.en}) | Collaborators Registry`
+    ? `Edit: ${collab?.name?.ckb || collab?.name?.en || 'Collaborator'} (${collab?.name?.en || ''}) | Collaborators Registry`
     : `Edit Collaborator | Curatorial Portal`;
 
   return {

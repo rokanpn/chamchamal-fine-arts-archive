@@ -90,7 +90,7 @@ export function StudentsIndexClient() {
         >
           {departments.map((dept) => {
             const isSelected = selectedDept === dept.key;
-            const label = dept.label[locale] || dept.label.ckb;
+            const label = dept?.label?.[locale] || dept?.label?.ckb || dept?.label?.en || '';
 
             return (
               <button
@@ -125,10 +125,10 @@ export function StudentsIndexClient() {
       >
         <AnimatePresence mode="popLayout">
           {filteredStudents.map((student, idx) => {
-            const name = student.fullName[locale] || student.fullName.ckb;
-            const dept = student.department[locale] || student.department.ckb;
-            const cohort = student.cohort[locale] || student.cohort.ckb;
-            const statement = student.statement[locale] || student.statement.ckb;
+            const name = student?.fullName?.[locale] || student?.fullName?.ckb || student?.fullName?.en || '';
+            const dept = student?.department?.[locale] || student?.department?.ckb || student?.department?.en || '';
+            const cohort = student?.cohort?.[locale] || student?.cohort?.ckb || student?.cohort?.en || '';
+            const statement = student?.statement?.[locale] || student?.statement?.ckb || student?.statement?.en || '';
 
             // Student artworks
             const studentArtworks = ARTWORKS_DATA.filter((a) =>
@@ -197,11 +197,11 @@ export function StudentsIndexClient() {
                             key={art.id}
                             href={`/artworks/${art.slug}`}
                             className="group/art relative w-12 h-12 rounded-xl overflow-hidden border border-white/10 hover:border-gold/50 transition-all shrink-0"
-                            title={art.title[locale] || art.title.ckb}
+                            title={art?.title?.[locale] || art?.title?.ckb || art?.title?.en || ''}
                           >
                             <SafeImage
                               src={art.imageUrl}
-                              alt={art.title[locale] || art.title.ckb}
+                              alt={art?.title?.[locale] || art?.title?.ckb || art?.title?.en || ''}
                               fill
                               className="object-cover group-hover/art:scale-110 transition-transform"
                             />

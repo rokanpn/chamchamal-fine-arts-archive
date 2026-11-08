@@ -1,13 +1,44 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { getSupabaseServerClient } from '@/lib/supabaseServer';
+import { getSupabaseServerClient, isSupabaseServerConfigured } from '@/lib/supabaseServer';
 import { Artwork } from '@/data/artworks';
 import { parseArtworkDimensions } from '@/lib/dimensions';
 import { AtelierTool } from '@/data/tools';
 import { StudentArtist } from '@/data/students';
 import { FacultyMember } from '@/types/faculty';
 import { Collaborator } from '@/types/collaborators';
+
+/**
+ * Safely parses any database field into a guaranteed non-null LocalizedString { ckb, ar, en }.
+ * Prevents "TypeError: Cannot read properties of null (reading 'ckb')" when database columns are null.
+ */
+function parseLocalizedString(field: any, defaultText: string = ''): { ckb: string; ar: string; en: string } {
+  if (!field) {
+    return { ckb: defaultText, ar: defaultText, en: defaultText };
+  }
+  if (typeof field === 'string') {
+    try {
+      const parsed = JSON.parse(field);
+      if (parsed && typeof parsed === 'object') {
+        return {
+          ckb: String(parsed.ckb || parsed.en || parsed.ar || defaultText),
+          ar: String(parsed.ar || parsed.en || parsed.ckb || defaultText),
+          en: String(parsed.en || parsed.ckb || parsed.ar || defaultText),
+        };
+      }
+    } catch (_) {}
+    return { ckb: field, ar: field, en: field };
+  }
+  if (typeof field === 'object' && field !== null) {
+    return {
+      ckb: String(field.ckb || field.en || field.ar || defaultText),
+      ar: String(field.ar || field.en || field.ckb || defaultText),
+      en: String(field.en || field.ckb || field.ar || defaultText),
+    };
+  }
+  return { ckb: defaultText, ar: defaultText, en: defaultText };
+}
 
 /**
  * Universal revalidation trigger for all archive routes.
@@ -500,6 +531,10 @@ export async function fetchLiveArchiveDataAction(): Promise<LiveArchiveData> {
     gallerySettings: null,
   };
 
+  if (!isSupabaseServerConfigured()) {
+    return result;
+  }
+
   try {
     const supabase = getSupabaseServerClient();
 
@@ -520,16 +555,16 @@ export async function fetchLiveArchiveDataAction(): Promise<LiveArchiveData> {
         return {
           id: String(row.id),
           slug: row.slug || String(row.id),
-          title: typeof row.title === 'object' ? row.title : { ckb: row.title, ar: row.title, en: row.title },
-          artist: typeof row.artist === 'object' ? row.artist : { ckb: row.artist, ar: row.artist, en: row.artist },
+          title: parseLocalizedString(row.title, 'Archival Artwork'),
+          artist: parseLocalizedString(row.artist, 'Institute Artist'),
           artistId: row.artistId || row.artist_id || 'faculty-collection',
-          artistBio: typeof row.artistBio === 'object' ? row.artistBio : (typeof row.artist_bio === 'object' ? row.artist_bio : { ckb: '', ar: '', en: '' }),
+          artistBio: parseLocalizedString(row.artistBio || row.artist_bio, 'Alumnus of Chamchamal Fine Arts Institute'),
           artistGraduationYear: Number(row.artistGraduationYear || row.artist_graduation_year) || 2022,
           category: row.category || 'painting',
-          categoryLabel: typeof row.categoryLabel === 'object' ? row.categoryLabel : { ckb: 'شێوەکاری', ar: 'رسم تشكيلي', en: 'Painting' },
+          categoryLabel: parseLocalizedString(row.categoryLabel, 'Painting'),
           department: row.department || 'painting',
-          departmentLabel: typeof row.departmentLabel === 'object' ? row.departmentLabel : { ckb: 'شێوەکاری', ar: 'فنون تشكيلية', en: 'Fine Arts' },
-          medium: typeof row.medium === 'object' ? row.medium : { ckb: row.medium || '', ar: row.medium || '', en: row.medium || '' },
+          departmentLabel: parseLocalizedString(row.departmentLabel, 'Fine Arts'),
+          medium: parseLocalizedString(row.medium, 'Mixed Atelier Media'),
           year: Number(row.year) || 2026,
           dimensions: row.dimensions || `${finalWidthCm} × ${finalHeightCm} cm`,
           width_cm: finalWidthCm,
@@ -544,15 +579,15 @@ export async function fetchLiveArchiveDataAction(): Promise<LiveArchiveData> {
           modelVertices: row.modelVertices || undefined,
           modelPolygons: row.modelPolygons || undefined,
           featured: Boolean(row.featured),
-          description: typeof row.description === 'object' ? row.description : { ckb: row.description || '', ar: row.description || '', en: row.description || '' },
-          curatorialEssay: typeof row.curatorialEssay === 'object' ? row.curatorialEssay : undefined,
+          description: parseLocalizedString(row.description, ''),
+          curatorialEssay: row.curatorialEssay ? parseLocalizedString(row.curatorialEssay, '') : undefined,
           audioUrl: row.audioUrl || undefined,
           audioDurationSeconds: Number(row.audioDurationSeconds) || undefined,
           videoUrl: row.videoUrl || undefined,
-          videoTitle: typeof row.videoTitle === 'object' ? row.videoTitle : undefined,
+          videoTitle: row.videoTitle ? parseLocalizedString(row.videoTitle, '') : undefined,
           curatorialPdfUrl: row.curatorialPdfUrl || undefined,
           curatorialPdfFileName: row.curatorialPdfFileName || undefined,
-          locationInInstitute: typeof row.locationInInstitute === 'object' ? row.locationInInstitute : { ckb: 'هۆڵی سەرەکی', ar: 'القاعة الرئيسية', en: 'Main Gallery Hall' },
+          locationInInstitute: parseLocalizedString(row.locationInInstitute, 'Main Gallery Hall'),
           provenancePedestal: row.provenancePedestal || 'GALLERY-PEDESTAL-1',
           physicalPlaqueCode: row.physicalPlaqueCode || `CFA-${row.year || 2026}-01`,
           atelierTools: [],
@@ -571,20 +606,20 @@ export async function fetchLiveArchiveDataAction(): Promise<LiveArchiveData> {
       result.tools = toolData.map((row: any) => ({
         id: String(row.id),
         slug: row.slug || String(row.id),
-        name: typeof row.name === 'object' ? row.name : { ckb: row.name, ar: row.name, en: row.name },
+        name: parseLocalizedString(row.name, 'Atelier Tool'),
         category: row.category || 'painting',
-        categoryLabel: typeof row.categoryLabel === 'object' ? row.categoryLabel : { ckb: 'فڵچەکان', ar: 'فرش', en: 'Brushes' },
+        categoryLabel: parseLocalizedString(row.categoryLabel, 'Tools'),
         imageUrl: row.imageUrl || 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=1200&q=80',
         galleryImages: Array.isArray(row.galleryImages) ? row.galleryImages : [],
-        description: typeof row.description === 'object' ? row.description : { ckb: row.description || '', ar: '', en: '' },
-        historicalSignificance: typeof row.historicalSignificance === 'object' ? row.historicalSignificance : { ckb: '', ar: '', en: '' },
-        bestPractices: typeof row.bestPractices === 'object' ? row.bestPractices : { ckb: '', ar: '', en: '' },
-        materials: typeof row.materials === 'object' ? row.materials : { ckb: '', ar: '', en: '' },
-        origin: typeof row.origin === 'object' ? row.origin : { ckb: '', ar: '', en: '' },
-        usageInstructions: typeof row.usageInstructions === 'object' ? row.usageInstructions : { ckb: '', ar: '', en: '' },
+        description: parseLocalizedString(row.description, ''),
+        historicalSignificance: parseLocalizedString(row.historicalSignificance, ''),
+        bestPractices: parseLocalizedString(row.bestPractices, ''),
+        materials: parseLocalizedString(row.materials, ''),
+        origin: parseLocalizedString(row.origin, ''),
+        usageInstructions: parseLocalizedString(row.usageInstructions, ''),
         videoUrl: row.videoUrl || '',
-        videoTitle: typeof row.videoTitle === 'object' ? row.videoTitle : { ckb: '', ar: '', en: '' },
-        proTips: typeof row.proTips === 'object' && row.proTips ? row.proTips : { ckb: [], ar: [], en: [] },
+        videoTitle: parseLocalizedString(row.videoTitle, ''),
+        proTips: typeof row.proTips === 'object' && row.proTips !== null ? row.proTips : { ckb: [], ar: [], en: [] },
         usedInArtworkSlugs: Array.isArray(row.usedInArtworkSlugs) ? row.usedInArtworkSlugs : [],
         glbUrl: row.glbUrl || '',
         audioDuration: row.audioDuration || '',
@@ -601,16 +636,16 @@ export async function fetchLiveArchiveDataAction(): Promise<LiveArchiveData> {
       result.students = stuData.map((row: any) => ({
         id: String(row.id),
         slug: row.slug || String(row.id),
-        fullName: typeof row.fullName === 'object' ? row.fullName : { ckb: row.fullName, ar: row.fullName, en: row.fullName },
-        department: typeof row.department === 'object' ? row.department : { ckb: row.department || 'شێوەکاری', ar: 'فنون', en: 'Fine Arts' },
+        fullName: parseLocalizedString(row.fullName, 'Student Artist'),
+        department: parseLocalizedString(row.department, 'Fine Arts'),
         graduationYear: Number(row.graduationYear) || 2026,
         avatarUrl: row.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-        bio: typeof row.bio === 'object' ? row.bio : { ckb: '', ar: '', en: '' },
-        statement: typeof row.statement === 'object' ? row.statement : { ckb: '', ar: '', en: '' },
-        studioLocation: typeof row.studioLocation === 'object' ? row.studioLocation : { ckb: 'چەمچەماڵ', ar: 'جمجمال', en: 'Chamchamal' },
+        bio: parseLocalizedString(row.bio, ''),
+        statement: parseLocalizedString(row.statement, ''),
+        studioLocation: parseLocalizedString(row.studioLocation, 'Chamchamal'),
         awards: Array.isArray(row.awards) ? row.awards : [],
         contactLinks: Array.isArray(row.contactLinks) ? row.contactLinks : [],
-        cohort: typeof row.cohort === 'object' ? row.cohort : { ckb: 'خولی ٢٠٢٦', ar: 'دورة 2026', en: 'Class of 2026' },
+        cohort: parseLocalizedString(row.cohort, 'Class of 2026'),
         artworkSlugs: Array.isArray(row.artworkSlugs) ? row.artworkSlugs : [],
         email: row.email || '',
         disciplines: Array.isArray(row.disciplines) ? row.disciplines : [],
@@ -627,12 +662,12 @@ export async function fetchLiveArchiveDataAction(): Promise<LiveArchiveData> {
       result.faculty = facData.map((row: any) => ({
         id: String(row.id),
         slug: row.slug || String(row.id),
-        name: typeof row.name === 'object' ? row.name : { ckb: row.name, ar: row.name, en: row.name },
-        role: typeof row.role === 'object' ? row.role : { ckb: row.role || '', ar: row.role || '', en: row.role || '' },
-        department: typeof row.department === 'object' ? row.department : { ckb: row.department || 'شێوەکاری', ar: 'فنون', en: 'Fine Arts' },
+        name: parseLocalizedString(row.name, 'Faculty Member'),
+        role: parseLocalizedString(row.role, 'Faculty'),
+        department: parseLocalizedString(row.department, 'Fine Arts'),
         avatarUrl: row.avatarUrl || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=400&q=80',
-        bio: typeof row.bio === 'object' ? row.bio : { ckb: '', ar: '', en: '' },
-        officeLocation: typeof row.officeLocation === 'object' ? row.officeLocation : { ckb: '', ar: '', en: '' },
+        bio: parseLocalizedString(row.bio, ''),
+        officeLocation: parseLocalizedString(row.officeLocation, ''),
         academicDegrees: Array.isArray(row.academicDegrees) ? row.academicDegrees : [],
         contactEmail: row.contactEmail || '',
         order: Number(row.order) || 0,
@@ -649,14 +684,14 @@ export async function fetchLiveArchiveDataAction(): Promise<LiveArchiveData> {
       result.collaborators = colData.map((row: any) => ({
         id: String(row.id),
         slug: row.slug || String(row.id),
-        name: typeof row.name === 'object' ? row.name : { ckb: row.name, ar: row.name, en: row.name },
-        artistTitle: typeof row.artistTitle === 'object' ? row.artistTitle : { ckb: row.artistTitle || '', ar: '', en: '' },
-        country: typeof row.country === 'object' ? row.country : { ckb: row.country || '', ar: '', en: '' },
+        name: parseLocalizedString(row.name, 'Visiting Artist'),
+        artistTitle: parseLocalizedString(row.artistTitle, 'Collaborating Artist'),
+        country: parseLocalizedString(row.country, 'Kurdistan'),
         avatarUrl: row.avatarUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
-        bio: typeof row.bio === 'object' ? row.bio : { ckb: '', ar: '', en: '' },
-        curatorialSummary: typeof row.curatorialSummary === 'object' ? row.curatorialSummary : { ckb: '', ar: '', en: '' },
+        bio: parseLocalizedString(row.bio, ''),
+        curatorialSummary: parseLocalizedString(row.curatorialSummary, ''),
         collaborationType: row.collaborationType || 'workshop',
-        collaborationTypeLabel: typeof row.collaborationTypeLabel === 'object' ? row.collaborationTypeLabel : { ckb: 'وۆرکشۆپ', ar: 'ورشة عمل', en: 'Workshop' },
+        collaborationTypeLabel: parseLocalizedString(row.collaborationTypeLabel, 'Workshop'),
         collaborationYear: Number(row.collaborationYear) || 2026,
         galleryPhotos: Array.isArray(row.galleryPhotos) ? row.galleryPhotos : [],
         featured: Boolean(row.featured),

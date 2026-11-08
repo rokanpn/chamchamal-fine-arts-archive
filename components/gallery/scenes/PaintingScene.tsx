@@ -107,8 +107,8 @@ function ArtworkFrame3D({ artwork, index, total, isFocused, locale, onFocus, onO
   }, [artwork]);
 
   const plaqueText = useMemo(() => {
-    const artistName = artwork.artist[locale] || artwork.artist.ckb || artwork.artist.en;
-    const deptText = getArtworkDepartmentLabel(artwork.departmentLabel || artwork.department, locale);
+    const artistName = artwork?.artist?.[locale] || artwork?.artist?.ckb || artwork?.artist?.en || '';
+    const deptText = getArtworkDepartmentLabel(artwork?.departmentLabel || artwork?.department, locale);
     const discipline = artwork.categoryLabel?.[locale] || deptText || artwork.categoryLabel?.ckb || artwork.categoryLabel?.en || 'Painting';
     return `${artistName} • ${discipline} • ${artwork.year}`;
   }, [artwork, locale]);

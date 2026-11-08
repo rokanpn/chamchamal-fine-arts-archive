@@ -50,12 +50,12 @@ export function ArtCard({ artwork, index }: ArtCardProps) {
     mouseY.set(0.5);
   };
 
-  // Localized texts
-  const title = artwork.title[locale] || artwork.title.ckb;
-  const artist = artwork.artist[locale] || artwork.artist.ckb;
-  const medium = artwork.medium[locale] || artwork.medium.ckb;
-  const department = getArtworkDepartmentLabel(artwork.departmentLabel || artwork.department, locale);
-  const categoryLabel = artwork.categoryLabel[locale] || artwork.categoryLabel.ckb;
+  // Localized texts with defensive optional chaining
+  const title = artwork?.title?.[locale] || artwork?.title?.ckb || artwork?.title?.en || '';
+  const artist = artwork?.artist?.[locale] || artwork?.artist?.ckb || artwork?.artist?.en || '';
+  const medium = artwork?.medium?.[locale] || artwork?.medium?.ckb || artwork?.medium?.en || '';
+  const department = getArtworkDepartmentLabel(artwork?.departmentLabel || artwork?.department, locale);
+  const categoryLabel = artwork?.categoryLabel?.[locale] || artwork?.categoryLabel?.ckb || artwork?.categoryLabel?.en || '';
 
   return (
     <motion.div

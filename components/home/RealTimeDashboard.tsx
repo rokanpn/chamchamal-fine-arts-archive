@@ -97,35 +97,35 @@ export function RealTimeDashboard() {
   const departmentData = useMemo(() => {
     // A. شێوەکاری (Painting / Fine Arts)
     const paintingArtworks = artworks.filter((a) =>
-      ['painting', 'sculpture', 'ceramics', 'design'].includes(a.category) ||
-      /شێوەکاری|پەیکەرسازی|سیرامیک|دیزاین/i.test(getArtworkDepartmentLabel(a.departmentLabel || a.department, 'ckb'))
+      ['painting', 'sculpture', 'ceramics', 'design'].includes(a?.category) ||
+      /شێوەکاری|پەیکەرسازی|سیرامیک|دیزاین/i.test(getArtworkDepartmentLabel(a?.departmentLabel || a?.department, 'ckb'))
     );
     const paintingStudents = students.filter(
       (s) =>
         /شێوەکاری|پەیکەرسازی|سیرامیک|دیزاین|painting|sculpture|ceramics|design/i.test(
-          s.department.ckb || ''
-        ) || !/مۆسیقا|شانۆ/i.test(s.department.ckb || '')
+          s?.department?.ckb || s?.department?.en || ''
+        ) || !/مۆسیقا|شانۆ/i.test(s?.department?.ckb || s?.department?.en || '')
     );
     const paintingCfg = departmentsConfig?.painting || DEFAULT_DEPARTMENTS_CONFIG.painting;
 
     // B. مۆسیقا (Music)
     const musicArtworks = artworks.filter(
       (a) =>
-        a.category === 'music' ||
-        /مۆسیقا|دەنگ|تار|music/i.test(getArtworkDepartmentLabel(a.departmentLabel || a.department, 'ckb')) ||
-        Boolean(a.audioUrl)
+        a?.category === 'music' ||
+        /مۆسیقا|دەنگ|تار|music/i.test(getArtworkDepartmentLabel(a?.departmentLabel || a?.department, 'ckb')) ||
+        Boolean(a?.audioUrl)
     );
-    const musicStudents = students.filter((s) => /مۆسیقا|music/i.test(s.department.ckb || ''));
+    const musicStudents = students.filter((s) => /مۆسیقا|music/i.test(s?.department?.ckb || s?.department?.en || ''));
     const musicCfg = departmentsConfig?.music || DEFAULT_DEPARTMENTS_CONFIG.music;
 
     // C. شانۆ (Theater)
     const theaterArtworks = artworks.filter(
       (a) =>
-        a.category === 'theater' ||
-        /شانۆ|دراما|theater|theatre/i.test(getArtworkDepartmentLabel(a.departmentLabel || a.department, 'ckb'))
+        a?.category === 'theater' ||
+        /شانۆ|دراما|theater|theatre/i.test(getArtworkDepartmentLabel(a?.departmentLabel || a?.department, 'ckb'))
     );
     const theaterStudents = students.filter((s) =>
-      /شانۆ|theater|theatre/i.test(s.department.ckb || '')
+      /شانۆ|theater|theatre/i.test(s?.department?.ckb || s?.department?.en || '')
     );
     const theaterCfg = departmentsConfig?.theater || DEFAULT_DEPARTMENTS_CONFIG.theater;
 

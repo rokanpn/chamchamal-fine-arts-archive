@@ -211,9 +211,9 @@ export function ToolEditClient({ slug }: ToolEditClientProps) {
 
     const updatedData: Partial<AtelierTool> = {
       name: {
-        ckb: formData.nameCkb || targetTool.name.ckb,
-        ar: formData.nameAr || formData.nameCkb || targetTool.name.ar,
-        en: formData.nameEn || targetTool.name.en,
+        ckb: formData.nameCkb || targetTool?.name?.ckb || targetTool?.name?.en || '',
+        ar: formData.nameAr || formData.nameCkb || targetTool?.name?.ar || '',
+        en: formData.nameEn || targetTool?.name?.en || '',
       },
       category: formData.category,
       categoryLabel: categoryLabels[formData.category] || categoryLabels.painting,
@@ -288,7 +288,7 @@ export function ToolEditClient({ slug }: ToolEditClientProps) {
                 <span>{locale === 'ckb' ? 'دەستکاریکردنی کەرەستەی ئاتلیێ' : 'Edit Atelier Instrument'}</span>
               </div>
               <h1 className="text-xl md:text-2xl font-serif font-bold text-parchment-pure">
-                {targetTool?.name[locale] || targetTool?.name.ckb || 'Modify Tool Record'}
+                {targetTool?.name?.[locale] || targetTool?.name?.ckb || targetTool?.name?.en || 'Modify Tool Record'}
               </h1>
             </div>
           </div>
@@ -707,10 +707,10 @@ export function ToolEditClient({ slug }: ToolEditClientProps) {
                     </div>
                     <div className="flex flex-col min-w-0">
                       <span className={`text-xs font-bold truncate ${isSelected ? 'text-gold-light' : 'text-parchment'}`}>
-                        {art.title[locale] || art.title.ckb}
+                        {art?.title?.[locale] || art?.title?.ckb || art?.title?.en || ''}
                       </span>
                       <span className="text-[10px] text-museum-caption truncate">
-                        {art.artist[locale] || art.artist.ckb}
+                        {art?.artist?.[locale] || art?.artist?.ckb || art?.artist?.en || ''}
                       </span>
                     </div>
                   </button>

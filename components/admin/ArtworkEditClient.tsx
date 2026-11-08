@@ -134,28 +134,28 @@ export function ArtworkEditClient({ slug }: ArtworkEditClientProps) {
       const h = targetArtwork.height_cm ?? parsed.heightCm;
 
       setFormData({
-        titleCkb: targetArtwork.title.ckb || '',
-        titleAr: targetArtwork.title.ar || '',
-        titleEn: targetArtwork.title.en || '',
-        artistId: targetArtwork.artistId || students[0]?.id || '',
-        category: targetArtwork.category || 'painting',
-        department: targetArtwork.department ? getArtworkDepartment(targetArtwork) : 'painting',
-        mediumCkb: targetArtwork.medium.ckb || '',
-        mediumAr: targetArtwork.medium.ar || '',
-        mediumEn: targetArtwork.medium.en || '',
-        year: targetArtwork.year || new Date().getFullYear(),
-        dimensions: targetArtwork.dimensions || `${w} × ${h} cm`,
+        titleCkb: targetArtwork?.title?.ckb || targetArtwork?.title?.en || '',
+        titleAr: targetArtwork?.title?.ar || '',
+        titleEn: targetArtwork?.title?.en || '',
+        artistId: targetArtwork?.artistId || students[0]?.id || '',
+        category: targetArtwork?.category || 'painting',
+        department: targetArtwork?.department ? getArtworkDepartment(targetArtwork) : 'painting',
+        mediumCkb: targetArtwork?.medium?.ckb || targetArtwork?.medium?.en || '',
+        mediumAr: targetArtwork?.medium?.ar || '',
+        mediumEn: targetArtwork?.medium?.en || '',
+        year: targetArtwork?.year || new Date().getFullYear(),
+        dimensions: targetArtwork?.dimensions || `${w} × ${h} cm`,
         width_cm: w,
         height_cm: h,
-        descriptionCkb: targetArtwork.description.ckb || '',
-        descriptionAr: targetArtwork.description.ar || '',
-        descriptionEn: targetArtwork.description.en || '',
-        curatorialEssayCkb: targetArtwork.curatorialEssay?.ckb || '',
-        curatorialEssayAr: targetArtwork.curatorialEssay?.ar || '',
-        curatorialEssayEn: targetArtwork.curatorialEssay?.en || '',
-        locationInInstituteCkb: targetArtwork.locationInInstitute.ckb || '',
-        locationInInstituteAr: targetArtwork.locationInInstitute.ar || '',
-        locationInInstituteEn: targetArtwork.locationInInstitute.en || '',
+        descriptionCkb: targetArtwork?.description?.ckb || targetArtwork?.description?.en || '',
+        descriptionAr: targetArtwork?.description?.ar || '',
+        descriptionEn: targetArtwork?.description?.en || '',
+        curatorialEssayCkb: targetArtwork?.curatorialEssay?.ckb || '',
+        curatorialEssayAr: targetArtwork?.curatorialEssay?.ar || '',
+        curatorialEssayEn: targetArtwork?.curatorialEssay?.en || '',
+        locationInInstituteCkb: targetArtwork?.locationInInstitute?.ckb || targetArtwork?.locationInInstitute?.en || '',
+        locationInInstituteAr: targetArtwork?.locationInInstitute?.ar || '',
+        locationInInstituteEn: targetArtwork?.locationInInstitute?.en || '',
         provenancePedestal: targetArtwork.provenancePedestal || '',
         imageUrl: targetArtwork.imageUrl || '',
         imageFileName: '',
@@ -231,9 +231,9 @@ export function ArtworkEditClient({ slug }: ArtworkEditClientProps) {
   const filteredTools = tools.filter((tool) => {
     const term = toolSearch.toLowerCase();
     return (
-      tool.name.ckb.toLowerCase().includes(term) ||
-      tool.name.en.toLowerCase().includes(term) ||
-      tool.name.ar.toLowerCase().includes(term)
+      (tool?.name?.ckb || '').toLowerCase().includes(term) ||
+      (tool?.name?.en || '').toLowerCase().includes(term) ||
+      (tool?.name?.ar || '').toLowerCase().includes(term)
     );
   });
 
@@ -254,9 +254,9 @@ export function ArtworkEditClient({ slug }: ArtworkEditClientProps) {
 
     const updatedData: Partial<Artwork> = {
       title: {
-        ckb: formData.titleCkb || targetArtwork.title.ckb,
-        ar: formData.titleAr || formData.titleCkb || targetArtwork.title.ar,
-        en: formData.titleEn || formData.titleCkb || targetArtwork.title.en,
+        ckb: formData.titleCkb || targetArtwork?.title?.ckb || targetArtwork?.title?.en || '',
+        ar: formData.titleAr || formData.titleCkb || targetArtwork?.title?.ar || '',
+        en: formData.titleEn || formData.titleCkb || targetArtwork?.title?.en || '',
       },
       artist: selectedArtist ? selectedArtist.fullName : targetArtwork.artist,
       artistId: selectedArtist ? selectedArtist.id : targetArtwork.artistId,
@@ -267,9 +267,9 @@ export function ArtworkEditClient({ slug }: ArtworkEditClientProps) {
       department: (formData.department || (targetArtwork ? getArtworkDepartment(targetArtwork) : 'painting')) as ArtworkDepartment,
       departmentLabel: DEPARTMENT_LABELS[(formData.department || (targetArtwork ? getArtworkDepartment(targetArtwork) : 'painting')) as ArtworkDepartment],
       medium: {
-        ckb: formData.mediumCkb || targetArtwork.medium.ckb,
-        ar: formData.mediumAr || targetArtwork.medium.ar,
-        en: formData.mediumEn || targetArtwork.medium.en,
+        ckb: formData.mediumCkb || targetArtwork?.medium?.ckb || targetArtwork?.medium?.en || '',
+        ar: formData.mediumAr || targetArtwork?.medium?.ar || '',
+        en: formData.mediumEn || targetArtwork?.medium?.en || '',
       },
       year: Number(formData.year) || targetArtwork.year,
       dimensions: formData.dimensions || `${formData.width_cm || 120} × ${formData.height_cm || 90} cm`,
@@ -283,9 +283,9 @@ export function ArtworkEditClient({ slug }: ArtworkEditClientProps) {
       modelVertices: has3D ? formData.modelVertices : undefined,
       modelPolygons: has3D ? formData.modelPolygons : undefined,
       description: {
-        ckb: formData.descriptionCkb || targetArtwork.description.ckb,
-        ar: formData.descriptionAr || targetArtwork.description.ar,
-        en: formData.descriptionEn || targetArtwork.description.en,
+        ckb: formData.descriptionCkb || targetArtwork?.description?.ckb || targetArtwork?.description?.en || '',
+        ar: formData.descriptionAr || targetArtwork?.description?.ar || '',
+        en: formData.descriptionEn || targetArtwork?.description?.en || '',
       },
       curatorialEssay: (formData.curatorialEssayCkb || formData.curatorialEssayEn) ? {
         ckb: formData.curatorialEssayCkb || '',
@@ -303,9 +303,9 @@ export function ArtworkEditClient({ slug }: ArtworkEditClientProps) {
       curatorialPdfUrl: formData.curatorialPdfUrl || undefined,
       curatorialPdfFileName: formData.curatorialPdfFileName || undefined,
       locationInInstitute: {
-        ckb: formData.locationInInstituteCkb || targetArtwork.locationInInstitute.ckb,
-        ar: formData.locationInInstituteAr || targetArtwork.locationInInstitute.ar,
-        en: formData.locationInInstituteEn || targetArtwork.locationInInstitute.en,
+        ckb: formData.locationInInstituteCkb || targetArtwork?.locationInInstitute?.ckb || targetArtwork?.locationInInstitute?.en || '',
+        ar: formData.locationInInstituteAr || targetArtwork?.locationInInstitute?.ar || '',
+        en: formData.locationInInstituteEn || targetArtwork?.locationInInstitute?.en || '',
       },
       provenancePedestal: formData.provenancePedestal || targetArtwork.provenancePedestal,
       atelierTools: tools
@@ -617,7 +617,7 @@ export function ArtworkEditClient({ slug }: ArtworkEditClientProps) {
                 >
                   {students.map((student) => (
                     <option key={student.id} value={student.id}>
-                      {student.fullName[locale] || student.fullName.ckb} ({student.graduationYear})
+                      {student?.fullName?.[locale] || student?.fullName?.ckb || student?.fullName?.en || ''} ({student.graduationYear})
                     </option>
                   ))}
                 </select>
@@ -882,13 +882,13 @@ export function ArtworkEditClient({ slug }: ArtworkEditClientProps) {
 
                     <div className="flex flex-col flex-1 min-w-0 text-start">
                       <span className="text-[10px] text-gold uppercase tracking-wider font-mono">
-                        {tool.categoryLabel[locale] || tool.categoryLabel.ckb}
+                        {tool?.categoryLabel?.[locale] || tool?.categoryLabel?.ckb || tool?.categoryLabel?.en || ''}
                       </span>
                       <h4 className="text-xs font-bold text-parchment truncate">
-                        {tool.name[locale] || tool.name.ckb}
+                        {tool?.name?.[locale] || tool?.name?.ckb || tool?.name?.en || ''}
                       </h4>
                       <span className="text-[10px] text-museum-caption truncate">
-                        {tool.name.en}
+                        {tool?.name?.en || ''}
                       </span>
                     </div>
 

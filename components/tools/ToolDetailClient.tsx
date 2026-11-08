@@ -45,16 +45,16 @@ export function ToolDetailClient({ tool: initialTool }: ToolDetailClientProps) {
   const [selectedGalleryImg, setSelectedGalleryImg] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
-  const name = tool.name[locale] || tool.name.ckb;
-  const categoryLabel = tool.categoryLabel[locale] || tool.categoryLabel.ckb;
-  const description = tool.description[locale] || tool.description.ckb;
-  const history = tool.historicalSignificance[locale] || tool.historicalSignificance.ckb;
-  const bestPractices = tool.bestPractices[locale] || tool.bestPractices.ckb;
-  const materials = tool.materials[locale] || tool.materials.ckb;
-  const origin = tool.origin[locale] || tool.origin.ckb;
-  const usageInstructions = tool.usageInstructions ? (tool.usageInstructions[locale] || tool.usageInstructions.ckb) : '';
-  const proTips = tool.proTips ? (tool.proTips[locale] || tool.proTips.ckb || []) : [];
-  const videoTitle = tool.videoTitle ? (tool.videoTitle[locale] || tool.videoTitle.ckb) : '';
+  const name = tool?.name?.[locale] || tool?.name?.ckb || tool?.name?.en || '';
+  const categoryLabel = tool?.categoryLabel?.[locale] || tool?.categoryLabel?.ckb || tool?.categoryLabel?.en || '';
+  const description = tool?.description?.[locale] || tool?.description?.ckb || tool?.description?.en || '';
+  const history = tool?.historicalSignificance?.[locale] || tool?.historicalSignificance?.ckb || tool?.historicalSignificance?.en || '';
+  const bestPractices = tool?.bestPractices?.[locale] || tool?.bestPractices?.ckb || tool?.bestPractices?.en || '';
+  const materials = tool?.materials?.[locale] || tool?.materials?.ckb || tool?.materials?.en || '';
+  const origin = tool?.origin?.[locale] || tool?.origin?.ckb || tool?.origin?.en || '';
+  const usageInstructions = tool?.usageInstructions ? (tool?.usageInstructions?.[locale] || tool?.usageInstructions?.ckb || tool?.usageInstructions?.en || '') : '';
+  const proTips = tool?.proTips ? (tool?.proTips?.[locale] || tool?.proTips?.ckb || tool?.proTips?.en || []) : [];
+  const videoTitle = tool?.videoTitle ? (tool?.videoTitle?.[locale] || tool?.videoTitle?.ckb || tool?.videoTitle?.en || '') : '';
 
   // Matching artworks
   const relatedArtworks = allArtworks.filter((art) =>
@@ -425,7 +425,7 @@ export function ToolDetailClient({ tool: initialTool }: ToolDetailClientProps) {
                     <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-stone-100 dark:bg-obsidian-elevated shrink-0">
                       <SafeImage
                         src={art.imageUrl}
-                        alt={art.title[locale] || art.title.ckb}
+                        alt={art?.title?.[locale] || art?.title?.ckb || art?.title?.en || ''}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform"
                       />
@@ -435,10 +435,10 @@ export function ToolDetailClient({ tool: initialTool }: ToolDetailClientProps) {
                         {getArtworkDepartmentLabel(art.departmentLabel || art.department, locale)}
                       </span>
                       <h4 className="text-xs sm:text-sm font-bold text-stone-900 dark:text-parchment group-hover:text-gold-dark dark:group-hover:text-gold-light truncate transition-colors">
-                        {art.title[locale] || art.title.ckb}
+                        {art?.title?.[locale] || art?.title?.ckb || art?.title?.en || ''}
                       </h4>
                       <span className="text-[11px] text-stone-500 dark:text-museum-secondary truncate">
-                        {art.artist[locale] || art.artist.ckb} • {art.year}
+                        {art?.artist?.[locale] || art?.artist?.ckb || art?.artist?.en || ''} • {art.year}
                       </span>
                     </div>
                     <ArrowUpRight className="w-4 h-4 text-gold shrink-0 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />

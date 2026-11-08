@@ -84,7 +84,7 @@ export function FacultyClient() {
                 {locale === 'ckb' ? 'پەیامی ڕاگری پەیمانگە' : 'Dean’s Institutional Inscription'}
               </span>
               <h3 className="text-lg sm:text-xl font-bold text-parchment-pure font-serif">
-                {sortedFaculty[0].name[locale] || sortedFaculty[0].name.ckb}
+                {sortedFaculty[0]?.name?.[locale] || sortedFaculty[0]?.name?.ckb || sortedFaculty[0]?.name?.en || ''}
               </h3>
               <p className="text-xs text-parchment-muted leading-relaxed font-sans italic">
                 &ldquo;
@@ -94,7 +94,7 @@ export function FacultyClient() {
                 &rdquo;
               </p>
               <span className="text-[11px] text-museum-caption font-mono mt-1">
-                {sortedFaculty[0].role[locale] || sortedFaculty[0].role.ckb}
+                {sortedFaculty[0]?.role?.[locale] || sortedFaculty[0]?.role?.ckb || sortedFaculty[0]?.role?.en || ''}
               </span>
             </div>
           </div>
@@ -122,7 +122,7 @@ export function FacultyClient() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-transparent dark:from-obsidian dark:via-obsidian/40 dark:to-transparent" />
 
               <span className="absolute bottom-3 start-4 px-3 py-1 rounded-full text-[10px] font-semibold bg-black/70 backdrop-blur-md text-gold border border-gold/30">
-                {member.department[locale] || member.department.ckb}
+                {member?.department?.[locale] || member?.department?.ckb || member?.department?.en || ''}
               </span>
             </div>
 
@@ -130,14 +130,14 @@ export function FacultyClient() {
             <div className="p-6 flex flex-col flex-1 justify-between gap-4">
               <div className="flex flex-col gap-1.5">
                 <h3 className="text-lg sm:text-xl font-bold text-stone-900 dark:text-parchment-pure font-serif group-hover:text-gold-dark dark:group-hover:text-gold-light transition-colors">
-                  {member.name[locale] || member.name.ckb}
+                  {member?.name?.[locale] || member?.name?.ckb || member?.name?.en || ''}
                 </h3>
                 <span className="text-xs text-gold-dark dark:text-gold font-medium">
-                  {member.role[locale] || member.role.ckb}
+                  {member?.role?.[locale] || member?.role?.ckb || member?.role?.en || ''}
                 </span>
 
                 <p className="text-xs text-stone-600 dark:text-museum-secondary leading-relaxed mt-2 line-clamp-3">
-                  {member.bio[locale] || member.bio.ckb}
+                  {member?.bio?.[locale] || member?.bio?.ckb || member?.bio?.en || ''}
                 </p>
               </div>
 
@@ -147,7 +147,7 @@ export function FacultyClient() {
                   <div className="flex items-start gap-2 text-museum-caption">
                     <GraduationCap className="w-4 h-4 text-gold shrink-0 mt-0.5" />
                     <span className="truncate">
-                      {member.academicDegrees[0][locale] || member.academicDegrees[0].ckb}
+                      {member?.academicDegrees?.[0]?.[locale] || member?.academicDegrees?.[0]?.ckb || member?.academicDegrees?.[0]?.en || ''}
                     </span>
                   </div>
                 )}
@@ -156,7 +156,7 @@ export function FacultyClient() {
                   <div className="flex items-center gap-2 text-museum-caption">
                     <MapPin className="w-3.5 h-3.5 text-gold shrink-0" />
                     <span className="truncate">
-                      {member.officeLocation[locale] || member.officeLocation.ckb}
+                      {member?.officeLocation?.[locale] || member?.officeLocation?.ckb || member?.officeLocation?.en || ''}
                     </span>
                   </div>
                 )}

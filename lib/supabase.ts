@@ -6,10 +6,17 @@ import { parseArtworkDimensions } from '@/lib/dimensions';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-if (!supabaseUrl || !supabaseAnonKey) {
+export const isSupabaseConfigured = Boolean(
+  supabaseUrl &&
+  supabaseAnonKey &&
+  !supabaseUrl.includes('placeholder') &&
+  !supabaseAnonKey.includes('placeholder')
+);
+
+if (!isSupabaseConfigured) {
   if (typeof window !== 'undefined' && process.env.NODE_ENV !== 'production') {
     console.warn(
-      '[Supabase] Warning: Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY in environment variables.'
+      '[Supabase] Warning: Missing valid NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY in environment variables.'
     );
   }
 }
@@ -128,19 +135,22 @@ export function mapSupabaseRowToArtwork(row: any): Artwork {
         const parsed = JSON.parse(field);
         if (parsed && typeof parsed === 'object') {
           return {
-            ckb: parsed.ckb || parsed.en || defaultText,
-            ar: parsed.ar || parsed.en || defaultText,
-            en: parsed.en || parsed.ckb || defaultText,
+            ckb: String(parsed.ckb || parsed.en || parsed.ar || defaultText),
+            ar: String(parsed.ar || parsed.en || parsed.ckb || defaultText),
+            en: String(parsed.en || parsed.ckb || parsed.ar || defaultText),
           };
         }
       } catch (_) {}
       return { ckb: field, ar: field, en: field };
     }
-    return {
-      ckb: field.ckb || field.en || defaultText,
-      ar: field.ar || field.en || defaultText,
-      en: field.en || field.ckb || defaultText,
-    };
+    if (typeof field === 'object' && field !== null) {
+      return {
+        ckb: String(field.ckb || field.en || field.ar || defaultText),
+        ar: String(field.ar || field.en || field.ckb || defaultText),
+        en: String(field.en || field.ckb || field.ar || defaultText),
+      };
+    }
+    return { ckb: defaultText, ar: defaultText, en: defaultText };
   };
 
   const deptCode: ArtworkDepartment =
@@ -221,6 +231,9 @@ export function mapSupabaseRowToArtwork(row: any): Artwork {
  * Fetches all artworks from the live Supabase 'artworks' table.
  */
 export async function fetchArtworksFromSupabase(): Promise<Artwork[]> {
+  if (!isSupabaseConfigured) {
+    return [];
+  }
   try {
     const { data, error } = await supabase
       .from('artworks')
@@ -371,19 +384,22 @@ export function mapSupabaseRowToTool(row: any): AtelierTool {
         const parsed = JSON.parse(field);
         if (parsed && typeof parsed === 'object') {
           return {
-            ckb: parsed.ckb || parsed.en || defaultText,
-            ar: parsed.ar || parsed.en || defaultText,
-            en: parsed.en || parsed.ckb || defaultText,
+            ckb: String(parsed.ckb || parsed.en || parsed.ar || defaultText),
+            ar: String(parsed.ar || parsed.en || parsed.ckb || defaultText),
+            en: String(parsed.en || parsed.ckb || parsed.ar || defaultText),
           };
         }
       } catch (_) {}
       return { ckb: field, ar: field, en: field };
     }
-    return {
-      ckb: field.ckb || field.en || defaultText,
-      ar: field.ar || field.en || defaultText,
-      en: field.en || field.ckb || defaultText,
-    };
+    if (typeof field === 'object' && field !== null) {
+      return {
+        ckb: String(field.ckb || field.en || field.ar || defaultText),
+        ar: String(field.ar || field.en || field.ckb || defaultText),
+        en: String(field.en || field.ckb || field.ar || defaultText),
+      };
+    }
+    return { ckb: defaultText, ar: defaultText, en: defaultText };
   };
 
   const id = String(row.id || `tool-${Date.now()}`);
@@ -442,6 +458,9 @@ export function mapSupabaseRowToTool(row: any): AtelierTool {
  * Fetches all tools/products from the live Supabase 'tools' table.
  */
 export async function fetchToolsFromSupabase(): Promise<AtelierTool[]> {
+  if (!isSupabaseConfigured) {
+    return [];
+  }
   try {
     const { data, error } = await supabase
       .from('tools')

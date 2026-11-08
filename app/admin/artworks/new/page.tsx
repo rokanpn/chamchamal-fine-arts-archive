@@ -131,9 +131,9 @@ export default function NewArtworkIngestionPage() {
   const filteredTools = tools.filter((tool) => {
     const term = toolSearch.toLowerCase();
     return (
-      tool.name.ckb.toLowerCase().includes(term) ||
-      tool.name.en.toLowerCase().includes(term) ||
-      tool.name.ar.toLowerCase().includes(term)
+      (tool?.name?.ckb || '').toLowerCase().includes(term) ||
+      (tool?.name?.en || '').toLowerCase().includes(term) ||
+      (tool?.name?.ar || '').toLowerCase().includes(term)
     );
   });
 
@@ -523,7 +523,7 @@ export default function NewArtworkIngestionPage() {
                 >
                   {students.map((student) => (
                     <option key={student.id} value={student.id}>
-                      {student.fullName[locale] || student.fullName.ckb} ({student.graduationYear})
+                      {student?.fullName?.[locale] || student?.fullName?.ckb || student?.fullName?.en || ''} ({student.graduationYear})
                     </option>
                   ))}
                 </select>
@@ -768,13 +768,13 @@ export default function NewArtworkIngestionPage() {
 
                     <div className="flex flex-col flex-1 min-w-0 text-start">
                       <span className="text-[10px] text-gold uppercase tracking-wider font-mono">
-                        {tool.categoryLabel[locale] || tool.categoryLabel.ckb}
+                        {tool?.categoryLabel?.[locale] || tool?.categoryLabel?.ckb || tool?.categoryLabel?.en || ''}
                       </span>
                       <h4 className="text-xs font-bold text-parchment truncate">
-                        {tool.name[locale] || tool.name.ckb}
+                        {tool?.name?.[locale] || tool?.name?.ckb || tool?.name?.en || ''}
                       </h4>
                       <span className="text-[10px] text-museum-caption truncate">
-                        {tool.name.en}
+                        {tool?.name?.en || ''}
                       </span>
                     </div>
 

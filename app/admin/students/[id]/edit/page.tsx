@@ -19,7 +19,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const student = STUDENTS_DATA.find((item) => item.id === params.id || item.slug === params.id);
   const title = student
-    ? `Edit: ${student.fullName.ckb} (${student.fullName.en}) | Student Registry`
+    ? `Edit: ${student?.fullName?.ckb || student?.fullName?.en || 'Student'} (${student?.fullName?.en || ''}) | Student Registry`
     : `Edit Student Profile | Curatorial Portal`;
 
   return {

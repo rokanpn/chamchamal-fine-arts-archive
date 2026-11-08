@@ -106,8 +106,10 @@ export function ArtworksDirectoryClient() {
       // 2. Search Query Filter
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
-        const titleMatch = (item.title[locale] || item.title.ckb || item.title.en).toLowerCase().includes(q);
-        const artistMatch = (item.artist[locale] || item.artist.ckb || item.artist.en).toLowerCase().includes(q);
+        const titleStr = (item?.title?.[locale] || item?.title?.ckb || item?.title?.en || '').toLowerCase();
+        const artistStr = (item?.artist?.[locale] || item?.artist?.ckb || item?.artist?.en || '').toLowerCase();
+        const titleMatch = titleStr.includes(q);
+        const artistMatch = artistStr.includes(q);
         const deptLabel = getArtworkDepartmentLabel(item.departmentLabel || item.department, locale);
         const deptMatch = deptLabel.toLowerCase().includes(q);
         if (!titleMatch && !artistMatch && !deptMatch) return false;
@@ -180,7 +182,7 @@ export function ArtworksDirectoryClient() {
         {departmentsList.map((dept) => {
           const isSelected = selectedDept === dept.id;
           const Icon = dept.icon;
-          const label = dept.label[locale] || dept.label.ckb;
+          const label = dept?.label?.[locale] || dept?.label?.ckb || dept?.label?.en || '';
 
           return (
             <button

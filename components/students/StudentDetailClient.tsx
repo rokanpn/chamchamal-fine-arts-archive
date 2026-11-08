@@ -49,12 +49,12 @@ export function StudentDetailClient({ student }: StudentDetailClientProps) {
   const { locale, isRTL } = useLanguage();
   const { artworks: allArtworks } = useArchive();
 
-  const name = student.fullName[locale] || student.fullName.ckb;
-  const dept = student.department[locale] || student.department.ckb;
-  const cohort = student.cohort[locale] || student.cohort.ckb;
-  const bio = student.bio[locale] || student.bio.ckb;
-  const statement = student.statement[locale] || student.statement.ckb;
-  const studio = student.studioLocation[locale] || student.studioLocation.ckb;
+  const name = student?.fullName?.[locale] || student?.fullName?.ckb || student?.fullName?.en || '';
+  const dept = student?.department?.[locale] || student?.department?.ckb || student?.department?.en || '';
+  const cohort = student?.cohort?.[locale] || student?.cohort?.ckb || student?.cohort?.en || '';
+  const bio = student?.bio?.[locale] || student?.bio?.ckb || student?.bio?.en || '';
+  const statement = student?.statement?.[locale] || student?.statement?.ckb || student?.statement?.en || '';
+  const studio = student?.studioLocation?.[locale] || student?.studioLocation?.ckb || student?.studioLocation?.en || '';
 
   // Student artworks from dynamic archive
   const artworks = allArtworks.filter((a) =>
@@ -76,7 +76,7 @@ export function StudentDetailClient({ student }: StudentDetailClientProps) {
       const localized = award as any;
       return {
         id: `award-${idx}`,
-        title: localized[locale] || localized.ckb || localized.en || String(award),
+        title: localized?.[locale] || localized?.ckb || localized?.en || String(award || ''),
         year: `${student.graduationYear}`,
         issuer: 'پەیمانگەی هونەرە جوانەکانی چەمچەماڵ • Chamchamal Fine Arts',
         description: '',
@@ -212,7 +212,7 @@ export function StudentDetailClient({ student }: StudentDetailClientProps) {
                 key={i}
                 className="px-2.5 py-0.5 rounded-full text-[11px] bg-obsidian-elevated text-parchment-muted border border-white/5"
               >
-                {d[locale] || d.ckb}
+                {d?.[locale] || d?.ckb || d?.en || ''}
               </span>
             ))}
           </div>
@@ -504,7 +504,7 @@ export function StudentDetailClient({ student }: StudentDetailClientProps) {
                 <div className="relative aspect-[4/3] w-full bg-obsidian-elevated overflow-hidden">
                   <SafeImage
                     src={art.imageUrl}
-                    alt={art.title[locale] || art.title.ckb}
+                    alt={art?.title?.[locale] || art?.title?.ckb || art?.title?.en || ''}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                   />
@@ -523,10 +523,10 @@ export function StudentDetailClient({ student }: StudentDetailClientProps) {
                     {getArtworkDepartmentLabel(art.departmentLabel || art.department, locale)} • {art.year}
                   </span>
                   <h3 className="text-base font-bold text-parchment-pure group-hover:text-gold-light truncate transition-colors">
-                    {art.title[locale] || art.title.ckb}
+                    {art?.title?.[locale] || art?.title?.ckb || art?.title?.en || ''}
                   </h3>
                   <p className="text-xs text-museum-secondary line-clamp-2">
-                    {art.medium[locale] || art.medium.ckb}
+                    {art?.medium?.[locale] || art?.medium?.ckb || art?.medium?.en || ''}
                   </p>
                   <div className="mt-3 pt-3 border-t border-museum-divider flex items-center justify-between text-[11px] text-museum-secondary">
                     <span>{art.dimensions}</span>

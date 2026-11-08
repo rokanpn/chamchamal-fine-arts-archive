@@ -50,7 +50,7 @@ export function ArtworkFeed() {
         >
           {CATEGORIES.map((cat) => {
             const isSelected = selectedCategory === cat.key;
-            const label = cat.label[locale] || cat.label.ckb;
+            const label = cat.label?.[locale] || cat.label?.ckb || cat.label?.en || '';
 
             return (
               <button

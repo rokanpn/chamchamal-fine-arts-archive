@@ -114,11 +114,11 @@ export default function AdminDashboardPage() {
   const filteredArtworks = useMemo(() => {
     return artworks.filter((art) => {
       const matchSearch =
-        art.title.ckb.toLowerCase().includes(artSearchQuery.toLowerCase()) ||
-        art.title.en.toLowerCase().includes(artSearchQuery.toLowerCase()) ||
-        art.artist.ckb.toLowerCase().includes(artSearchQuery.toLowerCase());
+        (art?.title?.ckb || '').toLowerCase().includes(artSearchQuery.toLowerCase()) ||
+        (art?.title?.en || '').toLowerCase().includes(artSearchQuery.toLowerCase()) ||
+        (art?.artist?.ckb || '').toLowerCase().includes(artSearchQuery.toLowerCase());
 
-      const matchDept = selectedArtDept === 'all' || art.category === selectedArtDept;
+      const matchDept = selectedArtDept === 'all' || art?.category === selectedArtDept;
 
       return matchSearch && matchDept;
     });
@@ -128,11 +128,11 @@ export default function AdminDashboardPage() {
   const filteredTools = useMemo(() => {
     return tools.filter((tool) => {
       const matchSearch =
-        tool.name.ckb.toLowerCase().includes(toolSearchQuery.toLowerCase()) ||
-        tool.name.en.toLowerCase().includes(toolSearchQuery.toLowerCase()) ||
-        tool.name.ar.toLowerCase().includes(toolSearchQuery.toLowerCase());
+        (tool?.name?.ckb || '').toLowerCase().includes(toolSearchQuery.toLowerCase()) ||
+        (tool?.name?.en || '').toLowerCase().includes(toolSearchQuery.toLowerCase()) ||
+        (tool?.name?.ar || '').toLowerCase().includes(toolSearchQuery.toLowerCase());
 
-      const matchCat = selectedToolCat === 'all' || tool.category === selectedToolCat;
+      const matchCat = selectedToolCat === 'all' || tool?.category === selectedToolCat;
 
       return matchSearch && matchCat;
     });
@@ -143,9 +143,9 @@ export default function AdminDashboardPage() {
     return students.filter((s) => {
       const term = studentSearchQuery.toLowerCase();
       return (
-        s.fullName.ckb.toLowerCase().includes(term) ||
-        s.fullName.en.toLowerCase().includes(term) ||
-        s.department.ckb.toLowerCase().includes(term)
+        (s?.fullName?.ckb || '').toLowerCase().includes(term) ||
+        (s?.fullName?.en || '').toLowerCase().includes(term) ||
+        (s?.department?.ckb || '').toLowerCase().includes(term)
       );
     });
   }, [students, studentSearchQuery]);
@@ -155,9 +155,9 @@ export default function AdminDashboardPage() {
     return faculty.filter((f) => {
       const term = facultySearchQuery.toLowerCase();
       return (
-        f.name.ckb.toLowerCase().includes(term) ||
-        f.name.en.toLowerCase().includes(term) ||
-        f.role.ckb.toLowerCase().includes(term)
+        (f?.name?.ckb || '').toLowerCase().includes(term) ||
+        (f?.name?.en || '').toLowerCase().includes(term) ||
+        (f?.role?.ckb || '').toLowerCase().includes(term)
       );
     });
   }, [faculty, facultySearchQuery]);
@@ -167,9 +167,9 @@ export default function AdminDashboardPage() {
     return collaborators.filter((c) => {
       const term = collaboratorSearchQuery.toLowerCase();
       return (
-        c.name.ckb.toLowerCase().includes(term) ||
-        c.name.en.toLowerCase().includes(term) ||
-        c.country.ckb.toLowerCase().includes(term)
+        (c?.name?.ckb || '').toLowerCase().includes(term) ||
+        (c?.name?.en || '').toLowerCase().includes(term) ||
+        (c?.country?.ckb || '').toLowerCase().includes(term)
       );
     });
   }, [collaborators, collaboratorSearchQuery]);
@@ -514,10 +514,10 @@ export default function AdminDashboardPage() {
                             </div>
                             <div className="flex flex-col min-w-0">
                               <span className="font-bold text-parchment-pure truncate max-w-[200px]">
-                                {art.title[locale] || art.title.ckb}
+                                {art?.title?.[locale] || art?.title?.ckb || art?.title?.en || ''}
                               </span>
                               <span className="text-[11px] text-museum-secondary truncate">
-                                {art.artist[locale] || art.artist.ckb}
+                                {art?.artist?.[locale] || art?.artist?.ckb || art?.artist?.en || ''}
                               </span>
                             </div>
                           </div>
@@ -525,7 +525,7 @@ export default function AdminDashboardPage() {
 
                         <td className="py-3 px-4 text-museum-secondary">
                           <span className="px-2 py-0.5 rounded-full text-[10px] bg-white/5 border border-white/5">
-                            {art.categoryLabel[locale] || art.categoryLabel.ckb}
+                            {art?.categoryLabel?.[locale] || art?.categoryLabel?.ckb || art?.categoryLabel?.en || ''}
                           </span>
                         </td>
 
@@ -629,10 +629,10 @@ export default function AdminDashboardPage() {
                             </div>
                             <div className="flex flex-col min-w-0">
                               <span className="font-bold text-parchment-pure truncate max-w-[220px]">
-                                {tool.name[locale] || tool.name.ckb}
+                                {tool?.name?.[locale] || tool?.name?.ckb || tool?.name?.en || ''}
                               </span>
                               <span className="text-[11px] text-museum-secondary truncate">
-                                {tool.name.en}
+                                {tool?.name?.en || ''}
                               </span>
                             </div>
                           </div>
@@ -640,13 +640,13 @@ export default function AdminDashboardPage() {
 
                         <td className="py-3 px-4 text-museum-secondary">
                           <span className="px-2.5 py-0.5 rounded-full text-[10px] bg-gold/10 text-gold border border-gold/20">
-                            {tool.categoryLabel[locale] || tool.categoryLabel.ckb}
+                            {tool?.categoryLabel?.[locale] || tool?.categoryLabel?.ckb || tool?.categoryLabel?.en || ''}
                           </span>
                         </td>
 
                         <td className="py-3 px-4 text-museum-secondary max-w-[200px] truncate">
-                          <span className="block truncate text-parchment">{tool.origin[locale] || tool.origin.ckb}</span>
-                          <span className="text-[10px] text-museum-caption truncate block">{tool.materials[locale] || tool.materials.ckb}</span>
+                          <span className="block truncate text-parchment">{tool?.origin?.[locale] || tool?.origin?.ckb || tool?.origin?.en || ''}</span>
+                          <span className="text-[10px] text-museum-caption truncate block">{tool?.materials?.[locale] || tool?.materials?.ckb || tool?.materials?.en || ''}</span>
                         </td>
 
                         <td className="py-3 px-4 text-center font-mono text-gold">
@@ -731,10 +731,10 @@ export default function AdminDashboardPage() {
                             </div>
                             <div className="flex flex-col min-w-0">
                               <span className="font-bold text-parchment-pure truncate max-w-[200px]">
-                                {student.fullName[locale] || student.fullName.ckb}
+                                {student?.fullName?.[locale] || student?.fullName?.ckb || student?.fullName?.en || ''}
                               </span>
                               <span className="text-[11px] text-museum-secondary truncate">
-                                {student.fullName.en}
+                                {student?.fullName?.en || ''}
                               </span>
                             </div>
                           </div>
@@ -742,7 +742,7 @@ export default function AdminDashboardPage() {
 
                         <td className="py-3 px-4 text-museum-secondary">
                           <span className="px-2.5 py-0.5 rounded-full text-[10px] bg-white/5 border border-white/5">
-                            {student.department[locale] || student.department.ckb}
+                            {student?.department?.[locale] || student?.department?.ckb || student?.department?.en || ''}
                           </span>
                         </td>
 
@@ -832,21 +832,21 @@ export default function AdminDashboardPage() {
                             </div>
                             <div className="flex flex-col min-w-0">
                               <span className="font-bold text-parchment-pure truncate max-w-[200px]">
-                                {member.name[locale] || member.name.ckb}
+                                {member?.name?.[locale] || member?.name?.ckb || member?.name?.en || ''}
                               </span>
                               <span className="text-[11px] text-museum-secondary truncate">
-                                {member.name.en}
+                                {member?.name?.en || ''}
                               </span>
                             </div>
                           </div>
                         </td>
 
                         <td className="py-3 px-4 text-gold font-medium">
-                          {member.role[locale] || member.role.ckb}
+                          {member?.role?.[locale] || member?.role?.ckb || member?.role?.en || ''}
                         </td>
 
                         <td className="py-3 px-4 text-museum-secondary">
-                          {member.department[locale] || member.department.ckb}
+                          {member?.department?.[locale] || member?.department?.ckb || member?.department?.en || ''}
                         </td>
 
                         <td className="py-3 px-4 font-mono text-[11px] text-museum-secondary">
@@ -931,10 +931,10 @@ export default function AdminDashboardPage() {
                             </div>
                             <div className="flex flex-col min-w-0">
                               <span className="font-bold text-parchment-pure truncate max-w-[200px]">
-                                {collab.name[locale] || collab.name.ckb}
+                                {collab?.name?.[locale] || collab?.name?.ckb || collab?.name?.en || ''}
                               </span>
                               <span className="text-[11px] text-museum-secondary truncate">
-                                {collab.artistTitle[locale] || collab.artistTitle.ckb}
+                                {collab?.artistTitle?.[locale] || collab?.artistTitle?.ckb || collab?.artistTitle?.en || ''}
                               </span>
                             </div>
                           </div>
@@ -942,12 +942,12 @@ export default function AdminDashboardPage() {
 
                         <td className="py-3 px-4 text-museum-secondary">
                           <span className="px-2.5 py-0.5 rounded-full text-[10px] bg-gold/15 text-gold border border-gold/30">
-                            {collab.collaborationTypeLabel[locale] || collab.collaborationTypeLabel.ckb} • {collab.collaborationYear}
+                            {collab?.collaborationTypeLabel?.[locale] || collab?.collaborationTypeLabel?.ckb || collab?.collaborationTypeLabel?.en || ''} • {collab.collaborationYear}
                           </span>
                         </td>
 
                         <td className="py-3 px-4 text-parchment font-mono">
-                          {collab.country[locale] || collab.country.ckb}
+                          {collab?.country?.[locale] || collab?.country?.ckb || collab?.country?.en || ''}
                         </td>
 
                         <td className="py-3 px-4 text-center font-mono text-gold">

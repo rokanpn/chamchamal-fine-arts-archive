@@ -22,7 +22,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const artwork = ARTWORKS_DATA.find((item) => item.slug === params.slug);
   const title = artwork
-    ? `Edit: ${artwork.title.ckb} (${artwork.title.en}) | Curatorial Portal`
+    ? `Edit: ${artwork?.title?.ckb || artwork?.title?.en || 'Artwork'} (${artwork?.title?.en || ''}) | Curatorial Portal`
     : `Edit Masterwork | Curatorial Portal`;
 
   return {

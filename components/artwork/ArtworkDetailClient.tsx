@@ -50,44 +50,44 @@ export function ArtworkDetailClient({ artwork: initialArtwork }: ArtworkDetailCl
 
   // Resolve associated student artist profile & avatar
   const matchingStudent = (students || []).find(
-    (s) => s.id === artwork.artistId || s.slug === artwork.artistId || s.fullName.en.toLowerCase() === artwork.artist.en.toLowerCase()
+    (s) => s.id === artwork?.artistId || s.slug === artwork?.artistId || (s.fullName?.en && artwork?.artist?.en && s.fullName.en.toLowerCase() === artwork.artist.en.toLowerCase())
   ) || STUDENTS_DATA.find(
-    (s) => s.id === artwork.artistId || s.slug === artwork.artistId || s.fullName.en.toLowerCase() === artwork.artist.en.toLowerCase()
+    (s) => s.id === artwork?.artistId || s.slug === artwork?.artistId || (s.fullName?.en && artwork?.artist?.en && s.fullName.en.toLowerCase() === artwork.artist.en.toLowerCase())
   );
 
-  const studentSlug = matchingStudent?.slug || matchingStudent?.id || artwork.artistId;
+  const studentSlug = matchingStudent?.slug || matchingStudent?.id || artwork?.artistId;
   const studentAvatarUrl = matchingStudent?.avatarUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80';
 
   const isNotFound = isHydrated && initialArtwork.id.startsWith('temp-') && !artworks.some((a) => a.slug === initialArtwork.slug);
 
   // Resolved Media URLs (Handles IDB/Blob/Data URLs safely)
-  const [resolvedImageUrl, setResolvedImageUrl] = useState<string>(artwork.imageUrl);
-  const [resolvedModelUrl, setResolvedModelUrl] = useState<string>(artwork.modelUrl || '');
-  const [resolvedAudioUrl, setResolvedAudioUrl] = useState<string>(artwork.audioUrl || '');
-  const [resolvedVideoUrl, setResolvedVideoUrl] = useState<string>(artwork.videoUrl || '');
-  const [resolvedPdfUrl, setResolvedPdfUrl] = useState<string>(artwork.curatorialPdfUrl || '');
+  const [resolvedImageUrl, setResolvedImageUrl] = useState<string>(artwork?.imageUrl || '');
+  const [resolvedModelUrl, setResolvedModelUrl] = useState<string>(artwork?.modelUrl || '');
+  const [resolvedAudioUrl, setResolvedAudioUrl] = useState<string>(artwork?.audioUrl || '');
+  const [resolvedVideoUrl, setResolvedVideoUrl] = useState<string>(artwork?.videoUrl || '');
+  const [resolvedPdfUrl, setResolvedPdfUrl] = useState<string>(artwork?.curatorialPdfUrl || '');
 
   // Active Stage Mode: 3D vs. 2.5D Parallax Canvas
-  const [stageMode, setStageMode] = useState<'3d' | 'parallax'>(artwork.has3DModel ? '3d' : 'parallax');
+  const [stageMode, setStageMode] = useState<'3d' | 'parallax'>(artwork?.has3DModel ? '3d' : 'parallax');
   const [showPlaqueModal, setShowPlaqueModal] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isEssayExpanded, setIsEssayExpanded] = useState(false);
 
   useEffect(() => {
     let active = true;
-    if (artwork.imageUrl) {
+    if (artwork?.imageUrl) {
       resolveMediaUrl(artwork.imageUrl).then((url) => active && setResolvedImageUrl(url));
     }
-    if (artwork.modelUrl) {
+    if (artwork?.modelUrl) {
       resolveMediaUrl(artwork.modelUrl).then((url) => active && setResolvedModelUrl(url));
     }
-    if (artwork.audioUrl) {
+    if (artwork?.audioUrl) {
       resolveMediaUrl(artwork.audioUrl).then((url) => active && setResolvedAudioUrl(url));
     }
-    if (artwork.videoUrl) {
+    if (artwork?.videoUrl) {
       resolveMediaUrl(artwork.videoUrl).then((url) => active && setResolvedVideoUrl(url));
     }
-    if (artwork.curatorialPdfUrl) {
+    if (artwork?.curatorialPdfUrl) {
       resolveMediaUrl(artwork.curatorialPdfUrl).then((url) => active && setResolvedPdfUrl(url));
     }
     return () => {
@@ -95,21 +95,21 @@ export function ArtworkDetailClient({ artwork: initialArtwork }: ArtworkDetailCl
     };
   }, [artwork]);
 
-  // Localized Strings
-  const title = artwork.title[locale] || artwork.title.ckb;
-  const artist = artwork.artist[locale] || artwork.artist.ckb;
-  const artistBio = artwork.artistBio[locale] || artwork.artistBio.ckb;
-  const department = getArtworkDepartmentLabel(artwork.departmentLabel || artwork.department, locale);
-  const medium = artwork.medium[locale] || artwork.medium.ckb;
-  const description = artwork.description[locale] || artwork.description.ckb;
-  const locationInInstitute = artwork.locationInInstitute[locale] || artwork.locationInInstitute.ckb;
+  // Localized Strings with defensive optional chaining
+  const title = artwork?.title?.[locale] || artwork?.title?.ckb || artwork?.title?.en || '';
+  const artist = artwork?.artist?.[locale] || artwork?.artist?.ckb || artwork?.artist?.en || '';
+  const artistBio = artwork?.artistBio?.[locale] || artwork?.artistBio?.ckb || artwork?.artistBio?.en || '';
+  const department = getArtworkDepartmentLabel(artwork?.departmentLabel || artwork?.department, locale);
+  const medium = artwork?.medium?.[locale] || artwork?.medium?.ckb || artwork?.medium?.en || '';
+  const description = artwork?.description?.[locale] || artwork?.description?.ckb || artwork?.description?.en || '';
+  const locationInInstitute = artwork?.locationInInstitute?.[locale] || artwork?.locationInInstitute?.ckb || artwork?.locationInInstitute?.en || '';
 
-  const curatorialEssay = artwork.curatorialEssay
-    ? (artwork.curatorialEssay[locale] || artwork.curatorialEssay.ckb || artwork.curatorialEssay.en)
+  const curatorialEssay = artwork?.curatorialEssay
+    ? (artwork.curatorialEssay?.[locale] || artwork.curatorialEssay?.ckb || artwork.curatorialEssay?.en || '')
     : '';
 
-  const videoTitle = artwork.videoTitle
-    ? (artwork.videoTitle[locale] || artwork.videoTitle.ckb)
+  const videoTitle = artwork?.videoTitle
+    ? (artwork.videoTitle?.[locale] || artwork.videoTitle?.ckb || artwork.videoTitle?.en || '')
     : (locale === 'ckb' ? 'شیکاری بەرهەم و قۆناغەکانی دروستکردن' : 'Creation & Atelier Documentary');
 
   // Matching Tools from Archive
@@ -461,13 +461,13 @@ export function ArtworkDetailClient({ artwork: initialArtwork }: ArtworkDetailCl
                     </div>
                     <div className="flex flex-col flex-1 min-w-0 text-start">
                       <span className="text-[10px] text-gold font-mono uppercase">
-                        {tool.categoryLabel[locale] || tool.categoryLabel.ckb}
+                        {tool?.categoryLabel?.[locale] || tool?.categoryLabel?.ckb || tool?.categoryLabel?.en || ''}
                       </span>
                       <h5 className="text-xs font-bold text-parchment group-hover:text-gold-light truncate transition-colors">
-                        {tool.name[locale] || tool.name.ckb}
+                        {tool?.name?.[locale] || tool?.name?.ckb || tool?.name?.en || ''}
                       </h5>
                       <span className="text-[10px] text-museum-secondary truncate">
-                        {tool.materials[locale] || tool.materials.ckb}
+                        {tool?.materials?.[locale] || tool?.materials?.ckb || tool?.materials?.en || ''}
                       </span>
                     </div>
                     <ArrowUpRight className="w-3.5 h-3.5 text-gold shrink-0 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -510,7 +510,7 @@ export function ArtworkDetailClient({ artwork: initialArtwork }: ArtworkDetailCl
                     </span>
                     {matchingStudent?.department && (
                       <span className="text-[11px] text-museum-caption truncate">
-                        {matchingStudent.department[locale] || matchingStudent.department.ckb}
+                        {matchingStudent?.department?.[locale] || matchingStudent?.department?.ckb || matchingStudent?.department?.en || ''}
                       </span>
                     )}
                   </div>

@@ -155,19 +155,19 @@ export function CollaboratorEditClient({ id }: CollaboratorEditClientProps) {
 
     const updatedData: Partial<Collaborator> = {
       name: {
-        ckb: nameCkb || targetCollab.name.ckb,
-        ar: nameAr || nameCkb || targetCollab.name.ar,
-        en: nameEn || targetCollab.name.en,
+        ckb: nameCkb || targetCollab?.name?.ckb || targetCollab?.name?.en || '',
+        ar: nameAr || nameCkb || targetCollab?.name?.ar || '',
+        en: nameEn || targetCollab?.name?.en || '',
       },
       artistTitle: {
-        ckb: artistTitleCkb || targetCollab.artistTitle.ckb,
-        ar: artistTitleAr || artistTitleCkb || targetCollab.artistTitle.ar,
-        en: artistTitleEn || targetCollab.artistTitle.en,
+        ckb: artistTitleCkb || targetCollab?.artistTitle?.ckb || targetCollab?.artistTitle?.en || '',
+        ar: artistTitleAr || artistTitleCkb || targetCollab?.artistTitle?.ar || '',
+        en: artistTitleEn || targetCollab?.artistTitle?.en || '',
       },
       country: {
-        ckb: countryCkb || targetCollab.country.ckb,
-        ar: countryAr || countryCkb || targetCollab.country.ar,
-        en: countryEn || targetCollab.country.en,
+        ckb: countryCkb || targetCollab?.country?.ckb || targetCollab?.country?.en || '',
+        ar: countryAr || countryCkb || targetCollab?.country?.ar || '',
+        en: countryEn || targetCollab?.country?.en || '',
       },
       bio: {
         ckb: bioCkb,
@@ -209,7 +209,7 @@ export function CollaboratorEditClient({ id }: CollaboratorEditClientProps) {
                 <span>{locale === 'ckb' ? 'دەستکاریکردنی هونەرمەندی هاوبەش' : 'Edit Visiting Artist'}</span>
               </div>
               <h1 className="text-xl md:text-2xl font-serif font-bold text-parchment-pure">
-                {targetCollab?.name[locale] || targetCollab?.name.ckb || 'Modify Collaborator Record'}
+                {targetCollab?.name?.[locale] || targetCollab?.name?.ckb || targetCollab?.name?.en || 'Modify Collaborator Record'}
               </h1>
             </div>
           </div>

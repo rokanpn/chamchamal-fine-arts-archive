@@ -85,7 +85,7 @@ export function CollaboratorsClient() {
         <div className="flex items-center gap-2 mt-8 overflow-x-auto pb-2 sm:pb-0 scrollbar-none no-scrollbar max-w-full">
           {filterTabs.map((tab) => {
             const isSelected = activeFilter === tab.key;
-            const label = tab.label[locale] || tab.label.ckb;
+            const label = tab?.label?.[locale] || tab?.label?.ckb || tab?.label?.en || '';
             return (
               <button
                 key={tab.key}
@@ -128,7 +128,7 @@ export function CollaboratorsClient() {
                 <div className="flex flex-col text-start">
                   <div className="flex items-center gap-2">
                     <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-gold/15 text-gold border border-gold/30">
-                      {collaborator.collaborationTypeLabel[locale] || collaborator.collaborationTypeLabel.ckb}
+                      {collaborator?.collaborationTypeLabel?.[locale] || collaborator?.collaborationTypeLabel?.ckb || collaborator?.collaborationTypeLabel?.en || ''}
                     </span>
                     <span className="text-xs text-museum-secondary font-mono">
                       {collaborator.collaborationYear}
@@ -136,24 +136,24 @@ export function CollaboratorsClient() {
                   </div>
 
                   <h3 className="text-lg sm:text-2xl font-bold text-parchment-pure font-serif mt-1 group-hover:text-gold-light transition-colors">
-                    {collaborator.name[locale] || collaborator.name.ckb}
+                    {collaborator?.name?.[locale] || collaborator?.name?.ckb || collaborator?.name?.en || ''}
                   </h3>
                   <span className="text-xs text-museum-secondary">
-                    {collaborator.artistTitle[locale] || collaborator.artistTitle.ckb}
+                    {collaborator?.artistTitle?.[locale] || collaborator?.artistTitle?.ckb || collaborator?.artistTitle?.en || ''}
                   </span>
                 </div>
               </div>
 
               <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/5 text-[11px] text-museum-caption self-start sm:self-auto">
                 <MapPin className="w-3 h-3 text-gold" />
-                <span>{collaborator.country[locale] || collaborator.country.ckb}</span>
+                <span>{collaborator?.country?.[locale] || collaborator?.country?.ckb || collaborator?.country?.en || ''}</span>
               </div>
             </div>
 
             {/* Biography & Curatorial Summary */}
             <div className="flex flex-col gap-3 text-xs leading-relaxed text-start">
               <p className="text-parchment-muted">
-                {collaborator.bio[locale] || collaborator.bio.ckb}
+                {collaborator?.bio?.[locale] || collaborator?.bio?.ckb || collaborator?.bio?.en || ''}
               </p>
 
               <div className="p-4 rounded-2xl bg-black/40 border border-museum-border/60 text-museum-secondary">
@@ -161,7 +161,7 @@ export function CollaboratorsClient() {
                   {locale === 'ckb' ? 'دەستکەوتی هاوبەشی لە پەیمانگە:' : 'Collaboration Dossier:'}
                 </span>
                 <p>
-                  {collaborator.curatorialSummary[locale] || collaborator.curatorialSummary.ckb}
+                  {collaborator?.curatorialSummary?.[locale] || collaborator?.curatorialSummary?.ckb || collaborator?.curatorialSummary?.en || ''}
                 </p>
               </div>
             </div>

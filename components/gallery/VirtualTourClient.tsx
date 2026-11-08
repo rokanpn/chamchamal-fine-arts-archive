@@ -822,7 +822,7 @@ export function VirtualTourClient() {
                     </span>
                   </div>
                   <h3 className="text-xs sm:text-sm font-bold text-parchment-pure truncate font-serif mt-0.5">
-                    {focusedArtwork.title[locale] || focusedArtwork.title.ckb}
+                    {focusedArtwork?.title?.[locale] || focusedArtwork?.title?.ckb || focusedArtwork?.title?.en || ''}
                   </h3>
                 </div>
               </div>
@@ -983,29 +983,29 @@ export function VirtualTourClient() {
               <div>
                 <div className="flex flex-wrap items-center gap-2 mb-2">
                   <span className="px-3 py-0.5 rounded-full text-[10px] font-semibold uppercase bg-gold/15 text-gold border border-gold/30">
-                    {selectedModalArtwork.categoryLabel[locale] || selectedModalArtwork.categoryLabel.ckb}
+                    {selectedModalArtwork?.categoryLabel?.[locale] || selectedModalArtwork?.categoryLabel?.ckb || selectedModalArtwork?.categoryLabel?.en || ''}
                   </span>
                   <span className="px-3 py-0.5 rounded-full text-[10px] font-mono text-white/50 bg-white/5 border border-white/10">
-                    {selectedModalArtwork.year}
+                    {selectedModalArtwork?.year}
                   </span>
                 </div>
                 <h2 className="text-2xl sm:text-3xl font-bold text-parchment-pure font-serif">
-                  {selectedModalArtwork.title[locale] || selectedModalArtwork.title.ckb}
+                  {selectedModalArtwork?.title?.[locale] || selectedModalArtwork?.title?.ckb || selectedModalArtwork?.title?.en || ''}
                 </h2>
                 <div className="flex items-center gap-2 text-xs text-gold mt-1.5 font-medium">
-                  <span>{selectedModalArtwork.artist[locale] || selectedModalArtwork.artist.ckb}</span>
+                  <span>{selectedModalArtwork?.artist?.[locale] || selectedModalArtwork?.artist?.ckb || selectedModalArtwork?.artist?.en || ''}</span>
                   <span>•</span>
                   <span className="text-museum-secondary">
-                    {getArtworkDepartmentLabel(selectedModalArtwork.departmentLabel || selectedModalArtwork.department, locale)}
+                    {getArtworkDepartmentLabel(selectedModalArtwork?.departmentLabel || selectedModalArtwork?.department, locale)}
                   </span>
                 </div>
                 <p className="mt-4 text-xs sm:text-sm text-museum-secondary leading-relaxed line-clamp-4">
-                  {selectedModalArtwork.description[locale] || selectedModalArtwork.description.ckb}
+                  {selectedModalArtwork?.description?.[locale] || selectedModalArtwork?.description?.ckb || selectedModalArtwork?.description?.en || ''}
                 </p>
                 <div className="mt-4 pt-4 border-t border-museum-divider/60 grid grid-cols-2 gap-3 text-xs font-mono text-museum-caption">
                   <div>
                     <span className="block text-[10px] text-white/40 uppercase">Medium</span>
-                    <span className="text-parchment truncate block">{selectedModalArtwork.medium[locale] || selectedModalArtwork.medium.ckb}</span>
+                    <span className="text-parchment truncate block">{selectedModalArtwork?.medium?.[locale] || selectedModalArtwork?.medium?.ckb || selectedModalArtwork?.medium?.en || ''}</span>
                   </div>
                   <div>
                     <span className="block text-[10px] text-white/40 uppercase">Dimensions</span>

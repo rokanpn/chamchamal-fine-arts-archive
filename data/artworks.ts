@@ -53,13 +53,14 @@ export const DEPARTMENT_LABELS: Record<ArtworkDepartment, LocalizedString> = {
   },
 };
 
-export function getArtworkDepartment(art: { department?: ArtworkDepartment | LocalizedString; category?: string }): ArtworkDepartment {
+export function getArtworkDepartment(art: { department?: ArtworkDepartment | LocalizedString; category?: string } | null | undefined): ArtworkDepartment {
+  if (!art) return 'painting';
   if (art.department === 'painting' || art.department === 'sculpture' || art.department === 'mixed') {
     return art.department;
   }
-  if (typeof art.department === 'object' && art.department) {
-    const ckb = (art.department.ckb || '').toLowerCase();
-    const en = (art.department.en || '').toLowerCase();
+  if (typeof art.department === 'object' && art.department !== null) {
+    const ckb = (art.department?.ckb || '').toLowerCase();
+    const en = (art.department?.en || '').toLowerCase();
     if (ckb.includes('پەیکەر') || en.includes('sculpt') || art.category === 'sculpture' || art.category === 'ceramics') {
       return 'sculpture';
     }
@@ -74,15 +75,15 @@ export function getArtworkDepartment(art: { department?: ArtworkDepartment | Loc
 }
 
 export function getArtworkDepartmentLabel(
-  department: ArtworkDepartment | LocalizedString | undefined,
+  department: ArtworkDepartment | LocalizedString | undefined | null,
   locale: 'ckb' | 'ar' | 'en' = 'ckb'
 ): string {
   if (!department) return '';
   if (typeof department === 'string') {
     const label = DEPARTMENT_LABELS[department as ArtworkDepartment];
-    return label ? (label[locale] || label.ckb) : department;
+    return label ? (label?.[locale] || label?.ckb || '') : department;
   }
-  return department[locale] || department.ckb || department.en || '';
+  return department?.[locale] || department?.ckb || department?.en || '';
 }
 
 export interface Artwork {

@@ -1,5 +1,19 @@
 import { createClient } from '@supabase/supabase-js';
 
+export function isSupabaseServerConfigured(): boolean {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const keyToUse = serviceRoleKey || anonKey || '';
+
+  return Boolean(
+    supabaseUrl &&
+    keyToUse &&
+    !supabaseUrl.includes('placeholder') &&
+    !keyToUse.includes('placeholder')
+  );
+}
+
 /**
  * Creates an authoritative Supabase client for Server Actions.
  * Prioritizes SUPABASE_SERVICE_ROLE_KEY to bypass Row Level Security (RLS)

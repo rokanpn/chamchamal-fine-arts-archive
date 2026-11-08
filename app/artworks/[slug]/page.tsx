@@ -23,8 +23,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  const title = `${artwork.title.ckb} (${artwork.title.en}) | ${artwork.artist.ckb}`;
-  const description = artwork.description.ckb;
+  const ckbTitle = artwork?.title?.ckb || artwork?.title?.en || 'Masterwork';
+  const enTitle = artwork?.title?.en || artwork?.title?.ckb || 'Masterwork';
+  const ckbArtist = artwork?.artist?.ckb || artwork?.artist?.en || 'Chamchamal Artist';
+  const title = `${ckbTitle} (${enTitle}) | ${ckbArtist}`;
+  const description = artwork?.description?.ckb || artwork?.description?.en || '';
 
   return {
     title,
@@ -37,7 +40,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
           url: artwork.imageUrl,
           width: 1200,
           height: 800,
-          alt: artwork.title.en,
+          alt: enTitle,
         },
       ],
     },

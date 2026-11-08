@@ -104,10 +104,10 @@ export function QRBatchStudio({ artworks }: QRBatchStudioProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 print:grid-cols-2 print:gap-4 print:w-full">
         {artworks.map((artwork) => {
           const isSelected = selectedIds.includes(artwork.id);
-          const title = artwork.title[locale] || artwork.title.ckb;
-          const artist = artwork.artist[locale] || artwork.artist.ckb;
-          const department = getArtworkDepartmentLabel(artwork.departmentLabel || artwork.department, locale);
-          const medium = artwork.medium[locale] || artwork.medium.ckb;
+          const title = artwork?.title?.[locale] || artwork?.title?.ckb || artwork?.title?.en || '';
+          const artist = artwork?.artist?.[locale] || artwork?.artist?.ckb || artwork?.artist?.en || '';
+          const department = getArtworkDepartmentLabel(artwork?.departmentLabel || artwork?.department, locale);
+          const medium = artwork?.medium?.[locale] || artwork?.medium?.ckb || artwork?.medium?.en || '';
 
           // In print mode, only render selected ones
           return (

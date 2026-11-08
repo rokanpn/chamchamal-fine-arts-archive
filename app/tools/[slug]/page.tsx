@@ -23,8 +23,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  const title = `${tool.name.ckb} (${tool.name.en}) | Atelier Instruments`;
-  const description = tool.description.ckb;
+  const ckbName = tool?.name?.ckb || tool?.name?.en || 'Instrument';
+  const enName = tool?.name?.en || tool?.name?.ckb || 'Instrument';
+  const title = `${ckbName} (${enName}) | Atelier Instruments`;
+  const description = tool?.description?.ckb || tool?.description?.en || '';
 
   return {
     title,
@@ -37,7 +39,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
           url: tool.imageUrl,
           width: 1200,
           height: 800,
-          alt: tool.name.en,
+          alt: enName,
         },
       ],
     },

@@ -771,10 +771,10 @@ export default function NewToolIngestionPage() {
                     </div>
                     <div className="flex flex-col flex-1 min-w-0 text-start">
                       <span className="text-xs font-bold text-parchment truncate">
-                        {art.title[locale] || art.title.ckb}
+                        {art?.title?.[locale] || art?.title?.ckb || art?.title?.en || ''}
                       </span>
                       <span className="text-[10px] text-museum-secondary truncate">
-                        {art.artist[locale] || art.artist.ckb}
+                        {art?.artist?.[locale] || art?.artist?.ckb || art?.artist?.en || ''}
                       </span>
                     </div>
                     <input

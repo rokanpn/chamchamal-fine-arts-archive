@@ -724,10 +724,10 @@ export default function NewStudentPage() {
                     </div>
                     <div className="flex flex-col min-w-0">
                       <span className={`text-xs font-bold truncate ${isSelected ? 'text-gold-light' : 'text-parchment'}`}>
-                        {art.title[locale] || art.title.ckb}
+                        {art?.title?.[locale] || art?.title?.ckb || art?.title?.en || ''}
                       </span>
                       <span className="text-[10px] text-museum-caption truncate">
-                        {art.categoryLabel[locale] || art.categoryLabel.ckb} • {art.year}
+                        {art?.categoryLabel?.[locale] || art?.categoryLabel?.ckb || art?.categoryLabel?.en || ''} • {art.year}
                       </span>
                     </div>
                   </button>

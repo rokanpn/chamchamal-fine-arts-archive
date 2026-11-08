@@ -583,8 +583,8 @@ function CircularSculptureDisplay({
   const isModelActive = isClose || isFocused;
 
   const plaqueText = useMemo(() => {
-    const title = artwork.title[locale] || artwork.title.ckb;
-    const artist = artwork.artist[locale] || artwork.artist.ckb;
+    const title = artwork?.title?.[locale] || artwork?.title?.ckb || artwork?.title?.en || '';
+    const artist = artwork?.artist?.[locale] || artwork?.artist?.ckb || artwork?.artist?.en || '';
     return `${title} • ${artist} • ${artwork.year}`;
   }, [artwork, locale]);
 
