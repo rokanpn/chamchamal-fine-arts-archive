@@ -1,11 +1,11 @@
 // ============================================================
-// Chamchamal Fine Arts Archive — Service Worker v3
+// Chamchamal Fine Arts Archive — Service Worker v5
 // Strategy: NetworkFirst for all pages/data, CacheFirst only
 // for truly immutable static assets (_next/static/).
 // Bump CACHE_VERSION on every deploy to bust old caches.
 // ============================================================
 
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v5';
 const CACHE_NAME = `chamchamal-fine-arts-cache-${CACHE_VERSION}`;
 
 // Only pre-cache the app shell manifest — NOT data pages.
