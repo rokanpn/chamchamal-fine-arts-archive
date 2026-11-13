@@ -102,11 +102,11 @@ export function Navbar() {
   ];
 
   return (
-    <header className="fixed top-2 inset-x-2 sm:top-4 sm:inset-x-5 md:inset-x-8 z-50 max-w-7xl mx-auto print:hidden">
+    <header className="fixed top-1.5 inset-x-2 sm:top-4 sm:inset-x-5 md:inset-x-8 z-50 max-w-7xl mx-auto print:hidden">
       {/* Premium 3D-Effect Museum Glassmorphism Navigation Capsule */}
       <nav
         aria-label="Main Navigation"
-        className={`relative flex items-center justify-between px-3 sm:px-5 py-2 sm:py-2.5 rounded-full backdrop-blur-2xl transition-all duration-500 ${
+        className={`relative flex items-center justify-between h-13 sm:h-14 md:h-16 px-2.5 sm:px-5 py-1.5 sm:py-2.5 rounded-full backdrop-blur-2xl transition-all duration-500 ${
           scrolled
             ? 'bg-white/90 dark:bg-black/75 border border-stone-200/90 dark:border-t-white/10 dark:border-b-gold/20 dark:border-x-white/[0.04] shadow-[0_16px_40px_-8px_rgba(0,0,0,0.12),0_0_20px_rgba(212,175,55,0.1)] dark:shadow-[0_16px_50px_-8px_rgba(0,0,0,0.95),0_0_30px_rgba(212,175,55,0.12)]'
             : 'bg-white/80 dark:bg-black/55 border border-stone-200/70 dark:border-t-white/10 dark:border-b-gold/20 dark:border-x-white/[0.04] shadow-[0_10px_30px_-8px_rgba(0,0,0,0.08),0_0_15px_rgba(212,175,55,0.06)] dark:shadow-[0_12px_40px_-8px_rgba(0,0,0,0.85),0_0_25px_rgba(212,175,55,0.08)]'
@@ -127,10 +127,10 @@ export function Navbar() {
           }}
           onMouseEnter={() => prefetch('/')}
           onPointerDown={() => prefetch('/')}
-          className="flex items-center gap-2.5 sm:gap-3 group focus:outline-none focus-visible:ring-1 focus-visible:ring-gold rounded-full shrink-0 cursor-pointer active:scale-95 transition-transform"
+          className="flex items-center gap-2 sm:gap-3 group focus:outline-none focus-visible:ring-1 focus-visible:ring-gold rounded-full shrink-0 min-w-0 cursor-pointer active:scale-95 transition-transform"
         >
           {/* Dynamic Institute Logo Medallion (Transparent in Dark Mode, Solid White in Light Mode) */}
-          <div className="relative flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white dark:bg-obsidian-surface/90 border border-gold/40 shadow-[0_2px_10px_rgba(0,0,0,0.08)] dark:shadow-[0_0_16px_rgba(212,175,55,0.25)] group-hover:border-gold group-hover:shadow-[0_0_22px_rgba(212,175,55,0.45)] transition-all duration-300 overflow-hidden shrink-0 p-1">
+          <div className="relative flex items-center justify-center w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-white dark:bg-obsidian-surface/90 border border-gold/40 shadow-[0_2px_10px_rgba(0,0,0,0.08)] dark:shadow-[0_0_16px_rgba(212,175,55,0.25)] group-hover:border-gold group-hover:shadow-[0_0_22px_rgba(212,175,55,0.45)] transition-all duration-300 overflow-hidden shrink-0 p-0.5 sm:p-1">
             <div className="absolute inset-0 bg-gold/5 group-hover:bg-gold/15 transition-colors duration-500 pointer-events-none" />
 
             {/* Dark Mode Logo: Transparent background */}
@@ -139,7 +139,7 @@ export function Navbar() {
                 src="/logo-dark.png"
                 alt={t.instituteName}
                 fill
-                sizes="44px"
+                sizes="(max-width: 640px) 32px, 44px"
                 priority
                 className="object-contain rounded-full transition-transform duration-300 group-hover:scale-105"
               />
@@ -151,20 +151,20 @@ export function Navbar() {
                 src="/logo-light.png"
                 alt={t.instituteName}
                 fill
-                sizes="44px"
+                sizes="(max-width: 640px) 32px, 44px"
                 priority
                 className="object-contain rounded-full transition-transform duration-300 group-hover:scale-105"
               />
             </div>
 
             {/* Micro Gold Twinkle Flare */}
-            <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-gold shadow-[0_0_6px_#D4AF37] opacity-80 pointer-events-none z-10" />
+            <span className="absolute top-0.5 right-0.5 sm:top-1 sm:right-1 w-1.5 h-1.5 rounded-full bg-gold shadow-[0_0_6px_#D4AF37] opacity-80 pointer-events-none z-10" />
           </div>
 
           {/* Typography Moniker & Official Medallion */}
-          <div className="flex flex-col text-start">
-            <div className="flex items-center gap-2">
-              <span className="text-xs sm:text-sm font-bold tracking-wide text-stone-900 dark:text-parchment group-hover:text-gold-dark dark:group-hover:text-gold-light transition-colors duration-200">
+          <div className="flex flex-col text-start min-w-0">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <span className="text-[11px] sm:text-sm font-bold tracking-normal sm:tracking-wide text-stone-900 dark:text-parchment group-hover:text-gold-dark dark:group-hover:text-gold-light transition-colors duration-200 truncate max-w-[170px] xs:max-w-[220px] sm:max-w-none">
                 {t.instituteName}
               </span>
 
@@ -175,7 +175,8 @@ export function Navbar() {
               </span>
             </div>
 
-            <span className="text-[9px] sm:text-[10px] text-stone-500 dark:text-museum-secondary tracking-widest line-clamp-1 font-serif uppercase">
+            {/* English Subtitle: Completely hidden on mobile to save vertical & horizontal space */}
+            <span className="hidden sm:block text-[9px] sm:text-[10px] text-stone-500 dark:text-museum-secondary tracking-widest line-clamp-1 font-serif uppercase">
               CHAMCHAMAL FINE ARTS DIGITAL ARCHIVE
             </span>
           </div>
@@ -295,7 +296,7 @@ export function Navbar() {
             onClick={toggleTheme}
             aria-label={isDark ? 'گۆڕین بۆ دۆخی ڕۆژ (Light Mode)' : 'گۆڕین بۆ دۆخی شەو (Dark Mode)'}
             title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-            className="relative p-2 sm:p-2.5 rounded-full bg-stone-100/90 dark:bg-black/40 hover:bg-gold/15 dark:hover:bg-gold/15 border border-stone-200/90 dark:border-white/10 text-stone-700 dark:text-parchment hover:text-gold-dark dark:hover:text-gold transition-all duration-300 shadow-sm focus:outline-none cursor-pointer active:scale-95 group shrink-0"
+            className="relative p-1.5 sm:p-2.5 rounded-full bg-stone-100/90 dark:bg-black/40 hover:bg-gold/15 dark:hover:bg-gold/15 border border-stone-200/90 dark:border-white/10 text-stone-700 dark:text-parchment hover:text-gold-dark dark:hover:text-gold transition-all duration-300 shadow-sm focus:outline-none cursor-pointer active:scale-95 group shrink-0"
           >
             <span className="sr-only">Toggle theme</span>
             <AnimatePresence mode="wait" initial={false}>
@@ -307,7 +308,7 @@ export function Navbar() {
                   exit={{ rotate: 90, scale: 0.5, opacity: 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <Sun className="w-4 h-4 text-amber-400 group-hover:rotate-45 transition-transform" />
+                  <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 group-hover:rotate-45 transition-transform" />
                 </motion.div>
               ) : (
                 <motion.div
@@ -317,7 +318,7 @@ export function Navbar() {
                   exit={{ rotate: 90, scale: 0.5, opacity: 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <Moon className="w-4 h-4 text-stone-700 group-hover:-rotate-12 transition-transform" />
+                  <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-stone-700 group-hover:-rotate-12 transition-transform" />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -327,11 +328,11 @@ export function Navbar() {
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-full bg-stone-100/90 dark:bg-white/5 hover:bg-stone-200/80 dark:hover:bg-white/10 active:scale-95 border border-stone-200/90 dark:border-white/10 text-stone-700 dark:text-parchment hover:text-gold-dark dark:hover:text-gold transition-all focus:outline-none cursor-pointer"
+            className="lg:hidden p-1.5 sm:p-2 rounded-full bg-stone-100/90 dark:bg-white/5 hover:bg-stone-200/80 dark:hover:bg-white/10 active:scale-95 border border-stone-200/90 dark:border-white/10 text-stone-700 dark:text-parchment hover:text-gold-dark dark:hover:text-gold transition-all focus:outline-none cursor-pointer"
             aria-label={mobileMenuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
             aria-expanded={mobileMenuOpen}
           >
-            {mobileMenuOpen ? <X className="w-5 h-5 text-gold" /> : <Menu className="w-5 h-5" />}
+            {mobileMenuOpen ? <X className="w-4 h-4 sm:w-5 sm:h-5 text-gold" /> : <Menu className="w-4 h-4 sm:w-5 sm:h-5" />}
           </button>
         </div>
       </nav>

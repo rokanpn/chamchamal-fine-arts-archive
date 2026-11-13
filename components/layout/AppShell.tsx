@@ -36,7 +36,7 @@ export function AppShell({ children }: AppShellProps) {
         className={
           isVirtualTour
             ? 'relative z-10 w-full h-screen overflow-hidden p-0 m-0 max-w-none'
-            : 'relative z-10 flex-1 flex flex-col pt-20 sm:pt-24 pb-20 md:pb-12 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto w-full'
+            : 'relative z-10 flex-1 flex flex-col pt-16 sm:pt-24 pb-16 md:pb-12 px-3 sm:px-6 md:px-8 max-w-7xl mx-auto w-full'
         }
       >
         {children}
