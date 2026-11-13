@@ -2,8 +2,9 @@
 
 import React, { useState, useRef, useMemo, Suspense, useEffect, useCallback, useTransition } from 'react';
 import Link from 'next/link';
+import * as THREE from 'three';
 import { SafeImage } from '@/components/ui/SafeImage';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useArchive, AmbientTrack } from '@/context/ArchiveContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { useNavigationTransition } from '@/context/NavigationTransitionContext';
@@ -67,6 +68,53 @@ function JoystickLookRigController({
       onRotate(-look.x * YAW_SPEED * safeDelta, look.y * PITCH_SPEED * safeDelta);
     }
   });
+
+  return null;
+}
+
+// Synchronizes Three.js perspective camera aspect ratio and WebGL renderer on iOS Safari rotation/resize
+function CameraAndRendererResizeSync() {
+  const { camera, gl } = useThree();
+
+  useEffect(() => {
+    const handleResize = () => {
+      const container = gl.domElement.parentElement;
+      const width = container ? container.clientWidth : window.innerWidth;
+      const height = container
+        ? container.clientHeight
+        : window.visualViewport?.height || window.innerHeight;
+      if (width > 0 && height > 0) {
+        if ('aspect' in camera) {
+          (camera as THREE.PerspectiveCamera).aspect = width / height;
+          (camera as THREE.PerspectiveCamera).updateProjectionMatrix();
+        }
+        gl.setSize(width, height, false);
+      }
+    };
+
+    handleResize();
+
+    const onOrientation = () => {
+      handleResize();
+      setTimeout(handleResize, 100);
+      setTimeout(handleResize, 300);
+      setTimeout(handleResize, 500);
+    };
+
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', onOrientation);
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleResize);
+    }
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', onOrientation);
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', handleResize);
+      }
+    };
+  }, [camera, gl]);
 
   return null;
 }
@@ -170,19 +218,35 @@ export function VirtualTourClient() {
   useEffect(() => {
     const checkDeviceOrientation = () => {
       if (typeof window === 'undefined') return;
-      const touch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-      const landscape = window.innerWidth > window.innerHeight;
-      setIsTouchDevice(touch);
-      setIsLandscape(landscape);
+      const touch = 'ontouchstart' in window || (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
+      const isAngleLandscape =
+        typeof window.orientation !== 'undefined' && Math.abs(Number(window.orientation)) === 90;
+      const landscape = window.innerWidth > window.innerHeight || isAngleLandscape;
+      setIsTouchDevice(Boolean(touch));
+      setIsLandscape(Boolean(landscape));
     };
 
     checkDeviceOrientation();
+
+    const handleOrientationChange = () => {
+      checkDeviceOrientation();
+      setTimeout(checkDeviceOrientation, 100);
+      setTimeout(checkDeviceOrientation, 300);
+      setTimeout(checkDeviceOrientation, 500);
+    };
+
     window.addEventListener('resize', checkDeviceOrientation);
-    window.addEventListener('orientationchange', checkDeviceOrientation);
+    window.addEventListener('orientationchange', handleOrientationChange);
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', checkDeviceOrientation);
+    }
 
     return () => {
       window.removeEventListener('resize', checkDeviceOrientation);
-      window.removeEventListener('orientationchange', checkDeviceOrientation);
+      window.removeEventListener('orientationchange', handleOrientationChange);
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', checkDeviceOrientation);
+      }
     };
   }, []);
 
@@ -208,7 +272,53 @@ export function VirtualTourClient() {
   // UI Overlays & Modals
   const [selectedModalArtwork, setSelectedModalArtwork] = useState<Artwork | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isPseudoFullscreen, setIsPseudoFullscreen] = useState(false);
   const [isAudioPlayerExpanded, setIsAudioPlayerExpanded] = useState(false);
+
+  // Lock body & document scroll during pseudo-fullscreen (iOS Safari)
+  useEffect(() => {
+    if (isPseudoFullscreen) {
+      const origOverflow = document.body.style.overflow;
+      const origHtmlOverflow = document.documentElement.style.overflow;
+      const origTouchAction = document.body.style.touchAction;
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+      return () => {
+        document.body.style.overflow = origOverflow;
+        document.documentElement.style.overflow = origHtmlOverflow;
+        document.body.style.touchAction = origTouchAction;
+      };
+    }
+  }, [isPseudoFullscreen]);
+
+  // Non-passive touch gesture cancellation on container to stop Safari bounce/refresh
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const preventTouchGesture = (e: TouchEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (
+        target &&
+        (target.closest('button') ||
+          target.closest('input') ||
+          target.closest('a') ||
+          target.closest('[role="dialog"]') ||
+          target.closest('.overflow-y-auto'))
+      ) {
+        return;
+      }
+      if (e.cancelable) {
+        e.preventDefault();
+      }
+    };
+    el.addEventListener('touchstart', preventTouchGesture, { passive: false });
+    el.addEventListener('touchmove', preventTouchGesture, { passive: false });
+    return () => {
+      el.removeEventListener('touchstart', preventTouchGesture);
+      el.removeEventListener('touchmove', preventTouchGesture);
+    };
+  }, []);
 
   // Drag / Look / Multi-Touch interaction state
   const isPointerDownRef = useRef(false);
@@ -448,29 +558,67 @@ export function VirtualTourClient() {
   };
 
   // ─────────────────────────────────────────────────────────────
-  // Fullscreen API
+  // Fullscreen API with iOS Safari Pseudo-Fullscreen Fallback
   // ─────────────────────────────────────────────────────────────
   const toggleFullscreen = useCallback(async () => {
     try {
-      if (!document.fullscreenElement) {
-        if (containerRef.current?.requestFullscreen) await containerRef.current.requestFullscreen();
-        else if ((containerRef.current as any)?.webkitRequestFullscreen) await (containerRef.current as any).webkitRequestFullscreen();
-      } else {
-        if (document.exitFullscreen) await document.exitFullscreen();
-        else if ((document as any)?.webkitExitFullscreen) await (document as any).webkitExitFullscreen();
+      if (isPseudoFullscreen) {
+        setIsPseudoFullscreen(false);
+        setIsFullscreen(false);
+        return;
       }
-    } catch (err) { console.error('Fullscreen error:', err); }
-  }, []);
+
+      const isNativeFs = !!(
+        document.fullscreenElement ||
+        (document as any).webkitFullscreenElement
+      );
+
+      if (!isNativeFs) {
+        if (containerRef.current?.requestFullscreen) {
+          await containerRef.current.requestFullscreen();
+        } else if ((containerRef.current as any)?.webkitRequestFullscreen) {
+          await (containerRef.current as any).webkitRequestFullscreen();
+        } else {
+          // Fallback for iOS Safari (iPhone) where requestFullscreen is not supported on generic elements
+          setIsPseudoFullscreen(true);
+          setIsFullscreen(true);
+        }
+      } else {
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+        } else if ((document as any)?.webkitExitFullscreen) {
+          await (document as any).webkitExitFullscreen();
+        }
+        setIsPseudoFullscreen(false);
+      }
+    } catch (err) {
+      console.warn('Native fullscreen failed or not supported, falling back to CSS pseudo-fullscreen:', err);
+      // Fallback to CSS-based pseudo-fullscreen on devices like iPhone
+      setIsPseudoFullscreen((prev) => !prev);
+      setIsFullscreen((prev) => !prev);
+    }
+  }, [isPseudoFullscreen]);
 
   useEffect(() => {
-    const handleFSChange = () => setIsFullscreen(!!document.fullscreenElement);
+    const handleFSChange = () => {
+      const isNative = !!(
+        document.fullscreenElement ||
+        (document as any).webkitFullscreenElement
+      );
+      if (isNative) {
+        setIsFullscreen(true);
+        setIsPseudoFullscreen(false);
+      } else if (!isPseudoFullscreen) {
+        setIsFullscreen(false);
+      }
+    };
     document.addEventListener('fullscreenchange', handleFSChange);
     document.addEventListener('webkitfullscreenchange', handleFSChange);
     return () => {
       document.removeEventListener('fullscreenchange', handleFSChange);
       document.removeEventListener('webkitfullscreenchange', handleFSChange);
     };
-  }, []);
+  }, [isPseudoFullscreen]);
 
   // ─────────────────────────────────────────────────────────────
   // Computed values for HUD
@@ -499,9 +647,27 @@ export function VirtualTourClient() {
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
-      className={`dark relative w-full h-screen bg-[#070709] text-[#F5F3EC] overflow-hidden select-none touch-none transition-opacity duration-300 ${
-        isNavigating ? 'opacity-85 pointer-events-none' : 'opacity-100'
-      }`}
+      style={{
+        touchAction: 'none',
+        WebkitUserSelect: 'none',
+        userSelect: 'none',
+        WebkitTouchCallout: 'none',
+        height: '100dvh',
+        ...(isPseudoFullscreen
+          ? {
+              position: 'fixed',
+              inset: 0,
+              width: '100vw',
+              height: '100dvh',
+              zIndex: 9999,
+            }
+          : {}),
+      }}
+      className={`dark bg-[#070709] text-[#F5F3EC] overflow-hidden select-none touch-none transition-opacity duration-300 ${
+        isPseudoFullscreen
+          ? 'fixed inset-0 w-screen h-[100dvh] z-[9999]'
+          : 'relative w-full h-[100dvh] min-h-[100dvh]'
+      } ${isNavigating ? 'opacity-85 pointer-events-none' : 'opacity-100'}`}
     >
       {/* Hidden Native Audio Element for Playlist */}
       <audio ref={audioRef} src={playableAudioUrl} onEnded={handleNextTrack} preload="auto" />
@@ -512,7 +678,14 @@ export function VirtualTourClient() {
         gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
         dpr={[1, 1.5]}
         performance={{ min: 0.5 }}
+        style={{
+          touchAction: 'none',
+          width: '100%',
+          height: '100%',
+          display: 'block',
+        }}
       >
+        <CameraAndRendererResizeSync />
         <Suspense fallback={null}>
           {/* Active 60fps Native Right Joystick Look / Panning Controller */}
           <JoystickLookRigController

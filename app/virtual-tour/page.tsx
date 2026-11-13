@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 // Luxury Museum Loading Skeleton
 function VirtualTourLoader() {
   return (
-    <div className="dark w-full h-screen bg-[#070709] text-[#F5F3EC] flex flex-col items-center justify-center p-6 text-center select-none">
+    <div className="dark w-full h-[100dvh] min-h-[100dvh] bg-[#070709] text-[#F5F3EC] flex flex-col items-center justify-center p-6 text-center select-none">
       <div className="relative w-20 h-20 mb-6">
         <div className="absolute inset-0 rounded-full border-2 border-gold/20 animate-ping" />
         <div className="absolute inset-0 rounded-full border-2 border-t-gold border-r-transparent border-b-transparent border-l-transparent animate-spin" />

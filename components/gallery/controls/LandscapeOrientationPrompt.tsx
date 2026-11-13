@@ -20,21 +20,40 @@ export function LandscapeOrientationPrompt({
     const checkOrientation = () => {
       if (typeof window === 'undefined') return;
       const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-      // Portrait mode on mobile/tablet screens
-      const isPortrait = window.innerHeight > window.innerWidth;
-      // Screen width under 1024px to target mobile and tablet form factors
+      // Precise check for landscape orientation (including iOS Safari window.orientation fallback)
+      const isLandscapeAngle =
+        typeof window.orientation !== 'undefined' && Math.abs(window.orientation as number) === 90;
+      const isLandscapeDimensions = window.innerWidth > window.innerHeight;
+      const isLandscapeMode = isLandscapeAngle || isLandscapeDimensions;
+      const isPortrait = !isLandscapeMode;
+      // Screen width under 900px to target mobile and small tablet form factors
       const isMobileScreen = Math.min(window.innerWidth, window.innerHeight) < 900;
 
       setIsPortraitTouch(isTouch && isPortrait && isMobileScreen);
     };
 
     checkOrientation();
+
+    // iOS Safari animates screen dimensions after orientationchange over 100-500ms
+    const onOrientation = () => {
+      checkOrientation();
+      setTimeout(checkOrientation, 100);
+      setTimeout(checkOrientation, 300);
+      setTimeout(checkOrientation, 500);
+    };
+
     window.addEventListener('resize', checkOrientation);
-    window.addEventListener('orientationchange', checkOrientation);
+    window.addEventListener('orientationchange', onOrientation);
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', checkOrientation);
+    }
 
     return () => {
       window.removeEventListener('resize', checkOrientation);
-      window.removeEventListener('orientationchange', checkOrientation);
+      window.removeEventListener('orientationchange', onOrientation);
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', checkOrientation);
+      }
     };
   }, []);
 
@@ -48,7 +67,7 @@ export function LandscapeOrientationPrompt({
       role="dialog"
       aria-modal="true"
       aria-label="Landscape Orientation Recommendation"
-      className="fixed inset-0 z-50 flex items-center justify-center p-5 sm:p-6 bg-black/85 backdrop-blur-2xl animate-fade-in pointer-events-auto"
+      className="fixed inset-0 w-screen h-[100dvh] z-50 flex items-center justify-center p-5 sm:p-6 bg-black/85 backdrop-blur-2xl animate-fade-in pointer-events-auto"
     >
       <div className="relative max-w-sm w-full p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-[#14141a]/95 via-obsidian/95 to-[#0b0b0e]/95 border border-gold/40 shadow-[0_25px_60px_rgba(212,175,55,0.2)] flex flex-col items-center text-center gap-4 transition-all">
         {/* Subtle decorative gold light at top */}
