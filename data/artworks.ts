@@ -1,6 +1,6 @@
-export type ArtworkCategory = 'all' | 'painting' | 'sculpture' | 'ceramics' | 'design' | 'music' | 'theater';
+export type ArtworkCategory = 'all' | 'painting' | 'sculpture' | 'ceramics';
 
-export type ArtworkDepartment = 'painting' | 'sculpture' | 'mixed';
+export type ArtworkDepartment = 'painting' | 'sculpture' | 'ceramics';
 
 export interface LocalizedString {
   ckb: string;
@@ -12,65 +12,66 @@ export const DEPARTMENT_OPTIONS: { key: ArtworkDepartment; label: LocalizedStrin
   {
     key: 'painting',
     label: {
-      ckb: 'بەشی وێنەکێشان',
-      ar: 'قسم الرسم',
+      ckb: 'شێوەکاری',
+      ar: 'الفنون التشكيلية',
       en: 'Painting Department',
     },
   },
   {
     key: 'sculpture',
     label: {
-      ckb: 'بەشی پەیکەرسازی',
+      ckb: 'پەیکەرسازی',
       ar: 'قسم النحت',
       en: 'Sculpture Department',
     },
   },
   {
-    key: 'mixed',
+    key: 'ceramics',
     label: {
-      ckb: 'بابەتی تێکەڵاو',
-      ar: 'الوسائط المختلطة',
-      en: 'Mixed Media Department',
+      ckb: 'سیرامیک',
+      ar: 'قسم الخزف والسيراميك',
+      en: 'Ceramics Department',
     },
   },
 ];
 
 export const DEPARTMENT_LABELS: Record<ArtworkDepartment, LocalizedString> = {
   painting: {
-    ckb: 'بەشی وێنەکێشان',
-    ar: 'قسم الرسم',
+    ckb: 'شێوەکاری',
+    ar: 'الفنون التشكيلية',
     en: 'Painting Department',
   },
   sculpture: {
-    ckb: 'بەشی پەیکەرسازی',
+    ckb: 'پەیکەرسازی',
     ar: 'قسم النحت',
     en: 'Sculpture Department',
   },
-  mixed: {
-    ckb: 'بابەتی تێکەڵاو',
-    ar: 'الوسائط المختلطة',
-    en: 'Mixed Media Department',
+  ceramics: {
+    ckb: 'سیرامیک',
+    ar: 'قسم الخزف والسيراميك',
+    en: 'Ceramics Department',
   },
 };
 
-export function getArtworkDepartment(art: { department?: ArtworkDepartment | LocalizedString; category?: string } | null | undefined): ArtworkDepartment {
+export function getArtworkDepartment(art: { department?: ArtworkDepartment | LocalizedString | string; category?: string } | null | undefined): ArtworkDepartment {
   if (!art) return 'painting';
-  if (art.department === 'painting' || art.department === 'sculpture' || art.department === 'mixed') {
+  if (art.department === 'painting' || art.department === 'sculpture' || art.department === 'ceramics') {
     return art.department;
   }
   if (typeof art.department === 'object' && art.department !== null) {
     const ckb = (art.department?.ckb || '').toLowerCase();
     const en = (art.department?.en || '').toLowerCase();
-    if (ckb.includes('پەیکەر') || en.includes('sculpt') || art.category === 'sculpture' || art.category === 'ceramics') {
-      return 'sculpture';
+    const ar = (art.department?.ar || '').toLowerCase();
+    if (ckb.includes('سیرامیک') || en.includes('ceramic') || ar.includes('خزف') || art.category === 'ceramics') {
+      return 'ceramics';
     }
-    if (ckb.includes('تێکەڵ') || en.includes('mixed') || art.category === 'design' || art.category === 'music' || art.category === 'theater') {
-      return 'mixed';
+    if (ckb.includes('پەیکەر') || en.includes('sculpt') || ar.includes('نحت') || art.category === 'sculpture') {
+      return 'sculpture';
     }
     return 'painting';
   }
-  if (art.category === 'sculpture' || art.category === 'ceramics') return 'sculpture';
-  if (art.category === 'design' || art.category === 'music' || art.category === 'theater') return 'mixed';
+  if (art.category === 'ceramics') return 'ceramics';
+  if (art.category === 'sculpture') return 'sculpture';
   return 'painting';
 }
 
@@ -94,7 +95,7 @@ export interface Artwork {
   artistId: string;
   artistBio: LocalizedString;
   artistGraduationYear: number;
-  category: 'painting' | 'sculpture' | 'ceramics' | 'design' | 'music' | 'theater';
+  category: 'painting' | 'sculpture' | 'ceramics';
   categoryLabel: LocalizedString;
   department: ArtworkDepartment | LocalizedString;
   departmentLabel?: LocalizedString;
@@ -151,7 +152,7 @@ export const CATEGORIES: CategoryOption[] = [
       ar: 'الفن التشكيلي',
       en: 'Painting',
     },
-    count: 3,
+    count: 5,
   },
   {
     key: 'sculpture',
@@ -160,7 +161,7 @@ export const CATEGORIES: CategoryOption[] = [
       ar: 'النحت والتجسيم',
       en: 'Sculpture',
     },
-    count: 3,
+    count: 4,
   },
   {
     key: 'ceramics',
@@ -169,34 +170,7 @@ export const CATEGORIES: CategoryOption[] = [
       ar: 'الخزف الفني',
       en: 'Ceramics',
     },
-    count: 2,
-  },
-  {
-    key: 'design',
-    label: {
-      ckb: 'دیزاین و گرافیک',
-      ar: 'التصميم والطباعة',
-      en: 'Design & Prints',
-    },
-    count: 2,
-  },
-  {
-    key: 'music',
-    label: {
-      ckb: 'مۆسیقا',
-      ar: 'الموسيقى',
-      en: 'Music',
-    },
-    count: 1,
-  },
-  {
-    key: 'theater',
-    label: {
-      ckb: 'شانۆ',
-      ar: 'المسرح',
-      en: 'Theater',
-    },
-    count: 1,
+    count: 3,
   },
 ];
 
@@ -350,17 +324,9 @@ export const ARTWORKS_DATA: Artwork[] = [
     },
     artistGraduationYear: 2020,
     category: 'ceramics',
-    categoryLabel: {
-      ckb: 'سیرامیک',
-      ar: 'الخزف الفني',
-      en: 'Ceramics',
-    },
-    department: 'sculpture',
-    departmentLabel: {
-      ckb: 'بەشی سیرامیک و هونەرە ئاگرینەکان',
-      ar: 'قسم الخزف والفنون النارية',
-      en: 'Ceramics & Fire Arts Dept.',
-    },
+    categoryLabel: DEPARTMENT_LABELS.ceramics,
+    department: 'ceramics',
+    departmentLabel: DEPARTMENT_LABELS.ceramics,
     medium: {
       ckb: 'قوڕی گەرمیان، سوورکراوە لە پلەی ١٢٠٠°C بە ڕەنگی خۆڵەمێش',
       ar: 'طين كرميان المعالج، حرق بدرجة 1200 مئوية مع طلاء الرماد',
@@ -412,18 +378,10 @@ export const ARTWORKS_DATA: Artwork[] = [
       en: 'Printmaker and typography artist, recipient of the Erbil Biennial Innovation Award.',
     },
     artistGraduationYear: 2019,
-    category: 'design',
-    categoryLabel: {
-      ckb: 'دیزاین و گرافیک',
-      ar: 'التصميم والطباعة',
-      en: 'Design & Prints',
-    },
-    department: 'mixed',
-    departmentLabel: {
-      ckb: 'بابەتی تێکەڵاو',
-      ar: 'قسم التصميم الجرافيكي وفنون الطباعة',
-      en: 'Graphic Design & Printmaking Dept.',
-    },
+    category: 'painting',
+    categoryLabel: DEPARTMENT_LABELS.painting,
+    department: 'painting',
+    departmentLabel: DEPARTMENT_LABELS.painting,
     medium: {
       ckb: 'چاپکردنی لایلۆن و کالیگرافی کوردی لەسەر پەڕەی کەتان',
       ar: 'طباعة اللينوليوم مع خط كوردي على ورق الكتان المعتق',
@@ -598,17 +556,9 @@ export const ARTWORKS_DATA: Artwork[] = [
     },
     artistGraduationYear: 2019,
     category: 'ceramics',
-    categoryLabel: {
-      ckb: 'سیرامیک',
-      ar: 'الخزف الفني',
-      en: 'Ceramics',
-    },
-    department: 'sculpture',
-    departmentLabel: {
-      ckb: 'بەشی پەیکەرسازی و سیرامیک',
-      ar: 'قسم الخزف الفني',
-      en: 'Ceramics Department',
-    },
+    categoryLabel: DEPARTMENT_LABELS.ceramics,
+    department: 'ceramics',
+    departmentLabel: DEPARTMENT_LABELS.ceramics,
     medium: {
       ckb: 'تەکنیکی ڕاکۆ (Raku) لەگەڵ جامی مسین',
       ar: 'خزف راكو المختزل حرارياً مع بريق النحاس',
@@ -661,18 +611,10 @@ export const ARTWORKS_DATA: Artwork[] = [
       en: 'Calligrapher and visual systems designer exploring modern Kurdish typography.',
     },
     artistGraduationYear: 2022,
-    category: 'design',
-    categoryLabel: {
-      ckb: 'دیزاین و گرافیک',
-      ar: 'التصميم والطباعة',
-      en: 'Design & Prints',
-    },
-    department: 'mixed',
-    departmentLabel: {
-      ckb: 'بابەتی تێکەڵاو',
-      ar: 'قسم التصميم والاتصال البصري',
-      en: 'Design & Visual Communication Dept.',
-    },
+    category: 'painting',
+    categoryLabel: DEPARTMENT_LABELS.painting,
+    department: 'painting',
+    departmentLabel: DEPARTMENT_LABELS.painting,
     medium: {
       ckb: 'سیلک سککرین فرەڕەنگ لەسەر کاغەزی ئاوریشم',
       ar: 'طباعة سيلك سكرين متعددة الطبقات على ورق حريري',
@@ -828,11 +770,11 @@ export const ARTWORKS_DATA: Artwork[] = [
   },
   {
     id: 'art-011',
-    slug: 'garmian-string-reverie',
+    slug: 'garmian-ceramic-amphora',
     title: {
-      ckb: 'ئاوازی تاری گەرمیان • مەقامی بەیات',
-      ar: 'أنغام تار كرميان • مقام بيات',
-      en: 'Garmian String Reverie • Bayat Maqam',
+      ckb: 'کوزەی دێرینی گەرمیان',
+      ar: 'جرة كرميان الخزفية',
+      en: 'Garmian Ceramic Amphora',
     },
     artist: {
       ckb: 'هەڵوێست ئەحمەد عەزیز',
@@ -841,60 +783,51 @@ export const ARTWORKS_DATA: Artwork[] = [
     },
     artistId: 'halwest-ahmed-aziz',
     artistBio: {
-      ckb: 'مۆسیقاژەن و ژەنیاری ئامێری تار لە بەشی مۆسیقا؛ خاوەنی توێژینەوەی دەنگی لەسەر فۆلکلۆری ناوچەی چەمچەماڵ.',
-      ar: 'عازف تار وباحث في التراث الصوتي والمقامات الكردية في منطقة جمجمال.',
-      en: 'Master lutenist and acoustic researcher at the Music Department, specializing in Garmian folklore.',
+      ckb: 'خوێندکاری بەشی سیرامیک؛ خاوەنی توێژینەوە لەسەر قوڕ و کانزاکانی ناوچەی چەمچەماڵ و شێوازی نەریتی سوورکردنەوەی گڵینە.',
+      ar: 'فنان وباحث في قسم الخزف والسيراميك، متخصص في استخراج الطين المحلي وتقنيات الحرق التقليدي.',
+      en: 'Ceramicist and materials researcher exploring local Garmian clays and traditional kiln reduction techniques.',
     },
     artistGraduationYear: 2020,
-    category: 'music',
-    categoryLabel: {
-      ckb: 'مۆسیقا',
-      ar: 'الموسيقى',
-      en: 'Music',
-    },
-    department: 'mixed',
-    departmentLabel: {
-      ckb: 'بەشی مۆسیقا',
-      ar: 'قسم الموسيقى',
-      en: 'Music Department',
-    },
+    category: 'ceramics',
+    categoryLabel: DEPARTMENT_LABELS.ceramics,
+    department: 'ceramics',
+    departmentLabel: DEPARTMENT_LABELS.ceramics,
     medium: {
-      ckb: 'تۆماری ئاوازی دەنگ و ژەنینی تاری کلاسیکی کوردی',
-      ar: 'تسجيل موسيقي حي لآلة التار مع توثيق نغمي',
-      en: 'Acoustic Kurdish Tar Performance & Archival Master Audio',
+      ckb: 'قوڕی سوورەوەکراوی ناوچەی گەرمیان، لەعاب و جامی نەریتی',
+      ar: 'طين محلي محروق مع طبقة تزجيج حرارية تقليدية',
+      en: 'Fired terracotta clay, mineral glaze reduction',
     },
     year: 2023,
-    dimensions: 'Audio Recording • 04:05 min',
-    imageUrl: 'https://images.unsplash.com/photo-1511192336575-5a79af67a629?auto=format&fit=crop&w=1200&q=80',
-    aspectRatio: 'landscape',
+    dimensions: '42 × 30 × 30 cm',
+    imageUrl: 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=1200&q=80',
+    aspectRatio: 'portrait',
     has3DModel: false,
     featured: true,
-    audioUrl: 'https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=ambient-piano-amp-strings-10711.mp3',
-    audioDurationSeconds: 245,
     description: {
-      ckb: 'تۆمارێکی زەینی لە مەقامی کوردی بە ئامێری تاری دەستکردی دارگوێز، کە لە ستۆدیۆی تۆمارکردنی پەیمانگە ئەنجامدراوە.',
-      ar: 'تسجيل استثنائي للمقامات الكردية بآلة التار المصنوعة يدوياً من خشب الجوز، تم توثيقه في استوديو المعهد.',
-      en: 'A sublime recording of Kurdish traditional Maqam performed on a handcrafted walnut Tar, captured in the institute acoustic hall.',
+      ckb: 'کوزەیەکی هونەری تایبەت لە قوڕی سووری گەرمیان، بە شێوازی نەریتی لە کورەی پەیمانگەدا بە پلەی گەرمیی بەرز سوورکراوەتەوە.',
+      ar: 'جرة خزفية فنية مستوحاة من أواني كرميان التاريخية، نُفذت في أفران المعهد بدرجات حرارة عالية.',
+      en: 'An artistic ceramic amphora crafted from indigenous Garmian red clay, fired in the institute kiln at high temperature.',
     },
     locationInInstitute: {
-      ckb: 'ستۆدیۆی مۆسیقا و دەنگکاری، هۆڵی کۆنسێرت',
-      ar: 'استوديو الموسيقى والصوتيات، قاعة الحفلات',
-      en: 'Music & Sound Studio, Concert Pavilion',
+      ckb: 'ستۆدیۆی سیرامیک، هۆڵی پێشانگەی گڵینەکان',
+      ar: 'استوديو الخزف، قاعة معروضات الطين',
+      en: 'Ceramics Atelier, Pottery Display Gallery',
     },
-    provenancePedestal: 'STUDIO-REC-M01',
-    physicalPlaqueCode: 'CFA-2023-MU-011',
+    provenancePedestal: 'CERAMICS-VASE-C01',
+    physicalPlaqueCode: 'CFA-2023-CR-011',
     atelierTools: [
-      { ckb: 'تاری کوردی دارگوێز', ar: 'تار كوردي من خشب الجوز', en: 'Handcrafted Walnut Tar' },
+      { ckb: 'چەرخی سفالگەری و دەفرسازی', ar: 'عجلة الخزف اليدوية', en: 'Pottery Kick Wheel' },
+      { ckb: 'کورەی گەرمیی سوورکردنەوە', ar: 'فرن حرق الخزف الحراري', en: 'High-Temperature Kiln' },
     ],
     toolSlugs: [],
   },
   {
     id: 'art-012',
-    slug: 'shadows-of-the-citadel-stage',
+    slug: 'terracotta-sun-mask',
     title: {
-      ckb: 'شانۆگەری سێبەرەکانی قەڵا',
-      ar: 'مسرحية ظلال القلعة',
-      en: 'Shadows of the Citadel Stage',
+      ckb: 'پەیکەری تیشکی خۆری قەڵا',
+      ar: 'منحوتة شمس القلعة التعبيرية',
+      en: 'Citadel Sun Terracotta Mask',
     },
     artist: {
       ckb: 'دیدەن مستەفا کەریم',
@@ -903,48 +836,40 @@ export const ARTWORKS_DATA: Artwork[] = [
     },
     artistId: 'diden-mustafa-karim',
     artistBio: {
-      ckb: 'دەرهێنەر و ئەکتەری بەشی شانۆ، داهێنەری شێوازی سینۆگرافیای سێبەر و نواندنی جەستەیی لە پەیمانگە.',
-      ar: 'مخرج وممثل بقسم المسرح، رائد في السينوغرافيا التعبيرية والمسرح الحركي.',
-      en: 'Theatrical director and performer at the Theater Department, pioneering shadow scenography and physical drama.',
+      ckb: 'پەیکەرساز لە بەشی پەیکەرسازی؛ داهێنەری شێوازی تێکەڵکردنی برۆنز و گڵینەی نەریتی لە پەیمانگە.',
+      ar: 'نحات بقسم النحت، رائد في المزج بين البرونز والطين النضيج في المعهد.',
+      en: 'Sculptor at the Sculpture Department, pioneering mixed bronze and terracotta forms.',
     },
     artistGraduationYear: 2021,
-    category: 'theater',
-    categoryLabel: {
-      ckb: 'شانۆ',
-      ar: 'المسرح',
-      en: 'Theater',
-    },
-    department: 'mixed',
-    departmentLabel: {
-      ckb: 'بەشی شانۆ',
-      ar: 'قسم المسرح',
-      en: 'Theater Department',
-    },
+    category: 'sculpture',
+    categoryLabel: DEPARTMENT_LABELS.sculpture,
+    department: 'sculpture',
+    departmentLabel: DEPARTMENT_LABELS.sculpture,
     medium: {
-      ckb: 'نواندنی شانۆیی زیندوو، سینۆگرافیا و دیزاینی ڕووناکی',
-      ar: 'عرض مسرحي حي، سينوغرافيا وتصميم الإضاءة الدرامية',
-      en: 'Live Theatrical Performance, Scenography & Expressive Stage Lighting',
+      ckb: 'پەیکەری برۆنز و بەردی بازاڵتی سروشتی',
+      ar: 'برونز مصبوب وقاعدة من حجر البازلت الطبيعي',
+      en: 'Cast Bronze on Natural Basalt Plinth',
     },
     year: 2023,
-    dimensions: 'Stage Production • 65 min',
-    imageUrl: 'https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=1200&q=80',
-    aspectRatio: 'landscape',
+    dimensions: '75 × 45 × 35 cm',
+    imageUrl: 'https://images.unsplash.com/photo-1544967082-d9d25d867d66?auto=format&fit=crop&w=1200&q=80',
+    aspectRatio: 'portrait',
     has3DModel: false,
     featured: true,
     description: {
-      ckb: 'شانۆگەرییەکی درامی بەهێز کە لە هۆڵی شانۆی گەورەی پەیمانگە نمایشکرا؛ گێڕانەوەی قوربانیدانی گەلی کورد بە زمانی جەستە و سێبەر.',
-      ar: 'عمل مسرحي تعبيري عُرض على مسرح المعهد الرئيسي؛ يجسد ذاكرة الصمود عبر السينوغرافيا الحركية ولغة الإضاءة.',
-      en: 'A powerful theatrical production staged at the institute main theater hall; dramatizing historic resilience via expressive scenography and shadow play.',
+      ckb: 'پەیکەرێکی مۆدێرن کە گێڕانەوەی ڕووناکی و قوربانیدانی مێژوویی ناوچەکەیە لە ڕێگەی فۆرمی برۆنزی ئاڵۆز و بەردی سروشتی.',
+      ar: 'منحوتة برونزية تعبيرية تجسد ثيمات النور والذاكرة التاريخية من خلال تشكيلات بصرية حرة.',
+      en: 'An expressive cast bronze sculpture capturing motifs of illumination and historic memory on a raw basalt base.',
     },
     locationInInstitute: {
-      ckb: 'هۆڵی سەرەکی شانۆی پەیمانگە، سەکۆی ئازادی',
-      ar: 'المسرح الرئيسي للمعهد، منصة الحرية',
-      en: 'Main Theater Hall, Liberty Proscenium',
+      ckb: 'هۆڵی سەرەکی پەیکەرسازی، سەکۆی ئازادی',
+      ar: 'قاعة النحت الكبرى، منصة الحرية',
+      en: 'Sculpture Grand Gallery, Freedom Plinth',
     },
-    provenancePedestal: 'THEATER-STAGE-T01',
-    physicalPlaqueCode: 'CFA-2023-TH-012',
+    provenancePedestal: 'SCULPTURE-PLINTH-S03',
+    physicalPlaqueCode: 'CFA-2023-SC-012',
     atelierTools: [
-      { ckb: 'ڕووناکی سینۆگرافیای شانۆیی', ar: 'إضاءة مسرحية درامية', en: 'Theatrical Spotlights' },
+      { ckb: 'چەکوشی پەیکەرسازی و سکارپێل', ar: 'أزاميل النحت الاحترافية', en: 'Sculpting Chisels' },
     ],
     toolSlugs: [],
   },

@@ -472,7 +472,7 @@ export default function AdminDashboardPage() {
               </div>
 
               <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
-                {['all', 'painting', 'sculpture', 'ceramics', 'design'].map((dept) => (
+                {['all', 'painting', 'sculpture', 'ceramics'].map((dept) => (
                   <button
                     key={dept}
                     onClick={() => setSelectedArtDept(dept)}

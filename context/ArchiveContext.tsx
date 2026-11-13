@@ -48,7 +48,7 @@ export interface GallerySettings {
   ambientTracks: AmbientTrack[];
 }
 
-export type DepartmentId = 'painting' | 'music' | 'theater';
+export type DepartmentId = 'painting' | 'sculpture' | 'ceramics';
 
 export interface DepartmentConfig {
   id: DepartmentId;
@@ -113,33 +113,33 @@ const ArchiveContext = createContext<ArchiveContextType | undefined>(undefined);
 
 // ── Storage Keys (Curator Auth & Local Customizations) ─────────────
 const GALLERY_SETTINGS_STORAGE_KEY = 'chamchamal_curated_gallery_settings_v4';
-const DEPARTMENTS_CONFIG_STORAGE_KEY = 'chamchamal_curated_departments_config_v4';
+const DEPARTMENTS_CONFIG_STORAGE_KEY = 'chamchamal_curated_departments_config_v5';
 const AUTH_STORAGE_KEY = 'chamchamal_curator_session_token';
 
 export const DEFAULT_DEPARTMENTS_CONFIG: Record<DepartmentId, DepartmentConfig> = {
   painting: {
     id: 'painting',
     title: 'شێوەکاری',
-    subtitle: 'شێوەکاری و هونەری بینراو',
-    badgeText: 'شاکارەکانی کانڤاس و بەرد',
-    description: 'شێوەکاری ئەکادیمی، پەیکەرسازی، سیرامیک و گرافیک دیزاینی هاوچەرخ',
+    subtitle: 'ڕەنگ و هێڵەکان بۆ گێڕانەوەی چیرۆکەکان',
+    badgeText: 'بەشی شێوەکاری',
+    description: 'ڕەنگ و هێڵەکان یەکدەگرن بۆ گێڕانەوەی چیرۆکەکان',
     coverImage: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1200&q=80',
   },
-  music: {
-    id: 'music',
-    title: 'مۆسیقا',
-    subtitle: 'ئاواز و ژەنینی ئامێرەکان',
-    badgeText: 'ئاوازی تاری گەرمیان',
-    description: 'تۆماری ئاوازە دێرینەکانی گەرمیان، ژەنینی تاری کوردی و مەقاماتی ڕەسەن',
-    coverImage: 'https://images.unsplash.com/photo-1511192336575-5a79af67a629?auto=format&fit=crop&w=1200&q=80',
+  sculpture: {
+    id: 'sculpture',
+    title: 'پەیکەرسازی',
+    subtitle: 'بەرجەستەکردنی هەستەکان لەناو بەرد و ماددەکاندا',
+    badgeText: 'بەشی پەیکەرسازی',
+    description: 'بەرجەستەکردنی هەستەکان لەناو بەرد و ماددەکاندا',
+    coverImage: 'https://images.unsplash.com/photo-1544967082-d9d25d867d66?auto=format&fit=crop&w=1200&q=80',
   },
-  theater: {
-    id: 'theater',
-    title: 'شانۆ',
-    subtitle: 'نواندن، دراما و سینۆگرافیا',
-    badgeText: 'نمایشی زیندووی سەکۆ',
-    description: 'شانۆگەری درامی، نواندنی جەستەیی، دەرهێنان و دیمەنکاری سینۆگرافیا',
-    coverImage: 'https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=1200&q=80',
+  ceramics: {
+    id: 'ceramics',
+    title: 'سیرامیک',
+    subtitle: 'هونەری گۆڕینی قوڕ بۆ شاکاری نەمر بە یارمەتی ئاگر',
+    badgeText: 'بەشی سیرامیک',
+    description: 'هونەری گۆڕینی قوڕ بۆ شاکاری نەمر بە یارمەتی ئاگر',
+    coverImage: 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=1200&q=80',
   },
 };
 

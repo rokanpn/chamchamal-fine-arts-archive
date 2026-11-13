@@ -14,24 +14,22 @@ import { FileUploadDropzone } from '@/components/admin/FileUploadDropzone';
 import { SafeImage } from '@/components/ui/SafeImage';
 import { 
   Palette, 
-  Music, 
-  Theater, 
+  Box, 
   Save, 
   RotateCcw, 
   CheckCircle2, 
   Sparkles, 
   Eye, 
   Layers, 
-  ExternalLink,
-  Volume2,
-  ArrowRight,
-  ArrowLeft
+  ExternalLink, 
+  ArrowRight, 
+  ArrowLeft 
 } from 'lucide-react';
 
 const DEPT_ICONS: Record<DepartmentId, React.ComponentType<{ className?: string }>> = {
   painting: Palette,
-  music: Music,
-  theater: Theater,
+  sculpture: Box,
+  ceramics: Sparkles,
 };
 
 const DEPT_PRESETS: Record<DepartmentId, { label: string; url: string }[]> = {
@@ -45,36 +43,36 @@ const DEPT_PRESETS: Record<DepartmentId, { label: string; url: string }[]> = {
       url: 'https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?auto=format&fit=crop&w=1200&q=80',
     },
     {
-      label: 'پەیکەرسازی و فۆرمی مۆدێرن',
+      label: 'تابلۆی سروشتی گەرمیان',
+      url: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=1200&q=80',
+    },
+  ],
+  sculpture: [
+    {
+      label: 'پەیکەرسازی و فۆرمی برۆنز',
+      url: 'https://images.unsplash.com/photo-1544967082-d9d25d867d66?auto=format&fit=crop&w=1200&q=80',
+    },
+    {
+      label: 'نەخشاندنی بەردی مێژوویی',
       url: 'https://images.unsplash.com/photo-1547891654-e66ed7ebb968?auto=format&fit=crop&w=1200&q=80',
     },
-  ],
-  music: [
     {
-      label: 'تاری کوردی و ئامێرە تەلییەکان',
-      url: 'https://images.unsplash.com/photo-1511192336575-5a79af67a629?auto=format&fit=crop&w=1200&q=80',
-    },
-    {
-      label: 'ستۆدیۆی ئەکادیمی دەنگ و ئاواز',
-      url: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=1200&q=80',
-    },
-    {
-      label: 'نۆتە و ژەنینی مۆسیقای کلاسیک',
-      url: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1200&q=80',
+      label: 'هۆڵی پەیکەرسازی پەیمانگە',
+      url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1200&q=80',
     },
   ],
-  theater: [
+  ceramics: [
     {
-      label: 'سەکۆی نمایشی درامی و سینۆگرافیا',
-      url: 'https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=1200&q=80',
+      label: 'گڵینە و کوزەی نەریتی گەرمیان',
+      url: 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=1200&q=80',
     },
     {
-      label: 'ڕووناکی و شانۆی هاوچەرخ',
-      url: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1200&q=80',
+      label: 'هونەری سوورکردنەوەی سیرامیک لە فڕن',
+      url: 'https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?auto=format&fit=crop&w=1200&q=80',
     },
     {
-      label: 'هۆڵی نمایشی ئەکتەران',
-      url: 'https://images.unsplash.com/photo-1503095396549-807759245b35?auto=format&fit=crop&w=1200&q=80',
+      label: 'چەرخی سفالگەری و دەفرسازی',
+      url: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=1200&q=80',
     },
   ],
 };
@@ -115,12 +113,7 @@ function LivePreviewCard({
           <span className="text-[11px] font-semibold">{config.badgeText || 'دەقی باج'}</span>
         </div>
 
-        {deptId === 'music' && (
-          <div className="absolute top-3.5 end-3.5 z-10 flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/25 border border-amber-500/40 text-amber-300 text-[10px] font-mono backdrop-blur-md">
-            <Volume2 className="w-3 h-3 text-amber-300 animate-pulse" />
-            <span>AUDIO</span>
-          </div>
-        )}
+        
       </div>
 
       {/* Card Content Body */}
@@ -131,7 +124,7 @@ function LivePreviewCard({
               {config.subtitle || 'ژێرناو'}
             </span>
             <span className="text-[10px] font-mono text-white/40">
-              {deptId === 'painting' ? '01' : deptId === 'music' ? '02' : '03'}
+              {deptId === 'painting' ? '01' : deptId === 'sculpture' ? '02' : '03'}
             </span>
           </div>
 
@@ -190,48 +183,28 @@ export function DepartmentConfigEditor() {
     setFormData(current);
   }, [selectedDeptId, departmentsConfig]);
 
-  // Compute live department counts
-  const paintingWorksCount = artworks.filter((a) =>
-    ['painting', 'sculpture', 'ceramics', 'design'].includes(a.category) ||
-    /شێوەکاری|پەیکەرسازی|سیرامیک|دیزاین/i.test(getArtworkDepartmentLabel(a.departmentLabel || a.department, 'ckb'))
-  ).length;
-  const paintingStudentsCount = students.filter(
-    (s) =>
-      /شێوەکاری|پەیکەرسازی|سیرامیک|دیزاین|painting|sculpture|ceramics|design/i.test(
-        s?.department?.ckb || s?.department?.en || ''
-      ) || !/مۆسیقا|شانۆ/i.test(s?.department?.ckb || s?.department?.en || '')
-  ).length;
+    // Compute live department counts
+  const paintingWorksCount = artworks.filter((a) => a.department === 'painting' || a.category === 'painting').length;
+  const sculptureWorksCount = artworks.filter((a) => a.department === 'sculpture' || a.category === 'sculpture').length;
+  const ceramicsWorksCount = artworks.filter((a) => a.department === 'ceramics' || a.category === 'ceramics').length;
 
-  const musicWorksCount = artworks.filter(
-    (a) =>
-      a?.category === 'music' ||
-      /مۆسیقا|دەنگ|تار|music/i.test(getArtworkDepartmentLabel(a?.departmentLabel || a?.department, 'ckb')) ||
-      Boolean(a?.audioUrl)
-  ).length;
-  const musicStudentsCount = students.filter((s) => /مۆسیقا|music/i.test(s?.department?.ckb || s?.department?.en || '')).length;
-
-  const theaterWorksCount = artworks.filter(
-    (a) =>
-      a?.category === 'theater' ||
-      /شانۆ|دراما|theater|theatre/i.test(getArtworkDepartmentLabel(a?.departmentLabel || a?.department, 'ckb'))
-  ).length;
-  const theaterStudentsCount = students.filter((s) =>
-    /شانۆ|theater|theatre/i.test(s?.department?.ckb || s?.department?.en || '')
-  ).length;
+  const paintingStudentsCount = students.filter((s) => /painting|شێوەکاری/i.test(s?.department?.en || s?.department?.ckb || '')).length;
+  const sculptureStudentsCount = students.filter((s) => /sculpture|پەیکەر/i.test(s?.department?.en || s?.department?.ckb || '')).length;
+  const ceramicsStudentsCount = students.filter((s) => /ceramic|سیرامیک/i.test(s?.department?.en || s?.department?.ckb || '')).length;
 
   const currentWorksCount =
     selectedDeptId === 'painting'
       ? paintingWorksCount
-      : selectedDeptId === 'music'
-      ? musicWorksCount
-      : theaterWorksCount;
+      : selectedDeptId === 'sculpture'
+      ? sculptureWorksCount
+      : ceramicsWorksCount;
 
   const currentStudentsCount =
     selectedDeptId === 'painting'
       ? paintingStudentsCount
-      : selectedDeptId === 'music'
-      ? musicStudentsCount
-      : theaterStudentsCount;
+      : selectedDeptId === 'sculpture'
+      ? sculptureStudentsCount
+      : ceramicsStudentsCount;
 
   const handleSave = () => {
     updateDepartmentConfig(selectedDeptId, formData);
@@ -263,20 +236,20 @@ export function DepartmentConfigEditor() {
     {
       id: 'painting',
       title: departmentsConfig?.painting?.title || 'شێوەکاری',
-      defaultSubtitle: 'شێوەکاری و هونەری بینراو',
+      defaultSubtitle: 'ڕەنگ و هێڵەکان بۆ گێڕانەوەی چیرۆکەکان',
       icon: Palette,
     },
     {
-      id: 'music',
-      title: departmentsConfig?.music?.title || 'مۆسیقا',
-      defaultSubtitle: 'ئاواز و ژەنینی ئامێرەکان',
-      icon: Music,
+      id: 'sculpture',
+      title: departmentsConfig?.sculpture?.title || 'پەیکەرسازی',
+      defaultSubtitle: 'بەرجەستەکردنی هەستەکان لەناو بەرد و ماددەکاندا',
+      icon: Box,
     },
     {
-      id: 'theater',
-      title: departmentsConfig?.theater?.title || 'شانۆ',
-      defaultSubtitle: 'نواندن، دراما و سینۆگرافیا',
-      icon: Theater,
+      id: 'ceramics',
+      title: departmentsConfig?.ceramics?.title || 'سیرامیک',
+      defaultSubtitle: 'هونەری گۆڕینی قوڕ بۆ شاکاری نەمر بە یارمەتی ئاگر',
+      icon: Sparkles,
     },
   ];
 

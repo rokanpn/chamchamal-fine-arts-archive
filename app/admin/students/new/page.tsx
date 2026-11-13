@@ -53,7 +53,7 @@ export default function NewStudentPage() {
   const [fullNameAr, setFullNameAr] = useState('');
   const [fullNameEn, setFullNameEn] = useState('');
 
-  const [departmentKey, setDepartmentKey] = useState<'painting' | 'sculpture' | 'ceramics' | 'design'>('painting');
+  const [departmentKey, setDepartmentKey] = useState<'painting' | 'sculpture' | 'ceramics'>('painting');
   const [graduationYear, setGraduationYear] = useState(new Date().getFullYear());
 
   const [avatarUrl, setAvatarUrl] = useState(PRESET_AVATARS[0]);
@@ -322,7 +322,6 @@ export default function NewStudentPage() {
                   { key: 'painting', labelCkb: 'شێوەکاری', labelEn: 'Painting', icon: '🎨' },
                   { key: 'sculpture', labelCkb: 'پەیکەرسازی', labelEn: 'Sculpture', icon: '🗿' },
                   { key: 'ceramics', labelCkb: 'سیرامیک', labelEn: 'Ceramics', icon: '🏺' },
-                  { key: 'design', labelCkb: 'دیزاین و گرافیک', labelEn: 'Design', icon: '📐' },
                 ].map((dept) => (
                   <button
                     key={dept.key}

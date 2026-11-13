@@ -236,9 +236,9 @@ export const STUDENTS_DATA: StudentArtist[] = [
       en: 'Soran Faiq Majeed',
     },
     department: {
-      ckb: 'بەشی گرافیک دیزاین و چاپ',
-      ar: 'قسم التصميم الجرافيكي وفنون الطباعة',
-      en: 'Graphic Design & Printmaking Dept.',
+      ckb: 'بەشی شێوەکاری',
+      ar: 'قسم الفن التشكيلي',
+      en: 'Painting Department',
     },
     graduationYear: 2019,
     cohort: {
@@ -407,9 +407,9 @@ export const STUDENTS_DATA: StudentArtist[] = [
       en: 'Halwest Ahmed Aziz',
     },
     department: {
-      ckb: 'بەشی مۆسیقا',
-      ar: 'قسم الموسيقى',
-      en: 'Music Department',
+      ckb: 'بەشی سیرامیک',
+      ar: 'قسم الخزف والسيراميك',
+      en: 'Ceramics Department',
     },
     graduationYear: 2020,
     cohort: {
@@ -462,9 +462,9 @@ export const STUDENTS_DATA: StudentArtist[] = [
       en: 'Diden Mustafa Karim',
     },
     department: {
-      ckb: 'بەشی شانۆ',
-      ar: 'قسم المسرح',
-      en: 'Theater Department',
+      ckb: 'بەشی پەیکەرسازی',
+      ar: 'قسم النحت',
+      en: 'Sculpture Department',
     },
     graduationYear: 2021,
     cohort: {

@@ -252,7 +252,6 @@ export function ArtworkEditClient({ slug }: ArtworkEditClientProps) {
       painting: { ckb: 'شێوەکاری', ar: 'رسم تشكيلي', en: 'Painting' },
       sculpture: { ckb: 'پەیکەرسازی', ar: 'نحت وتجسيم', en: 'Sculpture' },
       ceramics: { ckb: 'سیرامیک', ar: 'خزف فني', en: 'Ceramics' },
-      design: { ckb: 'دیزاین و گرافیک', ar: 'تصميم وجرافيك', en: 'Design & Graphics' },
     };
 
     const updatedData: Partial<Artwork> = {
@@ -588,16 +587,14 @@ export function ArtworkEditClient({ slug }: ArtworkEditClientProps) {
                           ? 'painting'
                           : nextDept === 'sculpture'
                           ? 'sculpture'
-                          : prev.category === 'painting' || prev.category === 'sculpture'
-                          ? 'design'
-                          : prev.category,
+                          : 'ceramics',
                     }));
                   }}
                   className="w-full px-3 py-2 rounded-xl bg-black/50 border border-gold/40 text-xs text-parchment outline-none focus:border-gold font-medium"
                 >
-                  <option value="painting">بەشی وێنەکێشان (Painting Hall)</option>
+                  <option value="painting">بەشی شێوەکاری (Painting Hall)</option>
                   <option value="sculpture">بەشی پەیکەرسازی (Sculpture Rotunda)</option>
-                  <option value="mixed">بابەتی تێکەڵاو (Mixed Media Gallery)</option>
+                  <option value="ceramics">بەشی سیرامیک (Ceramics Atelier)</option>
                 </select>
               </div>
 
@@ -613,9 +610,6 @@ export function ArtworkEditClient({ slug }: ArtworkEditClientProps) {
                   <option value="painting">Painting / شێوەکاری</option>
                   <option value="sculpture">Sculpture / پەیکەرسازی</option>
                   <option value="ceramics">Ceramics / سیرامیک</option>
-                  <option value="design">Design & Graphics / گرافیک</option>
-                  <option value="music">Music / مۆسیقا</option>
-                  <option value="theater">Theater / شانۆ</option>
                 </select>
               </div>
 

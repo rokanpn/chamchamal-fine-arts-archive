@@ -98,14 +98,14 @@ export function VirtualTourClient() {
     const sculpts = artworks.filter(
       (a) => a.department === 'sculpture' || getArtworkDepartment(a) === 'sculpture'
     );
-    return sculpts.length > 0 ? sculpts : artworks.filter((a) => a.category === 'sculpture' || a.category === 'ceramics');
+    return sculpts.length > 0 ? sculpts : artworks.filter((a) => a.category === 'sculpture');
   }, [artworks]);
 
   const mixedArtworks = useMemo(() => {
-    const mixed = artworks.filter(
-      (a) => a.department === 'mixed' || getArtworkDepartment(a) === 'mixed'
+    const ceramics = artworks.filter(
+      (a) => a.department === 'ceramics' || getArtworkDepartment(a) === 'ceramics'
     );
-    return mixed.length > 0 ? mixed : artworks.filter((a) => a.category === 'design' || a.category === 'music' || a.category === 'theater');
+    return ceramics.length > 0 ? ceramics : artworks.filter((a) => a.category === 'ceramics');
   }, [artworks]);
 
   const activeArtworksList = useMemo(() => {

@@ -30,10 +30,14 @@ export interface DashboardTranslation {
   historicalOverlayDepts: string;
   paintingTitle: string;
   paintingDesc: string;
-  musicTitle: string;
-  musicDesc: string;
-  theaterTitle: string;
-  theaterDesc: string;
+  sculptureTitle?: string;
+  sculptureDesc?: string;
+  ceramicsTitle?: string;
+  ceramicsDesc?: string;
+  musicTitle?: string;
+  musicDesc?: string;
+  theaterTitle?: string;
+  theaterDesc?: string;
   alumniCount: string;
   worksCount: string;
   exploreDept: string;

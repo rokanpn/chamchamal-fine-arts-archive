@@ -13,9 +13,8 @@ import {
   ArrowRight, 
   Sparkles, 
   Palette, 
-  Music, 
+  Box, 
   Layers, 
-  Theater,
   Search,
   Filter
 } from 'lucide-react';
@@ -25,7 +24,7 @@ export function ArtworksDirectoryClient() {
   const { t, locale, isRTL } = useLanguage();
   const searchParams = useSearchParams();
 
-  // Selected department filter from query param: ?dept=painting | music | theater
+  // Selected department filter from query param: ?dept=painting | sculpture | ceramics
   const initialDept = searchParams?.get('dept')?.toLowerCase() || 'all';
   const [selectedDept, setSelectedDept] = useState<string>(initialDept);
   const [searchQuery, setSearchQuery] = useState('');
@@ -38,7 +37,7 @@ export function ArtworksDirectoryClient() {
     }
   }, [searchParams]);
 
-  // Department Filters List
+  // Department Filters List (Strictly 3 Academic Departments)
   const departmentsList = useMemo(() => [
     {
       id: 'all',
@@ -54,27 +53,27 @@ export function ArtworksDirectoryClient() {
       label: {
         ckb: 'شێوەکاری',
         ar: 'الفنون التشكيلية',
-        en: 'Painting & Fine Arts',
+        en: 'Painting',
       },
       icon: Palette,
     },
     {
-      id: 'music',
+      id: 'sculpture',
       label: {
-        ckb: 'مۆسیقا',
-        ar: 'الموسيقى',
-        en: 'Music & Sound',
+        ckb: 'پەیکەرسازی',
+        ar: 'النحت والتجسيم',
+        en: 'Sculpture',
       },
-      icon: Music,
+      icon: Box,
     },
     {
-      id: 'theater',
+      id: 'ceramics',
       label: {
-        ckb: 'شانۆ',
-        ar: 'المسرح',
-        en: 'Dramatic Arts & Theater',
+        ckb: 'سیرامیک',
+        ar: 'الخزف والسيراميك',
+        en: 'Ceramics',
       },
-      icon: Theater,
+      icon: Sparkles,
     },
   ], []);
 
@@ -83,23 +82,13 @@ export function ArtworksDirectoryClient() {
     return artworks.filter((item) => {
       // 1. Department Filter
       if (selectedDept !== 'all') {
-        const itemDeptLabel = getArtworkDepartmentLabel(item.departmentLabel || item.department, 'ckb');
         const itemDeptCode = getArtworkDepartment(item);
         if (selectedDept === 'painting' || selectedDept === 'shewakari' || selectedDept === 'شێوەکاری') {
-          const match = ['painting', 'sculpture', 'ceramics', 'design'].includes(item.category) ||
-            itemDeptCode === 'painting' ||
-            itemDeptCode === 'sculpture' ||
-            /شێوەکاری|پەیکەرسازی|سیرامیک|دیزاین/i.test(itemDeptLabel);
-          if (!match) return false;
-        } else if (selectedDept === 'music' || selectedDept === 'مۆسیقا' || selectedDept === 'موسيقى') {
-          const match = item.category === 'music' ||
-            /مۆسیقا|دەنگ|تار|music/i.test(itemDeptLabel) ||
-            Boolean(item.audioUrl);
-          if (!match) return false;
-        } else if (selectedDept === 'theater' || selectedDept === 'theatre' || selectedDept === 'شانۆ' || selectedDept === 'مسرح') {
-          const match = item.category === 'theater' ||
-            /شانۆ|دراما|theater|theatre/i.test(itemDeptLabel);
-          if (!match) return false;
+          if (itemDeptCode !== 'painting' && item.category !== 'painting') return false;
+        } else if (selectedDept === 'sculpture' || selectedDept === 'پەیکەرسازی') {
+          if (itemDeptCode !== 'sculpture' && item.category !== 'sculpture') return false;
+        } else if (selectedDept === 'ceramics' || selectedDept === 'سیرامیک') {
+          if (itemDeptCode !== 'ceramics' && item.category !== 'ceramics') return false;
         }
       }
 
@@ -156,10 +145,10 @@ export function ArtworksDirectoryClient() {
             </div>
             <p className="text-xs sm:text-sm text-museum-secondary mt-1 max-w-2xl">
               {locale === 'ckb'
-                ? 'کۆکراوەی سەرجەم بەرهەمە هونەرییەکان، تۆمارە دەنگییەکان و دۆکیۆمێنتەکانی سێ بەشە ڕەسەنەکەی پەیمانگە.'
+                ? 'کۆکراوەی سەرجەم بەرهەمە هونەرییەکان و دۆکیۆمێنتەکانی سێ بەشە سەرەکییەکەی پەیمانگە (شێوەکاری، پەیکەرسازی، سیرامیک).'
                 : locale === 'ar'
-                ? 'المجموعة الكاملة للأعمال الفنية، التسجيلات الصوتية ووثائق الأقسام الثلاثة للمعهد.'
-                : 'Complete repository of artistic works, audio performances, and archival documentations across the 3 historic institute departments.'}
+                ? 'المجموعة الكاملة للأعمال الفنية ووثائق الأقسام الأكاديمية الثلاثة للمعهد (الفنون التشكيلية، النحت، الخزف).'
+                : 'Complete repository of artistic works and archival documentation across the 3 historic institute departments (Painting, Sculpture, Ceramics).'}
             </p>
           </div>
 

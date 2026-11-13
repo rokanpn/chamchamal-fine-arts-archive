@@ -140,7 +140,7 @@ export function mapSupabaseRowToArtwork(row: any): Artwork {
   };
 
   const deptCode: ArtworkDepartment =
-    row.department === 'sculpture' || row.department === 'mixed' ? row.department : 'painting';
+    row.department === 'sculpture' || row.department === 'ceramics' ? row.department : 'painting';
 
   const titleObj = parseLocal(row.title, 'Archival Artwork');
   const artistObj = parseLocal(row.artist, 'Institute Artist');
@@ -164,7 +164,7 @@ export function mapSupabaseRowToArtwork(row: any): Artwork {
       : 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1200&q=80';
 
   const category =
-    row.category || (deptCode === 'sculpture' ? 'sculpture' : deptCode === 'mixed' ? 'design' : 'painting');
+    row.category || (deptCode === 'sculpture' ? 'sculpture' : deptCode === 'ceramics' ? 'ceramics' : 'painting');
 
   const rawW = row.width_cm != null ? Number(row.width_cm) : undefined;
   const rawH = row.height_cm != null ? Number(row.height_cm) : undefined;

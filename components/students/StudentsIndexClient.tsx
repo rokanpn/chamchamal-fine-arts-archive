@@ -27,18 +27,17 @@ export function StudentsIndexClient() {
       { key: 'painting', label: { ckb: 'شێوەکاری', ar: 'الفن التشكيلي', en: 'Painting' } },
       { key: 'sculpture', label: { ckb: 'پەیکەرسازی', ar: 'النحت', en: 'Sculpture' } },
       { key: 'ceramics', label: { ckb: 'سیرامیک', ar: 'الخزف', en: 'Ceramics' } },
-      { key: 'design', label: { ckb: 'دیزاین و چاپ', ar: 'التصميم والطباعة', en: 'Design & Prints' } },
     ];
   }, []);
 
   const filteredStudents = useMemo(() => {
     if (selectedDept === 'all') return STUDENTS_DATA;
     return STUDENTS_DATA.filter((s) => {
-      const deptEn = s.department.en.toLowerCase();
-      if (selectedDept === 'painting') return deptEn.includes('painting');
-      if (selectedDept === 'sculpture') return deptEn.includes('sculpture');
-      if (selectedDept === 'ceramics') return deptEn.includes('ceramics');
-      if (selectedDept === 'design') return deptEn.includes('design') || deptEn.includes('print');
+      const deptEn = (s?.department?.en || '').toLowerCase();
+      const deptCkb = (s?.department?.ckb || '').toLowerCase();
+      if (selectedDept === 'painting') return deptEn.includes('painting') || deptCkb.includes('شێوەکاری');
+      if (selectedDept === 'sculpture') return deptEn.includes('sculpture') || deptCkb.includes('پەیکەر');
+      if (selectedDept === 'ceramics') return deptEn.includes('ceramic') || deptCkb.includes('سیرامیک');
       return true;
     });
   }, [selectedDept]);

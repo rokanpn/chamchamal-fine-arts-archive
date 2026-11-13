@@ -4,7 +4,7 @@ export type {
   ContactPlatform 
 } from '@/data/students';
 
-export type ArtworkDepartment = 'painting' | 'sculpture' | 'mixed';
+export type ArtworkDepartment = 'painting' | 'sculpture' | 'ceramics';
 
 export interface CuratorUser {
   id: string;
@@ -23,7 +23,7 @@ export interface IngestionFormData {
 
   // Curatorial Artist & Department
   artistId?: string;
-  category?: 'painting' | 'sculpture' | 'ceramics' | 'design' | 'music' | 'theater';
+  category?: 'painting' | 'sculpture' | 'ceramics';
   department?: ArtworkDepartment;
 
   // Physical Medium & Spec
