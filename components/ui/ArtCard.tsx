@@ -78,11 +78,11 @@ export function ArtCard({ artwork, index }: ArtCardProps) {
             transformStyle: 'preserve-3d',
           }}
           whileTap={{ scale: 0.98 }}
-          className="group relative flex flex-col rounded-xl sm:rounded-2xl bg-white dark:bg-obsidian-surface/80 border border-stone-200/80 dark:border-museum-border hover:border-gold/50 dark:hover:border-gold/50 shadow-sm dark:shadow-art-card hover:shadow-md dark:hover:shadow-gold-glow transition-all duration-300 overflow-hidden cursor-pointer backdrop-blur-xl"
+          className="group relative flex flex-col rounded-lg sm:rounded-2xl bg-white dark:bg-obsidian-surface/80 border border-stone-200/80 dark:border-museum-border hover:border-gold/50 dark:hover:border-gold/50 shadow-sm dark:shadow-art-card hover:shadow-md dark:hover:shadow-gold-glow transition-all duration-300 overflow-hidden cursor-pointer backdrop-blur-xl"
         >
           {/* Dynamic Specular Glare / Sheen Follower */}
           <motion.div
-            className="pointer-events-none absolute -inset-px rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-30"
+            className="pointer-events-none absolute -inset-px rounded-lg sm:rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-30"
             style={{
               background: `radial-gradient(circle 280px at ${glareX} ${glareY}, rgba(212, 175, 55, 0.16), transparent 70%)`,
             }}
@@ -91,34 +91,34 @@ export function ArtCard({ artwork, index }: ArtCardProps) {
           {/* Top Fine Border Specular Line */}
           <div className="absolute inset-x-8 top-0 h-[1px] bg-gradient-to-r from-transparent via-stone-400/20 dark:via-white/15 to-transparent pointer-events-none z-20" />
 
-          {/* Image Container with Dynamic Aspect Ratio */}
-          <div className="relative w-full aspect-[4/3] overflow-hidden bg-stone-100 dark:bg-obsidian-elevated flex items-center justify-center p-2">
+          {/* Image Container with Dynamic Aspect Ratio (Square on mobile 3-col grid, 4:3 on desktop) */}
+          <div className="relative w-full aspect-square sm:aspect-[4/3] overflow-hidden bg-stone-100 dark:bg-obsidian-elevated flex items-center justify-center p-1 sm:p-2">
             <SafeImage
               src={artwork.imageUrl}
               alt={title}
               fill
               priority={index < 3}
-              className="object-contain object-center p-1 transition-transform duration-700 ease-out group-hover:scale-105"
+              className="object-contain object-center p-0.5 sm:p-1 transition-transform duration-700 ease-out group-hover:scale-105"
             />
 
             {/* Liquid Vignette Gradient over image */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-transparent z-10" />
 
             {/* Top Floating Badges */}
-            <div className="absolute top-1.5 sm:top-3 inset-x-1.5 sm:inset-x-3 z-20 flex items-center justify-between pointer-events-none gap-1">
+            <div className="absolute top-1 sm:top-2.5 inset-x-1 sm:inset-x-2.5 z-20 flex items-center justify-between pointer-events-none gap-0.5 sm:gap-1">
               {/* Category Pill */}
-              <span className="px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[8px] sm:text-[10px] font-medium tracking-wide bg-black/65 text-parchment-pure border border-white/10 backdrop-blur-md shadow-glass-pill truncate max-w-[55%] sm:max-w-none">
+              <span className="px-1 sm:px-2 py-0.2 sm:py-0.5 rounded-full text-[7px] sm:text-[9px] md:text-[10px] font-medium tracking-tight sm:tracking-wide bg-black/70 text-parchment-pure border border-white/10 backdrop-blur-md shadow-glass-pill truncate max-w-[55%] sm:max-w-none">
                 {categoryLabel}
               </span>
 
               {/* 3D / AR Indicator Badge */}
               {artwork.has3DModel ? (
-                <span className="inline-flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[8px] sm:text-[10px] font-bold tracking-wider bg-gold/25 text-gold-shimmer border border-gold/40 backdrop-blur-md shadow-gold-glow shrink-0">
-                  <Box className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 text-gold animate-spin-slow" />
+                <span className="inline-flex items-center gap-0.5 sm:gap-1 px-1 sm:px-2 py-0.2 sm:py-0.5 rounded-full text-[7px] sm:text-[9px] md:text-[10px] font-bold tracking-wider bg-gold/25 text-gold-shimmer border border-gold/40 backdrop-blur-md shadow-gold-glow shrink-0">
+                  <Box className="w-2 h-2 sm:w-3 sm:h-3 text-gold animate-spin-slow" />
                   <span>3D</span>
                 </span>
               ) : (
-                <span className="px-1.5 sm:px-2 py-0.5 rounded-full text-[8px] sm:text-[10px] text-white/80 font-mono bg-black/45 backdrop-blur-sm border border-white/5 shrink-0">
+                <span className="px-1 sm:px-1.5 py-0.2 rounded-full text-[7px] sm:text-[9px] md:text-[10px] text-white/80 font-mono bg-black/50 backdrop-blur-sm border border-white/5 shrink-0">
                   {artwork.year}
                 </span>
               )}
@@ -126,8 +126,8 @@ export function ArtCard({ artwork, index }: ArtCardProps) {
 
             {/* Hover Inspect Indicator Center */}
             <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-              <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-black/75 border border-gold/40 text-gold-light text-[10px] sm:text-xs font-medium backdrop-blur-md shadow-gold-glow">
-                <Eye className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+              <div className="flex items-center gap-1 sm:gap-2 px-1.5 sm:px-3.5 py-0.5 sm:py-1.5 rounded-full bg-black/75 border border-gold/40 text-gold-light text-[8px] sm:text-xs font-medium backdrop-blur-md shadow-gold-glow">
+                <Eye className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5" />
                 <span>
                   {artwork.has3DModel
                     ? locale === 'ckb'
@@ -142,35 +142,35 @@ export function ArtCard({ artwork, index }: ArtCardProps) {
           </div>
 
           {/* Artwork Editorial Inscription */}
-          <div className="relative z-20 p-2 sm:p-4 md:p-5 flex flex-col justify-between flex-1 gap-1.5 sm:gap-3">
-            <div className="flex flex-col gap-0.5 sm:gap-1.5">
+          <div className="relative z-20 p-1.5 sm:p-3 md:p-5 flex flex-col justify-between flex-1 gap-1 sm:gap-2.5">
+            <div className="flex flex-col gap-0.5 sm:gap-1">
               {/* Department Tag */}
-              <div className="flex items-center justify-between text-[8px] sm:text-[11px] text-stone-500 dark:text-museum-secondary">
-                <span className="truncate max-w-[65%] sm:max-w-none">{department}</span>
-                <span className="font-mono text-[8px] sm:text-[10px] text-gold-dark dark:text-gold/80 shrink-0">{artwork.dimensions}</span>
+              <div className="flex items-center justify-between text-[7.5px] sm:text-[10px] md:text-[11px] text-stone-500 dark:text-museum-secondary">
+                <span className="truncate max-w-[85%] sm:max-w-none font-medium">{department}</span>
+                <span className="hidden sm:inline font-mono text-[8px] sm:text-[10px] text-gold-dark dark:text-gold/80 shrink-0">{artwork.dimensions}</span>
               </div>
 
               {/* Title */}
-              <h3 className="text-xs sm:text-base md:text-lg font-bold text-stone-900 dark:text-parchment-pure group-hover:text-gold-dark dark:group-hover:text-gold-light transition-colors duration-200 line-clamp-1">
+              <h3 className="text-[10px] sm:text-sm md:text-base font-bold text-stone-900 dark:text-parchment-pure group-hover:text-gold-dark dark:group-hover:text-gold-light transition-colors duration-200 line-clamp-1 leading-tight sm:leading-snug">
                 {title}
               </h3>
 
               {/* Artist Moniker */}
-              <p className="text-[10px] sm:text-xs text-stone-600 dark:text-parchment-muted font-medium flex items-center gap-1 sm:gap-1.5 truncate">
+              <p className="text-[8.5px] sm:text-xs text-stone-600 dark:text-parchment-muted font-medium flex items-center gap-1 sm:gap-1.5 truncate">
                 <span className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-gold/70 shrink-0" />
                 <span className="truncate">{artist}</span>
               </p>
             </div>
 
             {/* Medium and Action Footnote */}
-            <div className="pt-1.5 sm:pt-3 border-t border-stone-200/80 dark:border-museum-divider flex items-center justify-between text-[9px] sm:text-xs">
-              <span className="text-[8px] sm:text-[11px] text-stone-500 dark:text-museum-caption truncate max-w-[70%]">
+            <div className="pt-1 sm:pt-2 md:pt-3 border-t border-stone-200/80 dark:border-museum-divider flex items-center justify-between text-[7.5px] sm:text-xs">
+              <span className="text-[7.5px] sm:text-[10px] md:text-[11px] text-stone-500 dark:text-museum-caption truncate max-w-[75%] sm:max-w-[70%]">
                 {medium}
               </span>
 
-              <div className="flex items-center gap-0.5 sm:gap-1 text-gold-dark dark:text-gold group-hover:text-gold dark:group-hover:text-gold-shimmer transition-colors font-medium text-[9px] sm:text-xs shrink-0">
+              <div className="flex items-center gap-0.5 sm:gap-1 text-gold-dark dark:text-gold group-hover:text-gold dark:group-hover:text-gold-shimmer transition-colors font-medium text-[8px] sm:text-xs shrink-0">
                 <ArrowUpRight
-                  className={`w-3 h-3 sm:w-4 sm:h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 ${
+                  className={`w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 ${
                     isRTL ? 'rotate-90' : ''
                   }`}
                 />

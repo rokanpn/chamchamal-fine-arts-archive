@@ -197,8 +197,8 @@ export function ArtworksDirectoryClient() {
         })}
       </div>
 
-      {/* Artworks Grid (2-Column Mobile) */}
-      <motion.div layout className="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-6 lg:gap-8">
+      {/* Artworks Grid (3-Column Mobile) */}
+      <motion.div layout className="grid grid-cols-3 gap-2 sm:gap-6 lg:gap-8">
         <AnimatePresence mode="popLayout">
           {filteredArtworks.map((artwork, idx) => (
             <motion.div

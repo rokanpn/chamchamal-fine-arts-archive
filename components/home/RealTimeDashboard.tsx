@@ -285,8 +285,8 @@ export function RealTimeDashboard() {
           </p>
         </div>
 
-        {/* 3 Modern Soft Department Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
+        {/* 3 Modern Soft Department Cards (3-column layout on both mobile and desktop) */}
+        <div className="grid grid-cols-3 gap-2 sm:gap-5 md:gap-6 lg:gap-8">
           {departmentData.map((dept, index) => {
             const Icon = dept.icon;
             return (
@@ -300,13 +300,13 @@ export function RealTimeDashboard() {
               >
                 <Link
                   href={dept.href}
-                  className="group relative flex flex-col h-full rounded-2xl sm:rounded-3xl bg-white/90 dark:bg-stone-900/50 border border-stone-200/80 dark:border-white/10 hover:border-gold/40 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden backdrop-blur-xl"
+                  className="group relative flex flex-col h-full rounded-xl sm:rounded-2xl md:rounded-3xl bg-white/90 dark:bg-stone-900/50 border border-stone-200/80 dark:border-white/10 hover:border-gold/40 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden backdrop-blur-xl"
                 >
                   {/* Subtle Top Gold Highlight */}
                   <div className="absolute top-0 inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-gold/40 to-transparent group-hover:via-gold transition-all duration-300" />
 
                   {/* High Quality Image Container with Gentle Gradient */}
-                  <div className="relative w-full aspect-[16/11] overflow-hidden bg-stone-100 dark:bg-black/60">
+                  <div className="relative w-full aspect-[4/3] sm:aspect-[16/11] overflow-hidden bg-stone-100 dark:bg-black/60">
                     <DepartmentThumbnailImage
                       src={dept.thumbnailUrl}
                       alt={dept.title}
@@ -315,32 +315,32 @@ export function RealTimeDashboard() {
                     <div className="absolute inset-0 bg-gradient-to-t from-stone-900/85 via-stone-900/25 to-transparent" />
 
                     {/* Minimalist Floating Badge */}
-                    <div className="absolute top-3 start-3 sm:top-4 sm:start-4 z-10 flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 border border-white/15 text-gold text-xs font-medium backdrop-blur-md shadow-sm">
-                      <Icon className="w-3.5 h-3.5 text-gold shrink-0" />
-                      <span className="text-[11px] font-semibold">{dept.badgeLabel}</span>
+                    <div className="absolute top-1.5 start-1.5 sm:top-4 sm:start-4 z-10 flex items-center gap-1 sm:gap-1.5 px-1.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-black/65 border border-white/15 text-gold text-xs font-medium backdrop-blur-md shadow-sm">
+                      <Icon className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 text-gold shrink-0" />
+                      <span className="hidden sm:inline text-[11px] font-semibold">{dept.badgeLabel}</span>
                     </div>
                   </div>
 
                   {/* Clean Content Body */}
-                  <div className="p-5 sm:p-6 flex flex-col justify-between flex-1 gap-4">
+                  <div className="p-2.5 sm:p-5 md:p-6 flex flex-col justify-between flex-1 gap-2 sm:gap-4">
                     <div>
-                      <h4 className="text-xl sm:text-2xl font-bold text-stone-900 dark:text-parchment-pure font-serif group-hover:text-gold-dark dark:group-hover:text-gold transition-colors">
+                      <h4 className="text-xs sm:text-lg md:text-2xl font-bold text-stone-900 dark:text-parchment-pure font-serif group-hover:text-gold-dark dark:group-hover:text-gold transition-colors truncate sm:line-clamp-none">
                         {dept.title}
                       </h4>
 
-                      <p className="mt-2 text-xs sm:text-sm text-stone-600 dark:text-museum-secondary leading-relaxed">
+                      <p className="hidden sm:block mt-1 sm:mt-2 text-xs sm:text-sm text-stone-600 dark:text-museum-secondary leading-relaxed line-clamp-2 md:line-clamp-3">
                         {dept.desc}
                       </p>
                     </div>
 
                     {/* Soft Minimalist Explore Action */}
-                    <div className="pt-3 border-t border-stone-200/70 dark:border-white/[0.06]">
-                      <div className="inline-flex items-center justify-between w-full px-4 py-2.5 rounded-full bg-stone-100 dark:bg-white/[0.04] group-hover:bg-gold/15 border border-stone-200/80 dark:border-white/10 group-hover:border-gold/40 text-stone-800 dark:text-parchment-pure group-hover:text-gold-dark dark:group-hover:text-gold text-xs font-semibold transition-all duration-300">
-                        <span>{t.dashboard.exploreDept}</span>
+                    <div className="pt-2 sm:pt-3 border-t border-stone-200/70 dark:border-white/[0.06]">
+                      <div className="inline-flex items-center justify-between w-full px-2 py-1.5 sm:px-4 sm:py-2.5 rounded-full bg-stone-100 dark:bg-white/[0.04] group-hover:bg-gold/15 border border-stone-200/80 dark:border-white/10 group-hover:border-gold/40 text-stone-800 dark:text-parchment-pure group-hover:text-gold-dark dark:group-hover:text-gold text-[9.5px] sm:text-xs font-semibold transition-all duration-300 gap-1">
+                        <span className="truncate">{t.dashboard.exploreDept}</span>
                         {isRTL ? (
-                          <ArrowLeft className="w-3.5 h-3.5 transition-transform duration-300 group-hover:-translate-x-1" />
+                          <ArrowLeft className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 shrink-0 transition-transform duration-300 group-hover:-translate-x-1" />
                         ) : (
-                          <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+                          <ArrowRight className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 shrink-0 transition-transform duration-300 group-hover:translate-x-1" />
                         )}
                       </div>
                     </div>
