@@ -4,11 +4,12 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { SafeImage } from '@/components/ui/SafeImage';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Artwork, getArtworkDepartmentLabel } from '@/data/artworks';
+import { Artwork, getArtworkDepartment, getArtworkDepartmentLabel } from '@/data/artworks';
 import { STUDENTS_DATA } from '@/data/students';
 import { useArchive } from '@/context/ArchiveContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { resolveMediaUrl } from '@/lib/mediaStorage';
+import { QRCodeSVG, QRCodeCanvas } from 'qrcode.react';
 import { ModelViewer3D } from './ModelViewer3D';
 import { ParallaxArtworkViewer } from './ParallaxArtworkViewer';
 import { AudioGuidePlayer } from './AudioGuidePlayer';
@@ -595,10 +596,28 @@ export function ArtworkDetailClient({ artwork: initialArtwork }: ArtworkDetailCl
                 {artist} • {artwork.year}
               </p>
 
-              <div className="my-6 p-4 rounded-2xl bg-white border border-gold/50 shadow-art-card flex flex-col items-center justify-center">
-                <QrCode className="w-40 h-40 text-black" strokeWidth={1.5} />
-                <span className="text-[9px] font-mono text-black/70 mt-1 uppercase font-bold">
-                  {artwork.physicalPlaqueCode}
+              {/* Hidden high-res canvas for downloading */}
+              <div className="hidden">
+                <QRCodeCanvas
+                  id={`detail-qr-canvas-${artwork.id}`}
+                  value={`https://chamchamal-fine-arts-archive.vercel.app/artworks/${artwork.slug}`}
+                  size={1024}
+                  level="H"
+                  includeMargin={true}
+                />
+              </div>
+
+              {/* Real Scannable High-Res QR Code */}
+              <div className="my-5 p-4 rounded-2xl bg-white border border-gold/50 shadow-art-card flex flex-col items-center justify-center">
+                <QRCodeSVG
+                  value={`https://chamchamal-fine-arts-archive.vercel.app/artworks/${artwork.slug}`}
+                  size={160}
+                  level="H"
+                  includeMargin={true}
+                  className="w-36 h-36 sm:w-40 sm:h-40"
+                />
+                <span className="text-[9px] font-mono text-black font-bold mt-1 uppercase tracking-wider">
+                  {artwork.physicalPlaqueCode || `CFA-2026-${getArtworkDepartment(artwork).slice(0, 2).toUpperCase()}-01`}
                 </span>
               </div>
 
@@ -610,17 +629,38 @@ export function ArtworkDetailClient({ artwork: initialArtwork }: ArtworkDetailCl
                   : 'This official archival plaque is mounted adjacent to the physical work at the institute.'}
               </p>
 
-              <button
-                onClick={() => {
-                  if (typeof window !== 'undefined') window.print();
-                }}
-                className="w-full py-3 rounded-full bg-gradient-to-r from-gold via-gold-light to-gold text-obsidian font-bold text-xs shadow-gold-glow flex items-center justify-center gap-2"
-              >
-                <Printer className="w-4 h-4" />
-                <span>
-                  {locale === 'ckb' ? 'چاپکردنی پلاتی فیزیکی' : locale === 'ar' ? 'طباعة اللوحة الإرشادية' : 'Print Archival Plaque'}
-                </span>
-              </button>
+              <div className="w-full flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    const canvas = document.getElementById(`detail-qr-canvas-${artwork.id}`) as HTMLCanvasElement;
+                    if (!canvas) return;
+                    const dataUrl = canvas.toDataURL('image/png');
+                    const link = document.createElement('a');
+                    link.href = dataUrl;
+                    link.download = `${artwork.slug}-qr-code.png`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                  }}
+                  className="flex-1 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-parchment font-semibold text-xs flex items-center justify-center gap-1.5 transition-all"
+                  title="Download High-Res QR PNG"
+                >
+                  <Download className="w-4 h-4 text-gold" />
+                  <span>{locale === 'ckb' ? 'داگرتنی وێنە (PNG)' : 'Download PNG'}</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    if (typeof window !== 'undefined') window.print();
+                  }}
+                  className="flex-1 py-2.5 rounded-full bg-gradient-to-r from-gold via-gold-light to-gold text-obsidian font-bold text-xs shadow-gold-glow flex items-center justify-center gap-1.5 hover:scale-105 transition-all"
+                >
+                  <Printer className="w-4 h-4" />
+                  <span>
+                    {locale === 'ckb' ? 'چاپکردنی پلات' : locale === 'ar' ? 'طباعة اللوحة' : 'Print Plaque'}
+                  </span>
+                </button>
+              </div>
             </motion.div>
           </div>
         )}

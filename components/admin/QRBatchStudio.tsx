@@ -1,8 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Artwork, getArtworkDepartmentLabel } from '@/data/artworks';
+import { QRCodeSVG } from 'qrcode.react';
+import { Artwork, getArtworkDepartment, getArtworkDepartmentLabel } from '@/data/artworks';
 import { useLanguage } from '@/context/LanguageContext';
+import { ArtworkQRModal } from '@/components/admin/ArtworkQRModal';
 import { 
   Printer, 
   CheckSquare, 
@@ -11,7 +13,9 @@ import {
   Sparkles, 
   Box, 
   CheckCircle2, 
-  Filter 
+  Filter,
+  Download,
+  ExternalLink
 } from 'lucide-react';
 
 interface QRBatchStudioProps {
@@ -23,6 +27,7 @@ export function QRBatchStudio({ artworks }: QRBatchStudioProps) {
   const [selectedIds, setSelectedIds] = useState<string[]>(
     artworks.slice(0, 4).map((a) => a.id)
   );
+  const [modalArtwork, setModalArtwork] = useState<Artwork | null>(null);
 
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) =>
@@ -161,12 +166,29 @@ export function QRBatchStudio({ artworks }: QRBatchStudioProps) {
                   </span>
                 </div>
 
-                {/* Physical High-Res QR Code */}
-                <div className="my-2 p-3 rounded-2xl bg-white border border-gold/40 shadow-inner flex flex-col items-center justify-center">
-                  <QrCode className="w-28 h-28 sm:w-32 sm:h-32 text-black" strokeWidth={1.5} />
-                  <span className="text-[8px] font-mono text-black/75 mt-0.5 uppercase tracking-wider">
-                    {artwork.physicalPlaqueCode}
+                {/* Real Scannable High-Res QR Code */}
+                <div className="my-2 p-3 rounded-2xl bg-white border border-gold/40 shadow-inner flex flex-col items-center justify-center print:border-black">
+                  <QRCodeSVG
+                    value={`https://chamchamal-fine-arts-archive.vercel.app/artworks/${artwork.slug}`}
+                    size={120}
+                    level="H"
+                    includeMargin={true}
+                    className="w-28 h-28 sm:w-32 sm:h-32"
+                  />
+                  <span className="text-[8px] font-mono text-black font-bold mt-0.5 uppercase tracking-wider">
+                    {artwork.physicalPlaqueCode || `CFA-2026-${getArtworkDepartment(artwork).slice(0, 2).toUpperCase()}-01`}
                   </span>
+                </div>
+
+                {/* Plaque Quick Actions (Screen only) */}
+                <div className="flex items-center gap-2 print:hidden mb-2">
+                  <button
+                    onClick={() => setModalArtwork(artwork)}
+                    className="px-3 py-1 rounded-full bg-gold/15 hover:bg-gold/30 text-gold-light hover:text-white text-[10px] font-semibold border border-gold/30 flex items-center gap-1 transition-all"
+                  >
+                    <Download className="w-3 h-3 text-gold" />
+                    <span>Download PNG</span>
+                  </button>
                 </div>
 
                 {/* Bottom Callout & Pedestal Provenance */}
@@ -189,6 +211,13 @@ export function QRBatchStudio({ artworks }: QRBatchStudioProps) {
           );
         })}
       </div>
+
+      {/* Dedicated Plaque Generator Modal for Single Artwork */}
+      <ArtworkQRModal
+        artwork={modalArtwork}
+        isOpen={Boolean(modalArtwork)}
+        onClose={() => setModalArtwork(null)}
+      />
     </div>
   );
 }

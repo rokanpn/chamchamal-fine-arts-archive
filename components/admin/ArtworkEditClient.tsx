@@ -10,6 +10,7 @@ import { AdminAuthGuard } from '@/components/admin/AdminAuthGuard';
 import { FileUploadDropzone } from '@/components/admin/FileUploadDropzone';
 import { ModelPreviewStudio } from '@/components/admin/ModelPreviewStudio';
 import { QuickToolAddModal } from '@/components/admin/QuickToolAddModal';
+import { ArtworkQRModal } from '@/components/admin/ArtworkQRModal';
 import { Artwork, ArtworkDepartment, DEPARTMENT_LABELS, DEPARTMENT_OPTIONS, getArtworkDepartment, ARTWORKS_DATA } from '@/data/artworks';
 import { parseArtworkDimensions } from '@/lib/dimensions';
 import { AtelierTool } from '@/data/tools';
@@ -36,6 +37,7 @@ import {
   Search,
   Check,
   Eye,
+  QrCode,
   Pencil,
   AlertTriangle
 } from 'lucide-react';
@@ -73,6 +75,7 @@ export function ArtworkEditClient({ slug }: ArtworkEditClientProps) {
   const [isQuickToolModalOpen, setIsQuickToolModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [showQRModal, setShowQRModal] = useState(false);
 
   // Form State
   const [formData, setFormData] = useState<IngestionFormData>({
@@ -352,6 +355,16 @@ export function ArtworkEditClient({ slug }: ArtworkEditClientProps) {
           </div>
 
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setShowQRModal(true)}
+              className="px-3.5 py-1.5 rounded-xl bg-gold/15 hover:bg-gold/25 border border-gold/40 text-gold-light hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-all shadow-glass-pill"
+              title="Generate / Download QR Code Plaque"
+            >
+              <QrCode className="w-3.5 h-3.5 text-gold" />
+              <span>{locale === 'ckb' ? 'پلاتی QR و چاپ' : 'QR Plaque & Print'}</span>
+            </button>
+
             <Link
               href={`/artworks/${slug}`}
               target="_blank"
@@ -945,6 +958,13 @@ export function ArtworkEditClient({ slug }: ArtworkEditClientProps) {
           isOpen={isQuickToolModalOpen}
           onClose={() => setIsQuickToolModalOpen(false)}
           onToolCreated={handleToolCreated}
+        />
+
+        {/* Physical Museum Plaque QR Modal */}
+        <ArtworkQRModal
+          artwork={targetArtwork || null}
+          isOpen={showQRModal}
+          onClose={() => setShowQRModal(false)}
         />
       </div>
     </AdminAuthGuard>

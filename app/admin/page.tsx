@@ -8,6 +8,8 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useResolvedAudioUrl } from '@/hooks/useResolvedAudioUrl';
 import { AdminAuthGuard } from '@/components/admin/AdminAuthGuard';
 import { QRBatchStudio } from '@/components/admin/QRBatchStudio';
+import { ArtworkQRModal } from '@/components/admin/ArtworkQRModal';
+import { Artwork } from '@/data/artworks';
 import { FileUploadDropzone } from '@/components/admin/FileUploadDropzone';
 import { DepartmentConfigEditor } from '@/components/admin/DepartmentConfigEditor';
 import { 
@@ -93,6 +95,9 @@ export default function AdminDashboardPage() {
   const { locale, isRTL } = useLanguage();
 
   const [activeTab, setActiveTab] = useState<'artworks' | 'tools' | 'students' | 'faculty' | 'collaborators' | 'plaques' | 'departments' | 'settings'>('artworks');
+
+  // QR Code Plaque Modal Target Artwork
+  const [qrTargetArtwork, setQrTargetArtwork] = useState<Artwork | null>(null);
 
   // New Ambient Track Form State
   const [newTrackTitle, setNewTrackTitle] = useState('');
@@ -553,6 +558,14 @@ export default function AdminDashboardPage() {
 
                         <td className="py-3 px-4 text-end">
                           <div className="inline-flex items-center gap-1.5">
+                            <button
+                              onClick={() => setQrTargetArtwork(art)}
+                              className="p-1.5 rounded-lg hover:bg-gold/15 text-museum-secondary hover:text-gold hover:shadow-gold-glow transition-all"
+                              title="Generate / Download QR Code"
+                            >
+                              <QrCode className="w-4 h-4 text-gold" />
+                            </button>
+
                             <Link
                               href={`/admin/artworks/${art.slug}/edit`}
                               className="p-1.5 rounded-lg hover:bg-gold/15 text-museum-secondary hover:text-gold hover:shadow-gold-glow transition-all"
@@ -1184,6 +1197,13 @@ export default function AdminDashboardPage() {
           </div>
         )}
       </div>
+
+      {/* Unique Artwork QR Code & Physical Plaque Generator Modal */}
+      <ArtworkQRModal
+        artwork={qrTargetArtwork}
+        isOpen={Boolean(qrTargetArtwork)}
+        onClose={() => setQrTargetArtwork(null)}
+      />
     </AdminAuthGuard>
   );
 }

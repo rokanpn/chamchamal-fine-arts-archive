@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
 import { RealTimeDashboard } from '@/components/home/RealTimeDashboard';
+import { QRScannerModal } from '@/components/qr/QRScannerModal';
 import { 
   QrCode, 
   Sparkles, 
@@ -250,97 +251,11 @@ export function CuratorialHero({ onScanClick, onExploreClick }: CuratorialHeroPr
         <RealTimeDashboard />
       </section>
 
-      {/* Museum Physical QR Scanner Simulation Modal */}
-      <AnimatePresence>
-        {showQRModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowQRModal(false)}
-              className="absolute inset-0 bg-black/85 backdrop-blur-2xl"
-            />
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 350 }}
-              className="relative w-full max-w-md rounded-3xl bg-obsidian-surface border border-gold/40 p-6 sm:p-8 shadow-gold-glow flex flex-col items-center text-center z-10 overflow-hidden"
-            >
-              <button
-                onClick={() => setShowQRModal(false)}
-                className="absolute top-4 end-4 p-2 rounded-full bg-white/5 hover:bg-white/10 text-museum-secondary hover:text-parchment transition-colors"
-                aria-label="Close Scanner"
-              >
-                <X className="w-5 h-5" />
-              </button>
-
-              <div className="flex items-center gap-2 text-gold text-xs font-semibold uppercase tracking-widest mb-1">
-                <Camera className="w-4 h-4" />
-                <span>{locale === 'ckb' ? 'سکانەری مۆزەخانەی چەمچەماڵ' : locale === 'ar' ? 'ماسح المعرض التفاعلي' : 'Gallery QR Scanner'}</span>
-              </div>
-              <h3 className="text-xl font-bold text-parchment mb-2">
-                {locale === 'ckb'
-                  ? 'کۆدی تابلۆ یان پەیکەرەکە ئاڕاستە بکە'
-                  : locale === 'ar'
-                  ? 'وجّه الكاميرا نحو رمز اللوحة أو المنحوتة'
-                  : 'Point at Physical Artwork Code'}
-              </h3>
-              <p className="text-xs text-museum-secondary mb-6 max-w-xs">
-                {locale === 'ckb'
-                  ? 'لە کاتی سەردانی پەیمانگە لە چەمچەماڵ، کامێراکەت بخەرە سەر هێمای تەنیشت بەرهەمەکە بۆ بینینی مۆدێلی ۳D و چیرۆکی شاکارەکە.'
-                  : locale === 'ar'
-                  ? 'أثناء زيارتك لمعهد جمجمال، امسح الرمز المجاور للعمل للوصول الفوري للمجسم ثلاثي الأبعاد.'
-                  : 'While visiting the institute in Chamchamal, scan the physical plaque code for instant 3D model inspection.'}
-              </p>
-
-              <div className="relative w-52 h-52 rounded-2xl border-2 border-dashed border-gold/50 bg-black/60 flex items-center justify-center overflow-hidden mb-6">
-                <motion.div
-                  animate={{ y: [-90, 90, -90] }}
-                  transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
-                  className="absolute inset-x-2 h-0.5 bg-gradient-to-r from-transparent via-gold to-transparent shadow-[0_0_12px_#D4AF37]"
-                />
-
-                <QrCode className="w-20 h-20 text-gold/30" />
-
-                <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-gold" />
-                <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-gold" />
-                <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-gold" />
-                <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-gold" />
-              </div>
-
-              <Link
-                href="/artworks/chamchamal-freedom-monument"
-                onClick={() => setShowQRModal(false)}
-                className="w-full py-3 rounded-full bg-gradient-to-r from-gold via-gold-light to-gold text-obsidian font-bold text-xs shadow-gold-glow flex items-center justify-center gap-2 mb-2"
-              >
-                <Box className="w-4 h-4 text-obsidian" />
-                <span>
-                  {locale === 'ckb'
-                    ? 'تاقیکردنەوە: کردنەوەی پەیکەری چەمچەماڵ (۳D)'
-                    : locale === 'ar'
-                    ? 'تجربة: فتح نصب جمجمال ثلاثي الأبعاد'
-                    : 'Simulate Scan: Open 3D Freedom Monument'}
-                </span>
-                <ArrowUpRight className="w-3.5 h-3.5" />
-              </Link>
-
-              <button
-                onClick={() => {
-                  setShowQRModal(false);
-                  const el = document.getElementById('gallery-feed');
-                  if (el) el.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="w-full py-2 rounded-full hover:bg-white/5 text-museum-secondary hover:text-parchment text-xs font-medium transition-all"
-              >
-                {locale === 'ckb' ? 'گەڕان بەناو ئەرشیف بەبێ سکانەر' : locale === 'ar' ? 'تصفح الأرشيف بدون مسح' : 'Browse Gallery Without Scanner'}
-              </button>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+      {/* Museum Physical QR Scanner Modal */}
+      <QRScannerModal
+        isOpen={showQRModal}
+        onClose={() => setShowQRModal(false)}
+      />
     </>
   );
 }
